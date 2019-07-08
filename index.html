@@ -5,9 +5,25 @@
     <title>Hello World!</title>
 </head>
 <body>
-<h1>BHorga</h1>
-We are using node <script>document.write(process.versions.node)</script>,
-Chrome <script>document.write(process.versions.chrome)</script>,
-and Electron <script>document.write(process.versions.electron)</script>.
+    <h1>BHorga</h1>
+    <ul>
+
+    </ul>
 </body>
+
+<script type="text/javascript">
+    alert("Halo");
+    console.log("hrey");
+    const electron = require('electron');
+    const {ipcRenderer} = electron;
+    const ul = document.querySelector('ul');
+
+    ipcRenderer.on('drink:add', function(e,drink){
+        /* Create a list item */
+       const li = document.createElement('li');
+       const drinkText = document.createTextNode(drink);
+       li.appendChild(drinkText);
+       ul.appendChild(li);
+    });
+</script>
 </html>

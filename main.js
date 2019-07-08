@@ -1,7 +1,8 @@
-const { app, BrowserWindow, Menu } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const url = require('url');
 const path = require('path');
 
+process.env.NODE_ENV = 'development';
 let sql = require('mysql');
 
 /**
@@ -29,16 +30,17 @@ connection.connect(function(err){
 function createWindow () {
     // Erstelle das Browser-Fenster.
     win = new BrowserWindow({
-        width: 800,
-        height: 600,
         webPreferences: {
             nodeIntegration: true
-        },
-        resizable:true,
-    })
+        }
+        }
+    )
 
-    // and load the index.html of the app.
-    win.loadFile('index.html')
+   win.loadURL(url.format({
+       pathname: path.join(__dirname,'index.html'),
+       protocol: 'file',
+       slashes: true
+   }))
 
     // Quit app once the main window is closed
     win.on('closed',function(){
@@ -57,7 +59,11 @@ function createAddDrinkWindow ( ) {
     addWin = new BrowserWindow( {
         width: 800,
         height: 600,
-        title:"Add a new Database Entry"
+        title:"Add a new Database Entry",
+        webPreferences: {
+            nodeIntegration: true
+        }
+
     });
 
     addWin.loadURL(url.format({
@@ -100,5 +106,30 @@ const mainMenuTemplate = [
         }
     }
 ];
+
+// Catch newly added drinks
+ipcMain.on('drink:add', function(e,drink){
+    console.log(drink);
+    win.webContents.send('drink:add', drink);
+    addWin.close();
+
+});
+
+if (process.env.NODE_ENV !== 'production'){
+    mainMenuTemplate.push({
+        label: 'DeveloperTools',
+        submenu: [
+        {
+            label: 'Toggle DevTools',
+            accelerator: process.platform == 'darwin' ? 'Command+I' : 'Ctrl+I',
+            click(item, focusedWindow){
+                focusedWindow.toggleDevTools();
+            }
+         },
+        {
+            role: 'reload'
+        }]
+    });
+}
 
 app.on('ready', createWindow)
