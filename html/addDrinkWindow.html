@@ -5,28 +5,43 @@
     <title>Getränke hinzufügen</title>
 </head>
 <body>
-    <form id="drinkForm">
-        <div>
-            <label>Neues Getränk</label>
-            <input type="text" id="drink" autofocus>
-        </div>
-        <button type="submit">Hinzufügen</button>
-    </form>
+    <div align="center">
+        <form id="drinkForm">
+            <table border="1">
+                <tr>
+                    <td>
+                        Getränk
+                    </td>
+                    <td>
+                        Größe
+                    </td>
+                    <td>
+                        Einkaufspreis
+                    </td>
+                    <td>
+                        Verkaufspreis
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" id="drink">
+                    </td>
+                    <td>
+                        <input type="text" id="size">
+                    </td>
 
-    <script>
-        const electron = require('electron');
-        const {ipcRenderer} = electron;
+                    <td>
+                        <input type="text" id="cost">
+                    </td>
+                    <td>
+                        <input type="text" id="price">
+                    </td>
+                </tr>
+            </table>
+            <button type="submit">Hinzufügen</button>
+        </form>
+    </div>
 
-        const form = document.querySelector('#drinkForm');
-        form.addEventListener('submit', submitForm);
-
-        function submitForm(e){
-            e.preventDefault();
-            const drink = document.querySelector('#drink').value;
-            console.log(drink);
-            // send newly added drink to main.js
-            ipcRenderer.send('drink:add', drink);
-        }
-    </script>
+    <script src="js/addDrinkWindow.js"/>
 </body>
 </html>

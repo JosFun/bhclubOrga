@@ -2,28 +2,14 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
+    <title>Orga</title>
 </head>
 <body>
-    <h1>BHorga</h1>
+    <h1>orga</h1>
     <ul>
 
     </ul>
 </body>
 
-<script type="text/javascript">
-    alert("Halo");
-    console.log("hrey");
-    const electron = require('electron');
-    const {ipcRenderer} = electron;
-    const ul = document.querySelector('ul');
-
-    ipcRenderer.on('drink:add', function(e,drink){
-        /* Create a list item */
-       const li = document.createElement('li');
-       const drinkText = document.createTextNode(drink);
-       li.appendChild(drinkText);
-       ul.appendChild(li);
-    });
-</script>
+<script src="js/index.js"/>
 </html>
