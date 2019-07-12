@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <title>Getränke hinzufügen</title>
+ <link rel="stylesheet" type="text/css" href="../css/tableStyle.css">
 </head>
 <body>
     <div align="center">
         <form id="drinkForm">
-            <table border="1">
+            <table border="1" id="addDrink">
                 <tr>
                     <td>
                         Getränk
@@ -16,10 +17,28 @@
                         Größe
                     </td>
                     <td>
-                        Einkaufspreis
+                        Netto Einkaufspreis pro Flasche
                     </td>
                     <td>
-                        Verkaufspreis
+                        Netto Einkaufspreis pro l
+                    </td>
+                    <td>
+                        Intern/Flasche
+                    </td>
+                    <td>
+                        Aufschlag/Flasche
+                    </td>
+                    <td>
+                        Portion
+                    </td>
+                    <td>
+                        Preis/Portion(berechnet)
+                    </td>
+                    <td>
+                        Preis/Portion(gerundet)
+                    </td>
+                    <td>
+                        Extern/Flasche
                     </td>
                 </tr>
                 <tr>
@@ -27,16 +46,64 @@
                         <input type="text" id="drink">
                     </td>
                     <td>
-                        <input type="text" id="size">
+                        <input type="text" id="bottleSize">
                     </td>
 
                     <td>
-                        <input type="text" id="cost">
+                        <input type="text" id="costBottle">
                     </td>
                     <td>
-                        <input type="text" id="price">
+                        <input type="text" id="costLitre">
+                    </td>
+                    <td>
+                        <input type="text" id="internalPrice">
+                    </td>
+                    <td>
+                        <input type="text" id="addition">
+                    </td>
+                    <td>
+                        <input type="text" id="portionSize">
+                    </td>
+                    <td>
+                        <input type="text" id="calcPricePortion">
+                    </td>
+                    <td>
+                        <input type="text" id="roundedPricePortion">
+                    </td>
+                    <td>
+                        <input type="text" id="externalBottle">
                     </td>
                 </tr>
+                <tr>
+                    <td>
+                        Einkaufspreis Waldhoff
+                    </td>
+                    <td>
+                        Einkaufspreis Metro
+                    </td>
+                    <td>
+                        Einkaufspreis Jäcklein
+                    </td>
+                    <td>
+                        Datum Marktcheck
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" id="waldhoff">
+                    </td>
+                    <td>
+                        <input type="text" id="metro">
+                    </td>
+
+                    <td>
+                        <input type="text" id="jacklein">
+                    </td>
+                    <td>
+                        <input type="text" id="date">
+                    </td>
+                </tr>
+
             </table>
             <button type="submit">Hinzufügen</button>
         </form>
