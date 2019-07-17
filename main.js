@@ -10,6 +10,10 @@ let sql = require('mysql');
  * */
 let win;
 
+/**
+ * Create a connection to the mysql database the software is using
+ * @type {Connection} The connection to the mysql database
+ */
 var connection = sql.createConnection({
     host    : 'localhost',
     user    : 'bhdbuser',
@@ -73,10 +77,6 @@ function createAddDrinkWindow ( ) {
     }));
 }
 
-function insertTest(){
-
-}
-
 /**
  * Minimize the main window
  */
@@ -108,11 +108,8 @@ const mainMenuTemplate = [
 ];
 
 // Catch newly added drinks
-ipcMain.on('drink:add', function(e,drink){
-    console.log(drink);
-    win.webContents.send('drink:add', drink);
-    addWin.close();
-
+ipcMain.on('drink:add', function(e,drinkInfo){
+    /*TODO: Perform the sql insertion*/
 });
 
 if (process.env.NODE_ENV !== 'production'){
