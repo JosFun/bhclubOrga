@@ -61,7 +61,7 @@ function createAddDrinkWindow ( ) {
         height: 600,
         title:"Add a new Database Entry",
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegrbhcation: true
         }
 
     });

@@ -8,7 +8,7 @@
 <body>
     <div align="center">
         <form id="drinkForm">
-            <table border="1" id="addDrink">
+            <table id="addDrink">
                 <tr>
                     <td>
                         Getränk
@@ -87,6 +87,18 @@
                     <td>
                         Datum Marktcheck
                     </td>
+                    <td>
+                        SK-Liste?
+                    </td>
+                    <td>
+                        AV-Verkauf?
+                    </td>
+                    <td>
+                        Bierkarte?
+                    </td>
+                    <td>
+                        Barkarte?
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -102,13 +114,61 @@
                     <td>
                         <input type="text" id="date">
                     </td>
+                    <td>
+                        <input type="checkbox" id="skListe">
+                    </td>
+                    <td>
+                        <input type="checkbox" id="avVerkauf">
+                    </td>
+                    <td>
+                        <input type="checkbox" id="bierKarte">
+                    </td>
+                    <td>
+                        <input type="checkbox" id="barKarte">
+                    </td>
                 </tr>
 
             </table>
             <button type="submit">Hinzufügen</button>
         </form>
+        <br><br>
+        <table id="drinkTable">
+            <tr>
+                <td>
+                    Getränk
+                </td>
+                <td>
+                    Größe
+                </td>
+                <td>
+                    Netto Einkaufspreis pro Flasche
+                </td>
+                <td>
+                    Netto Einkaufspreis pro l
+                </td>
+                <td>
+                    Intern/Flasche
+                </td>
+                <td>
+                    Aufschlag/Flasche
+                </td>
+                <td>
+                    Portion
+                </td>
+                <td>
+                    Preis/Portion(berechnet)
+                </td>
+                <td>
+                    Preis/Portion(gerundet)
+                </td>
+                <td>
+                    Extern/Flasche
+                </td>
+            </tr>
+        </table>
     </div>
 
-    <script src="js/addDrinkWindow.js"/>
+    <script src="../js/addDrinkWindow.js">
+    </script>
 </body>
 </html>
