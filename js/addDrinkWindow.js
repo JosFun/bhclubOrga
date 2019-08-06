@@ -4,7 +4,7 @@ const {ipcRenderer} = electron;
 /**
  * The number of columns that have to be specified for each drink
  * */
-const DRINK_COLUMNS = 17;
+const DRINK_COLUMNS = 18;
 
 const form = document.querySelector('#drinkForm');
 form.addEventListener('submit', submitForm);
@@ -30,6 +30,7 @@ function submitForm(e){
         columnInfo[14] = document.querySelector('#skListe').value;
         columnInfo[15] = document.querySelector('#avVerkauf').value;
         columnInfo[16] = document.querySelector('#bierKarte').value;
+        columnInfo[17] = document.querySelector('#barKarte').value;
     }
 
      //send newly added drink to main.js

@@ -14,22 +14,25 @@ let win;
  * Create a connection to the mysql database the software is using
  * @type {Connection} The connection to the mysql database
  */
-var connection = sql.createConnection({
+var dbConnection = sql.createConnection({
     host    : 'localhost',
+    port    : '3306',
     user    : 'bhdbuser',
     password: "bhc",
+    database: 'bhclub',
     }
 );
 
-/* Appliance of error callback mechanism*/
-connection.connect(function(err){
-    if ( !err ) {
-        console.log("Connection with the database has suceeded!");
-    }
-    else {
-        console.log("Connection could not have been established!");
-    }
-});
+function dataBaseConnect ( ) {
+    /* Appliance of error callback mechanism*/
+    dbConnection.connect(function (err) {
+        if (!err) {
+            console.log("Connection with the database has suceeded!");
+        } else {
+            console.log("Connection could not have been established!");
+        }
+    });
+}
 
 function createWindow () {
     // Erstelle das Browser-Fenster.
@@ -38,13 +41,13 @@ function createWindow () {
             nodeIntegration: true
         }
         }
-    )
+    );
 
    win.loadURL(url.format({
        pathname: path.join(__dirname,'index.html'),
        protocol: 'file',
        slashes: true
-   }))
+   }));
 
     // Quit app once the main window is closed
     win.on('closed',function(){
@@ -65,7 +68,7 @@ function createAddDrinkWindow ( ) {
         height: 600,
         title:"Add a new Database Entry",
         webPreferences: {
-            nodeIntegrbhcation: true
+            nodeIntegration: true
         }
 
     });
@@ -110,6 +113,14 @@ const mainMenuTemplate = [
 // Catch newly added drinks
 ipcMain.on('drink:add', function(e,drinkInfo){
     /*TODO: Perform the sql insertion*/
+    dataBaseConnect();
+    let sqlInsert = "INSERT INTO getraenke_daten VALUES (?)";
+    dbConnection.query(sqlInsert, drinkInfo, function ( err, result ) {
+        if ( err ) throw err;
+        console.log("New drink inserted!");
+    } )
+
+
 });
 
 if (process.env.NODE_ENV !== 'production'){
