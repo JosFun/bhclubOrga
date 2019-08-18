@@ -43,6 +43,8 @@ function createWindow () {
         }
     );
 
+    win.maximize();
+
    win.loadURL(url.format({
        pathname: path.join(__dirname,'index.html'),
        protocol: 'file',
@@ -64,14 +66,14 @@ function createAddDrinkWindow ( ) {
     windowShrink();
 
     addWin = new BrowserWindow( {
-        width: 800,
-        height: 600,
         title:"Add a new Database Entry",
         webPreferences: {
             nodeIntegration: true
         }
 
     });
+
+    addWin.maximize();
 
     addWin.loadURL(url.format({
         pathname: path.join(__dirname, 'html/addDrinkWindow.html'),

@@ -7,8 +7,9 @@
 </head>
 <body>
     <div align="center">
+        <h1> Neues Getränk hinzufügen</h1>
         <form id="drinkForm">
-            <table id="addDrink">
+            <table id="addDrink" border="0%" cellspacing="0" cellpadding="0">
                 <tr>
                     <td>
                         Getränk
@@ -27,18 +28,6 @@
                     </td>
                     <td>
                         Aufschlag/Flasche
-                    </td>
-                    <td>
-                        Portion
-                    </td>
-                    <td>
-                        Preis/Portion(berechnet)
-                    </td>
-                    <td>
-                        Preis/Portion(gerundet)
-                    </td>
-                    <td>
-                        Extern/Flasche
                     </td>
                 </tr>
                 <tr>
@@ -61,6 +50,22 @@
                     <td>
                         <input type="text" id="addition">
                     </td>
+                </tr>
+                <tr>
+                    <td>
+                        Portion
+                    </td>
+                    <td>
+                        Preis/Portion(berechnet)
+                    </td>
+                    <td>
+                        Preis/Portion(gerundet)
+                    </td>
+                    <td>
+                        Extern/Flasche
+                    </td>
+                </tr>
+                <tr>
                     <td>
                         <input type="text" id="portionSize">
                     </td>
@@ -76,18 +81,6 @@
                 </tr>
                 <tr>
                     <td>
-                        Einkaufspreis Waldhoff
-                    </td>
-                    <td>
-                        Einkaufspreis Metro
-                    </td>
-                    <td>
-                        Einkaufspreis Jäcklein
-                    </td>
-                    <td>
-                        Datum Marktcheck
-                    </td>
-                    <td>
                         SK-Liste?
                     </td>
                     <td>
@@ -101,19 +94,6 @@
                     </td>
                 </tr>
                 <tr>
-                    <td>
-                        <input type="text" id="waldhoff">
-                    </td>
-                    <td>
-                        <input type="text" id="metro">
-                    </td>
-
-                    <td>
-                        <input type="text" id="jacklein">
-                    </td>
-                    <td>
-                        <input type="text" id="date">
-                    </td>
                     <td>
                         <input type="checkbox" id="skListe">
                     </td>
@@ -132,7 +112,7 @@
             <button type="submit">Hinzufügen</button>
         </form>
         <br><br>
-        <table id="drinkTable">
+        <table id="drinkTable" border="0%" cellspacing="0" cellpadding="0">
             <tr>
                 <td>
                     Getränk
