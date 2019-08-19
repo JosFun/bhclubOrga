@@ -6,8 +6,11 @@
  <link rel="stylesheet" type="text/css" href="../css/tableStyle.css">
 </head>
 <body>
+<header class="main-header" role="banner">
+    <h1>BH-Club Orga</h1>
+</header>
     <div align="center">
-        <h1> Neues Getränk hinzufügen</h1>
+        <h2> Neues Getränk hinzufügen</h2>
         <form id="drinkForm">
             <table id="addDrink" border="0%" cellspacing="0" cellpadding="0">
                 <tr>
@@ -47,16 +50,16 @@
                     </td>
 
                     <td>
-                        <input type="text" id="costBottle">
+                        <input type="number" step="0.01" id="costBottle">
                     </td>
                     <td>
-                        <input type="text" id="costLitre">
+                        <input type="number" step="0.01" id="costLitre">
                     </td>
                     <td>
-                        <input type="text" id="internalPrice">
+                        <input type="number" step="0.01" id="internalPrice">
                     </td>
                     <td>
-                        <input type="text" id="addition">
+                        <input type="number" step="0.01" id="addition">
                     </td>
                 </tr>
                 <tr>
@@ -75,16 +78,22 @@
                 </tr>
                 <tr>
                     <td>
-                        <input type="text" id="portionSize">
+                       <select id="portionSize">
+                           <option value = ".04">0.04l</option>
+                           <option value = ".02">0.02l</option>
+                           <option value = ".2">0.2l</option>
+                           <option value = ".4">0.4l</option>
+                           <option value = ".5">0.5l</option>
+                       </select>
                     </td>
                     <td>
-                        <input type="text" id="calcPricePortion">
+                        <input type="number" step="0.01" id="calcPricePortion">
                     </td>
                     <td>
-                        <input type="text" id="roundedPricePortion">
+                        <input type="number" step="0.01" id="roundedPricePortion">
                     </td>
                     <td>
-                        <input type="text" id="externalBottle">
+                        <input type="number" step="0.01" id="externalBottle">
                     </td>
                 </tr>
                 <tr>
@@ -121,6 +130,7 @@
             <button type="submit">Getränk hinzufügen</button>
         </form>
         <br><br>
+        <h2>Getränkedatenbank</h2>
         <table id="drinkTable" border="0%" cellspacing="0" cellpadding="0">
             <tr>
                 <td>

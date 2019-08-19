@@ -4,7 +4,7 @@ const {ipcRenderer} = electron;
 /**
  * The number of columns that have to be specified for each drink
  * */
-const DRINK_COLUMNS = 18;
+const DRINK_COLUMNS = 14;
 
 const form = document.querySelector('#drinkForm');
 form.addEventListener('submit', submitForm);
@@ -23,14 +23,10 @@ function submitForm(e){
         columnInfo[7] = document.querySelector('#calcPricePortion').value;
         columnInfo[8] = document.querySelector('#roundedPricePortion').value;
         columnInfo[9] = document.querySelector('#externalBottle').value;
-        columnInfo[10] = document.querySelector('#waldhoff').value;
-        columnInfo[11] = document.querySelector('#metro').value;
-        columnInfo[12] = document.querySelector('#jacklein').value;
-        columnInfo[13] = document.querySelector('#date').value;
-        columnInfo[14] = document.querySelector('#skListe').value;
-        columnInfo[15] = document.querySelector('#avVerkauf').value;
-        columnInfo[16] = document.querySelector('#bierKarte').value;
-        columnInfo[17] = document.querySelector('#barKarte').value;
+        columnInfo[10] = document.querySelector('#skListe').value;
+        columnInfo[11] = document.querySelector('#avVerkauf').value;
+        columnInfo[12] = document.querySelector('#bierKarte').value;
+        columnInfo[13] = document.querySelector('#barKarte').value;
     }
 
      //send newly added drink to main.js
