@@ -4,7 +4,7 @@ html,body{
     width: 100%;
     height: 100%;
     padding: 0;
-    margin-top: 130px;
+    margin-top: 100px;
 }
 h1 {
     font-weight: bold;
@@ -48,7 +48,7 @@ button {
 
 header {
     background-color: white;
-    height: 130px;
+    height: 100px;
     position: fixed;
     top: 0;
     left: 0;
@@ -63,8 +63,15 @@ header * {
     display: inline;
 }
 
+header ul {
+    list-style-type: none;
+    overflow: hidden;
+    background-color: white;
+}
 header li {
-    margin: 30px;
+    float: left;
+    height: 100%;
+    margin: 20px;
 }
 
 header li a {
@@ -72,16 +79,25 @@ header li a {
     text-decoration: none;
     font-weight: bolder;
     font-size: 25px;
-    display: inline-block;
+    display: block;
+    line-height: 100px;
+    text-align: center;
+    padding: 0px 10px;
+}
+
+header li a:hover:not(.active) {
+    color:white;
+    background-color: #3C6F80;
 }
 
 header img {
-    height: 100px;
+    height: 70px;
     margin: 30px;
 }
 
 .active{
-
+    color: white;
+    background-color: #3C6F80;
 }
 
 #addDrink td, #addDrink th {
@@ -132,32 +148,134 @@ header img {
     background-color: #ddd;
 }
 
-@media screen and ( max-width: 500px ) {
-    #drinkTable {
-        width: 100%;
-    }
-    #addDrink {
-        width: 100%;
+
+
+@media screen and ( max-width: 800px ) {
+    header {
+        display: none;
     }
 }
 
-@media screen and ( max-width: 700px ){
-    #drinkTable {
-        width: 90%;
-    }
-    #addDrink {
-        width: 90%;
-    }
-}
-
-@media screen and ( max-width: 900px ) {
+@media screen and ( max-width: 950px ) {
     #drinkTable {
         width: 80%;
     }
     #addDrink {
         width: 80%;
     }
+    header {
+        height: 45px;
+    }
+    header img {
+        height: 35px;
+        margin: 15px;
+    }
+    header li {
+        margin: 1px;
+    }
+    header li a {
+        line-height: 45px;
+        font-size: 15px;
+        padding: 0px 8px;
+    }
 }
+
+@media screen and ( max-width: 1100px ) and ( min-width: 951px ) {
+    #drinkTable {
+        width: 80%;
+    }
+    #addDrink {
+        width: 80%;
+    }
+    header {
+        height: 55px;
+    }
+    header img {
+        height: 45px;
+        margin: 20px;
+    }
+    header li {
+        margin: 6px;
+    }
+    header li a {
+        line-height: 55px;
+        font-size: 16px;
+        padding: 0px 10px;
+    }
+}
+
+@media screen and ( max-width: 1300px ) and ( min-width: 1101px ) {
+    #drinkTable {
+        width: 80%;
+    }
+    #addDrink {
+        width: 80%;
+    }
+    header {
+        height: 65px;
+    }
+    header img {
+        height: 55px;
+        margin: 23px;
+    }
+    header li {
+        margin: 11px;
+    }
+    header li a {
+        line-height: 65px;
+        font-size: 17px;
+        padding: 0px 10px;
+    }
+}
+
+@media screen and ( max-width: 1500px ) and ( min-width: 1301px ) {
+    #drinkTable {
+        width: 75%;
+    }
+    #addDrink {
+        width: 75%;
+    }
+    header {
+        height: 75px;
+    }
+    header img {
+        height: 65px;
+        margin: 27px;
+    }
+    header li {
+        margin: 15px;
+    }
+    header li a {
+        line-height: 80px;
+        font-size: 16px;
+        padding: 0px 10px;
+    }
+}
+
+@media screen and ( max-width: 1700px ) and ( min-width: 1501px ) {
+    #drinkTable {
+        width: 75%;
+    }
+    #addDrink {
+        width: 75%;
+    }
+    header {
+        height: 85px;
+    }
+    header img {
+        height: 78px;
+        margin: 30px;
+    }
+    header li {
+        margin: 24px;
+    }
+    header li a {
+        line-height: 85px;
+        font-size: 19px;
+        padding: 0px 10px;
+    }
+}
+
 
 
 
