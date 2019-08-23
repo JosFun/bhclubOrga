@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Getränke hinzufügen</title>
+    <title>Getränkedatenbank</title>
  <link rel="stylesheet" type="text/css" href="../css/tableStyle.css">
 </head>
 <body>
@@ -21,22 +21,22 @@
                 </a>
             </li>
             <li>
-                <a href="">
+                <a href="barmenu.html">
                         Barkarte
                 </a>
             </li>
             <li>
-                <a href="">
+                <a href="beermenu.html">
                     Bierkarte
                 </a>
             </li>
             <li>
-                <a href="">
+                <a href=av_sale.html">
                         AV-Verkauf
                 </a>
             </li>
             <li>
-                <a href="">
+                <a href=sk_sale.html"">
                         SK-Verkauf
                 </a>
             </li>
@@ -144,8 +144,14 @@
                     <td>
                         Barkarte?
                     </td>
+                    <td>
+                        AV-Abrechnung?
+                    </td>
                 </tr>
                 <tr>
+                    <td>
+                        <input type="checkbox" id="abrechnung">
+                    </td>
                     <td>
                         <input type="checkbox" id="skListe">
                     </td>
@@ -164,42 +170,131 @@
             <br>
             <button type="submit">Getränk hinzufügen</button>
         </form>
+        <h2> Neuen Snack hinzufügen</h2>
+        <form id="snackForm">
+            <table id="snackTable" border="0%" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        Snack
+                    </td>
+                    <td>
+                        Einkaufspreis
+                    </td>
+                    <td>
+                        Verkaufspreis
+                    </td>
+                    <td>
+                        SK-Liste?
+                    </td>
+                    <td>
+                        AV-Verkauf?
+                    </td>
+                    <td>
+                        Bierkarte?
+                    </td>
+                    <td>
+                        Barkarte?
+                    </td>
+                    <td>
+                        AV-Abrechnung?
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="text" id="snackName">
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" id="snackPrice">
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" id="snackSellPrice">
+                    </td>
+                    <td>
+                        <input type="checkbox" id="snack_sk">
+                    </td>
+                    <td>
+                        <input type="checkbox" id="snack_av">
+                    </td>
+                    <td>
+                        <input type="checkbox" id="snack_bier">
+                    </td>
+                    <td>
+                        <input type="checkbox" id="snack_bar">
+                    </td>
+                    <td>
+                        <input type="checkbox" id="snack_abrechnung">
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <button type="submit">Snack hinzufügen</button>
+        </form>
         <br><br>
         <h2>Getränkedatenbank</h2>
-        <table id="drinkTable" border="0%" cellspacing="0" cellpadding="0">
-            <tr>
-                <td>
-                    Getränk
-                </td>
-                <td>
-                    Größe
-                </td>
-                <td>
-                    Netto Einkaufspreis pro Flasche
-                </td>
-                <td>
-                    Netto Einkaufspreis pro l
-                </td>
-                <td>
-                    Intern/Flasche
-                </td>
-                <td>
-                    Aufschlag/Flasche
-                </td>
-                <td>
-                    Portion
-                </td>
-                <td>
-                    Preis/Portion(berechnet)
-                </td>
-                <td>
-                    Preis/Portion(gerundet)
-                </td>
-                <td>
-                    Extern/Flasche
-                </td>
-            </tr>
-        </table>
+            <table id="drinkTable" border="0%" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        Getränk
+                    </td>
+                    <td>
+                        Größe
+                    </td>
+                    <td>
+                        Netto Einkaufspreis pro Flasche
+                    </td>
+                    <td>
+                        Netto Einkaufspreis pro l
+                    </td>
+                    <td>
+                        Intern/Flasche
+                    </td>
+                    <td>
+                        Aufschlag/Flasche
+                    </td>
+                    <td>
+                        Portion
+                    </td>
+                    <td>
+                        Preis/Portion(berechnet)
+                    </td>
+                    <td>
+                        Preis/Portion(gerundet)
+                    </td>
+                    <td>
+                        Extern/Flasche
+                    </td>
+                </tr>
+            </table>
+            <br><br>
+        <h2>Snackdatenbank</h2>
+            <table id="snackDataBase" border="0%" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td>
+                        Snack
+                    </td>
+                    <td>
+                        Einkaufspreis
+                    </td>
+                    <td>
+                        Verkaufspreis
+                    </td>
+                    <td>
+                        SK-Liste?
+                    </td>
+                    <td>
+                        AV-Verkauf?
+                    </td>
+                    <td>
+                        Bierkarte?
+                    </td>
+                    <td>
+                        Barkarte?
+                    </td>
+                    <td>
+                        AV-Abrechnung?
+                    </td>
+                </tr>
+            </table>
     </div>
 </main>
     <script src="../js/addDrinkWindow.js">

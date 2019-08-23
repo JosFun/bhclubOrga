@@ -44,6 +44,7 @@ button {
     text-decoration: none;
     display: inline-block;
     font-size: 16px;
+    cursor: pointer;
 }
 
 header {
@@ -126,20 +127,20 @@ footer p {
     background-color: #3C6F80;
 }
 
-#addDrink td, #addDrink th {
+#addDrink td, #addDrink th, #snackTable td, #snackTable th {
     border: 1px solid #ddd;
     padding: 8px;
 }
 
-#addDrink tr:nth-child(even){
+#addDrink tr:nth-child(even), #snackTable tr:nth-child(even){
     background-color: beige;
 }
 
-#addDrink tr:hover{
+#addDrink tr:hover, #snackTable tr:hover{
     background-color: #ddd;
 }
 
-#addDrink {
+#addDrink, #snackTable{
     border-collapse: collapse;
     padding-top: 12px;
     padding-bottom: 12px;
@@ -150,7 +151,11 @@ footer p {
     width: 75%;
 }
 
-#drinkTable{
+#drink, #snackName {
+    width: 100%;
+}
+
+#drinkTable, #snackDataBase {
     font-weight: bold;
     border-collapse: collapse;
     padding-top: 12px;
@@ -161,16 +166,16 @@ footer p {
     width: 75%;
 }
 
-#drinkTable td, #addDrink td {
+#drinkTable td, #addDrink td, #snackTable td, #snackDataBase td {
     border: 1px solid #ddd;
     padding: 8px;
 }
 
-#drinkTable tr:nth-child(even){
+#drinkTable tr:nth-child(even), #snackDataBase tr:nth-child(even){
     background-color: beige;
 }
 
-#drinkTable tr:hover{
+#drinkTable tr:hover, #snackDataBase tr:hover{
     background-color: #ddd;
 }
 
