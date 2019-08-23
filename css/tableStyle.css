@@ -94,6 +94,17 @@ header img {
     height: 70px;
     margin: 30px;
 }
+footer {
+    margin: 30px;
+    background-color: white;
+    box-shadow: 0 0 25px 0 black;
+    display: flex;
+
+}
+footer img {
+    height: 120px;
+    margin: 20px;
+}
 
 .active{
     color: white;
