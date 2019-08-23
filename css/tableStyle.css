@@ -95,15 +95,30 @@ header img {
     margin: 30px;
 }
 footer {
-    margin: 30px;
+    align-self: center;
+    width: fit-content;
+    height: fit-content;
+    margin: 5%;
     background-color: white;
     box-shadow: 0 0 25px 0 black;
     display: flex;
+    justify-content: center;
 
 }
 footer img {
     height: 120px;
     margin: 20px;
+}
+
+footer div {
+    padding: 2%;
+    text-align: center;
+    font-weight: bolder;
+}
+footer p {
+    text-align: center;
+    font-weight: bolder;
+    margin: 5%;
 }
 
 .active{
