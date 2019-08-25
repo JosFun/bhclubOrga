@@ -121,8 +121,12 @@ ipcMain.on('drink:add', function(e,drinkInfo){
         if ( err ) throw err;
         console.log("New drink inserted!");
     } )
+});
 
-
+// Catch newly added snacks
+ipcMain.on('snack:add', function(e,snackInfo){
+   /* TODO: Perform the sql injection */
+   dataBaseConnect();
 });
 
 if (process.env.NODE_ENV !== 'production'){

@@ -4,12 +4,13 @@ const {ipcRenderer} = electron;
 /**
  * The number of columns that have to be specified for each drink
  * */
-const DRINK_COLUMNS = 14;
+const DRINK_COLUMNS = 15;
+const SNACK_COLUMNS = 8;
 
 const form = document.querySelector('#drinkForm');
 form.addEventListener('submit', submitForm);
 
-function submitForm(e){
+function submitDrinkForm(e){
     e.preventDefault();
     const columnInfo = new Array ( DRINK_COLUMNS );
     {
@@ -23,14 +24,33 @@ function submitForm(e){
         columnInfo[7] = document.querySelector('#calcPricePortion').value;
         columnInfo[8] = document.querySelector('#roundedPricePortion').value;
         columnInfo[9] = document.querySelector('#externalBottle').value;
-        columnInfo[10] = document.querySelector('#skListe').value;
-        columnInfo[11] = document.querySelector('#avVerkauf').value;
-        columnInfo[12] = document.querySelector('#bierKarte').value;
-        columnInfo[13] = document.querySelector('#barKarte').value;
+        columnInfo[10] = document.querySelector( '#abrechnung').value;
+        columnInfo[11] = document.querySelector('#skListe').value;
+        columnInfo[12] = document.querySelector('#avVerkauf').value;
+        columnInfo[13] = document.querySelector('#bierKarte').value;
+        columnInfo[14] = document.querySelector('#barKarte').value;
     }
 
      //send newly added drink to main.js
     ipcRenderer.send('drink:add', columnInfo);
+}
+
+function submitSnackForm (e){
+    e.preventDefault();
+    const columnInfo = new Array ( SNACK_COLUMNS );
+    {
+        columnInfo[0] = document.querySelector('#snackName').value;
+        columnInfo[1] = document.querySelector('#snackPrice').value;
+        columnInfo[2] = document.querySelector( '#snackSellPrice' ).value;
+        columnInfo[3] = document.querySelector( '#snack_sk').value;
+        columnInfo[4] = document.querySelector( '#snack_av').value;
+        columnInfo[5] = document.querySelector( '#snack_bier').value;
+        columnInfo[6] = document.querySelector( '#snack_bar').value;
+        columnInfo[7] = document.querySelector( '#snack_abrechnung').value;
+    }
+
+    //send newly added snack to main.js, i.e. the main process of the electron application
+    ipcRenderer.send('snack:add', columnInfo);
 }
 
 /**
