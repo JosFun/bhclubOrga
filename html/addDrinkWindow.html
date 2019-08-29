@@ -62,10 +62,10 @@
                         Netto Einkaufspreis pro l
                     </td>
                     <td>
-                        Intern/Flasche
+                        Preis intern
                     </td>
                     <td>
-                        Aufschlag/Flasche
+                        Gewinn intern
                     </td>
                 </tr>
                 <tr>
@@ -73,25 +73,23 @@
                         <input type="text" id="drink">
                     </td>
                     <td>
-                       <input type="number" step="0.001" id="bottleSize">
+                       <input type="number" step="0.001" min="0.001" id="bottleSize">
                         <span style="margin-left:3px;">€</span>
                     </td>
 
                     <td>
-                        <input type="number" step="0.01" id="costBottle">
+                        <input type="number" step="0.01" min="0.01" id="costBottle">
                         <span style="margin-left:3px;">€</span>
                     </td>
                     <td>
-                        <input type="number" step="0.01" id="costLitre">
+                        <span style="alignment: center" id="costLitre"></span>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" min="0.01" id="internalPrice">
                         <span style="margin-left:3px;">€</span>
                     </td>
                     <td>
-                        <input type="number" step="0.01" id="internalPrice">
-                        <span style="margin-left:3px;">€</span>
-                    </td>
-                    <td>
-                        <input type="number" step="0.01" id="addition">
-                        <span style="margin-left:3px;">€</span>
+                        <span style="alignment: center" id="addition"></span>
                     </td>
                 </tr>
                 <tr>
@@ -105,32 +103,38 @@
                         Preis/Portion(gerundet)
                     </td>
                     <td>
-                        Extern/Flasche
+                        Preis/Flasche
                     </td>
                     <td>
-                        Gewicht/Flasche
+                        Flaschengewicht
+                    </td>
+                    <td>
+                        Flaschenpfand
                     </td>
                 </tr>
                 <tr>
                     <td>
-                       <input type="number" step="0.01" id="portionSize">
+                       <input type="number" step="0.01" min="0.01" id="portionSize">
                         <span style="margin-left:2px;">l</span>
                     </td>
                     <td>
-                        <input type="number" step="0.01" id="calcPricePortion">
+                        <input type="number" step="0.01" min="0.01" id="calcPricePortion">
                         <span style="margin-left:2px;">€</span>
                     </td>
                     <td>
-                        <input type="number" step="0.01" id="roundedPricePortion">
+                        <input type="number" step="0.01" min="0.01" id="roundedPricePortion">
                         <span style="margin-left:2px;">€</span>
                     </td>
                     <td>
-                        <input type="number" step="0.01" id="externalBottle">
-                        <span style="margin-left:2px;">€</span>
+                        <span style="alignment: center;" id="externalBottle"></span>
                     </td>
                     <td>
-                        <input type="number" step="1" id = "bottleWeight">
+                        <input type="number" step="1" min="1" id = "bottleWeight">
                         <span style="margin-left:2px;">g</span>
+                    </td>
+                    <td>
+                        <input type="number" step="0.01" min="0.01" id="bottleDeposit">
+                        <span style="margin-left:2px;">€</span>
                     </td>
                 </tr>
                 <tr>
@@ -149,6 +153,9 @@
                     <td>
                         AV-Abrechnung?
                     </td>
+                    <td>
+                        Gewinn extern pro l
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -165,6 +172,9 @@
                     </td>
                     <td>
                         <input type="checkbox" id="barKarte">
+                    </td>
+                    <td>
+                        <span style="alignment:center;" id="profitExternal"></span>
                     </td>
                 </tr>
 
@@ -206,11 +216,11 @@
                         <input type="text" id="snackName">
                     </td>
                     <td>
-                        <input type="number" step="0.01" id="snackPrice">
+                        <input type="number" step="0.01" min="0.01" id="snackPrice">
                         <span style="margin-left:2px;">€</span>
                     </td>
                     <td>
-                        <input type="number" step="0.01" id="snackSellPrice">
+                        <input type="number" step="0.01" min="0.01" id="snackSellPrice">
                         <span style="margin-left:2px;">€</span>
                     </td>
                     <td>
