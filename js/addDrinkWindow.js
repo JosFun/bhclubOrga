@@ -17,18 +17,20 @@ function submitDrinkForm(e){
         columnInfo[0] = document.querySelector('#drink').value;
         columnInfo[1] = document.querySelector('#bottleSize').value;
         columnInfo[2] = document.querySelector('#costBottle').value;
-        columnInfo[3] = document.querySelector('#costLitre').value;
-        columnInfo[4] = document.querySelector('#internalPrice').value;
+        columnInfo[3] = document.querySelector('#internalPrice').value;
         columnInfo[5] = document.querySelector('#addition').value;
         columnInfo[6] = document.querySelector('#portionSize').value;
         columnInfo[7] = document.querySelector('#calcPricePortion').value;
         columnInfo[8] = document.querySelector('#roundedPricePortion').value;
         columnInfo[9] = document.querySelector('#externalBottle').value;
-        columnInfo[10] = document.querySelector( '#abrechnung').value;
-        columnInfo[11] = document.querySelector('#skListe').value;
-        columnInfo[12] = document.querySelector('#avVerkauf').value;
-        columnInfo[13] = document.querySelector('#bierKarte').value;
-        columnInfo[14] = document.querySelector('#barKarte').value;
+        columnInfo[10] = document.querySelector('#bottleWeight').value;
+        columnInfo[11] = document.querySelector('#bottleDeposit').value;
+        columnInfo[12] = document.querySelector( '#abrechnung').value;
+        columnInfo[13] = document.querySelector('#skListe').value;
+        columnInfo[14] = document.querySelector('#avVerkauf').value;
+        columnInfo[15] = document.querySelector('#bierKarte').value;
+        columnInfo[16] = document.querySelector('#barKarte').value;
+        columnInfo[17] = document.querySelector('#profitExternal').value;
     }
 
      //send newly added drink to main.js

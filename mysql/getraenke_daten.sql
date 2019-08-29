@@ -4,6 +4,7 @@ create table rohgetraenke(
     bottle_size float not null,
     bottle_cost float not null,
     internal_price float not null,
+    addition_price float not null,
     portion_size float not null,
     portion_price_rounded float not null,
     external_price_bottle float not null,
