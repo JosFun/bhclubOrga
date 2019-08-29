@@ -26,12 +26,14 @@ input {
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     font-weight: bolder;
     color: black;
+    text-align: center;
 }
 
 select {
     width: 50%;
     font-weight: bolder;
     color: black;
+    text-align: center;
 }
 
 button {
@@ -122,6 +124,11 @@ footer p {
     margin: 5%;
 }
 
+span {
+    color: black;
+    font-weight: bolder;
+}
+
 .active{
     color: white;
     background-color: #3C6F80;
@@ -130,6 +137,7 @@ footer p {
 #addDrink td, #addDrink th, #snackTable td, #snackTable th {
     border: 1px solid #ddd;
     padding: 8px;
+    text-align: center;
 }
 
 #addDrink tr:nth-child(even), #snackTable tr:nth-child(even){
