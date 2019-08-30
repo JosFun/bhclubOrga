@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, ipcMain, webContents } = require('electron');
 const url = require('url');
 const path = require('path');
 
@@ -34,6 +34,10 @@ function dataBaseConnect ( ) {
     });
 }
 
+function dataBaseDisconnect ( ) {
+    dbConnection.end();
+}
+
 function createWindow () {
     // Erstelle das Browser-Fenster.
     win = new BrowserWindow({
@@ -59,6 +63,8 @@ function createWindow () {
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
 
     Menu.setApplicationMenu(mainMenu);
+    dataBaseConnect();
+
 }
 
 // Handle createAddWindow
@@ -80,6 +86,7 @@ function createAddDrinkWindow ( ) {
         protocol:'file',
         slashes: true
     }));
+
 }
 
 /**
@@ -115,18 +122,41 @@ const mainMenuTemplate = [
 // Catch newly added drinks
 ipcMain.on('drink:add', function(e,drinkInfo){
     /*TODO: Perform the sql insertion*/
-    dataBaseConnect();
-    let sqlInsert = "INSERT INTO getraenke_daten VALUES (?)";
-    dbConnection.query(sqlInsert, drinkInfo, function ( err, result ) {
+    let sqlInsert = "INSERT INTO rohgetraenke (drink_name, bottle_size, bottle_cost, " +
+        "internal_price, addition_price, portion_size, portion_price_rounded, external_price_bottle, " +
+        "weight_bottle, skListe, avVerkauf, bierKarte, barKarte, abrechnung) VALUES (?)";
+    dbConnection.query(sqlInsert, [drinkInfo], function ( err, result ) {
         if ( err ) throw err;
         console.log("New drink inserted!");
     } )
+
+    let sqlSelect = "SELECT * FROM rohgetraenke;"
+    dbConnection.query(sqlSelect, function( err, result, fields ) {
+       if ( err ) throw err;
+       /* Send the data of all drinks to all the renderer processes. */
+        win.webContents.send("drinks:data", result);
+    });
+
+
 });
 
 // Catch newly added snacks
 ipcMain.on('snack:add', function(e,snackInfo){
-   /* TODO: Perform the sql injection */
-   dataBaseConnect();
+   /* Perform the sql insertion of the data belonging to the newly added snack */
+   let sqlInsert = "INSERT INTO snacks (snack_name, snack_cost, snack_price, skListe, " +
+       "avVerkauf, bierKarte, barKarte, abrechnung) VALUES (?)";
+   dbConnection.query(sqlInsert, [snackInfo], function( err, result ){
+       if ( err ) throw err;
+       console.log("New snack inserted!");
+   })
+
+    /* Get all the data of all the snacks inside the snack database */
+    let sqlSelect = "SELECT * FROM snacks;"
+    dbConnection.query(sqlSelect, function ( err, result, fields ) {
+       if ( err ) throw err;
+       /* Send the data of all the snacks to all the renderer processes. */
+        win.webContents.send("snacks:data", result);
+    });
 });
 
 if (process.env.NODE_ENV !== 'production'){

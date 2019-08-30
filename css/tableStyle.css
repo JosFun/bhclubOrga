@@ -179,9 +179,21 @@ span {
     padding: 8px;
 }
 
-#drinkTable tr:nth-child(even), #snackDataBase tr:nth-child(even){
-    background-color: beige;
+
+#snackDataBase tr:first-child, #drinkTable tr:first-child {
+    background-color: #3C6F80;
+    color: white;
+    font-weight: bold;
 }
+
+#snackDataBase tr, #drinkTable tr {
+    background-color: beige;
+    color:black;
+    font-weight: bolder;
+}
+
+
+
 
 #drinkTable tr:hover, #snackDataBase tr:hover{
     background-color: #ddd;
