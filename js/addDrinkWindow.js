@@ -176,6 +176,7 @@ function updateSnackData ( ...fields ) {
     }
 }
 
+
 ipcRenderer.on("snacks:data", function ( e, snackFields) {
     updateSnackData(snackFields);
 })
@@ -183,3 +184,47 @@ ipcRenderer.on("snacks:data", function ( e, snackFields) {
 ipcRenderer.on("drinks:data", function (e, drinkFields) {
     updateDrinkData(drinkFields);
 })
+
+/**
+ * Updates the field for the per litre costs of a bottle of the drink that is about to be added to the database.
+ */
+function costUpdate ( ) {
+    let bottleCost = document.querySelector("#costBottle").value;
+    let bottleSize = document.querySelector("#bottleSize").value;
+
+    let litreCost = Math.round(100 * bottleCost / parseFloat(bottleSize)) / 100;
+
+    document.getElementById("costLitre").textContent = litreCost.toString() + "€";
+}
+
+/* If either the costBottle or the bottleSize input field are changed, the per litre cost of the drink
+   is being updated.
+*/
+document.getElementById("costBottle").addEventListener("change", function(e) {
+    e.preventDefault();
+    costUpdate();
+});
+
+document.getElementById("bottleSize").addEventListener("change", function(e) {
+    e.preventDefault();
+    costUpdate();
+});
+
+/**
+ * Updates the field for the internal profit the club is making with every internal sell.
+ */
+function internalProfitUpdate ( ) {
+    let internalPrice = document.querySelector("#internalPrice").value;
+    let bottleCost = document.querySelector("#costBottle").value;
+    /* Calculate the profit of the sell */
+    let profit = internalPrice - bottleCost;
+
+    document.getElementById("addition").textContent = profit.toString() + "€";
+}
+
+document.getElementById("internalPrice").addEventListener("change", function(e) {
+    e.preventDefault();
+    internalProfitUpdate();
+});
+
+
