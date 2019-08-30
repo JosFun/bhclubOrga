@@ -105,19 +105,19 @@ function updateDrinkData ( ...fields ) {
             tds[8].appendChild(document.createTextNode(fields[0][k]["weight_bottle"]));
             tr.appendChild(tds[8]);
 
-            tds[9].appendChild(document.createTextNode(fields[0][k]["skListe"]));
+            tds[9].appendChild(document.createTextNode(fields[0][k]["skListe"] == 1));
             tr.appendChild(tds[9]);
 
-            tds[10].appendChild(document.createTextNode(fields[0][k]["avVerkauf"]));
+            tds[10].appendChild(document.createTextNode(fields[0][k]["avVerkauf"] == 1));
             tr.appendChild(tds[10]);
 
-            tds[11].appendChild(document.createTextNode(fields[0][k]["bierKarte"]));
+            tds[11].appendChild(document.createTextNode(fields[0][k]["bierKarte"] == 1));
             tr.appendChild(tds[11]);
 
-            tds[12].appendChild(document.createTextNode(fields[0][k]["barKarte"]));
+            tds[12].appendChild(document.createTextNode(fields[0][k]["barKarte"] == 1));
             tr.appendChild(tds[12]);
 
-            tds[13].appendChild(document.createTextNode(fields[0][k]["abrechnung"]));
+            tds[13].appendChild(document.createTextNode(fields[0][k]["abrechnung"] == 1));
             tr.appendChild(tds[13]);
 
 
@@ -156,19 +156,19 @@ function updateSnackData ( ...fields ) {
             tds[2].appendChild(document.createTextNode(fields[0][k]["snack_price"]));
             tr.appendChild(tds[2]);
 
-            tds[3].appendChild(document.createTextNode(fields[0][k]["skListe"]));
+            tds[3].appendChild(document.createTextNode(fields[0][k]["skListe"] == 1));
             tr.appendChild(tds[3]);
 
-            tds[4].appendChild(document.createTextNode(fields[0][k]["avVerkauf"]));
+            tds[4].appendChild(document.createTextNode(fields[0][k]["avVerkauf"] == 1));
             tr.appendChild(tds[4]);
 
-            tds[5].appendChild(document.createTextNode(fields[0][k]["bierKarte"]));
+            tds[5].appendChild(document.createTextNode(fields[0][k]["bierKarte"] == 1));
             tr.appendChild(tds[5]);
 
-            tds[6].appendChild(document.createTextNode(fields[0][k]["barKarte"]));
+            tds[6].appendChild(document.createTextNode(fields[0][k]["barKarte"] == 1));
             tr.appendChild(tds[6]);
 
-            tds[7].appendChild(document.createTextNode(fields[0][k]["abrechnung"]));
+            tds[7].appendChild(document.createTextNode(fields[0][k]["abrechnung"] == 1));
             tr.appendChild(tds[7]);
 
         }
