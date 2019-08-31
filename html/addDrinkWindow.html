@@ -65,7 +65,7 @@
                         Preis intern
                     </td>
                     <td>
-                        Gewinn intern
+                        Aufschlag intern
                     </td>
                 </tr>
                 <tr>
@@ -79,14 +79,20 @@
 
                     <td>
                         <input type="number" step="0.01" min="0.01" id="costBottle">
-                        <span style="margin-left:3px;">€</span>
+                        <span style="margin-left:1px;">€</span>
+                        <select style="margin-left:3px;" name="agent" size="1" id="agentName">
+                            <option>Waldhoff</option>
+                            <option>Metro</option>
+                        </select>
                     </td>
                     <td>
                         <span style="alignment: center" id="costLitre"></span>
                     </td>
                     <td>
-                        <input type="number" step="0.01" min="0.01" id="internalPrice">
-                        <span style="margin-left:3px;" id="deposit_addition">€</span>
+                        <span style="margin-left:3px;" id="internalPrice"></span>
+                        <span style="margin-left:0px; visibility: hidden" id="internalEuro">€</span>
+                        <span style="margin-left:3px;" contenteditable="true" id="newInternalPrice"></span>
+                        <span style="margin-left:0px; visibility: hidden" id="newInternalEuro" >€</span>
                     </td>
                     <td>
                         <span style="alignment: center" id="addition"></span>

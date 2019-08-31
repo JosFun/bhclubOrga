@@ -133,6 +133,10 @@ table {
     box-shadow: 0 0 10px 0 blacK;
 }
 
+select {
+    width: auto;
+}
+
 .active{
     color: white;
     background-color: #3C6F80;

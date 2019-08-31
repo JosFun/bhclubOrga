@@ -3,6 +3,7 @@ create table rohgetraenke(
     drink_name varchar(100) not null,
     bottle_size float not null,
     bottle_cost float not null,
+    trader varchar(100) not null,
     internal_price float not null,
     addition_price float not null,
     portion_size float not null,

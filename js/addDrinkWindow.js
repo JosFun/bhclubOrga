@@ -20,7 +20,8 @@ function submitDrinkForm(e){
         columnInfo[0] = document.querySelector('#drink').value;
         columnInfo[1] = document.querySelector('#bottleSize').value;
         columnInfo[2] = document.querySelector('#costBottle').value;
-        columnInfo[3] = document.querySelector('#internalPrice').value;
+        columnInfo[3] = document.querySelector('#agentName').value;
+        columnInfo[4] = document.querySelector('#newInternalPrice').value;
         columnInfo[5] = document.querySelector('#addition').value;
         columnInfo[6] = document.querySelector('#portionSize').value;
         columnInfo[7] = document.querySelector('#calcPricePortion').value;
@@ -219,16 +220,20 @@ document.getElementById("bottleDeposit").addEventListener("change", function(e) 
  * Updates the field for the internal profit the club is making with every internal sell.
  */
 function internalProfitUpdate ( ) {
-    let internalPrice = document.querySelector("#internalPrice").value;
-    let bottleCost = document.querySelector("#costBottle").value;
+    let internalPrice = parseFloat(document.getElementById("newInternalPrice").textContent);
+    let bottleCost = parseFloat(document.querySelector("#costBottle").value);
+
+    console.log(internalPrice);
+    console.log(bottleCost);
     /* Calculate the profit of the sell */
     let profit = Math.round( 100 * ( internalPrice - bottleCost ) ) / 100;
 
     document.getElementById("addition").textContent = profit.toString() + "€";
 }
 
-document.getElementById("internalPrice").addEventListener("change", function(e) {
+document.getElementById("costBottle").addEventListener("change", function(e) {
     e.preventDefault();
+    depositAddition();
     internalProfitUpdate();
 });
 
@@ -245,6 +250,7 @@ function bottlePriceUpdate ( ) {
     document.getElementById("externalBottle").textContent = bottlePrice.toString( ) + "C";
 }
 
+/* Update the external price for a bottle if the rounded price for a portion of the drink gets changed.*/
 document.getElementById("roundedPricePortion").addEventListener("change", function(e) {
     e.preventDefault();
     bottlePriceUpdate();
@@ -254,20 +260,32 @@ document.getElementById("roundedPricePortion").addEventListener("change", functi
  * Add the deposit to the internal price and round up as soon as a value for the deposit has been specified.
  */
 function depositAddition ( ) {
-    let internalPrice = parseFloat(document.querySelector("#internalPrice").value);
-    let deposit = parseFloat(document.querySelector("#bottleDeposit").value);
+    let internalPrice =  Math.round ( parseFloat(document.querySelector('#costBottle').value) * 119 ) / 100;
+    let deposit = 0;
+    /* If a deposit has been specified: Use that value to round up the internal price that will be applied at the end. */
+    if ( document.querySelector("#bottleDeposit").value.length > 0) {
+        deposit = parseFloat(document.querySelector("#bottleDeposit").value);
+    }
+
+    document.getElementById("internalPrice").textContent = internalPrice.toString();
+    document.getElementById("internalEuro").style.visibility = "visible";
 
     console.log(internalPrice);
     console.log(deposit);
 
-    let newInternalPrice = Math.round( 10 * ( internalPrice + deposit))/10;
+    /* Add the deposit to the current internal price and round up using Math.ceil */
+    let newInternalPrice = Math.ceil( 10 * ( internalPrice + deposit ))/10;
 
-    document.getElementById("deposit_addition").textContent = newInternalPrice.toString( ) + "€";
+    document.getElementById("newInternalPrice").textContent = newInternalPrice.toString( );
+    document.getElementById("newInternalEuro").style.visibility = "visible";
 }
 
+/* Once the deposit for a bottle of the drink has been changed, the deposit has to be added to the internal price.
+*  The internal price has to be updated as well.*/
 document.getElementById("bottleDeposit").addEventListener("change", function(e) {
    e.preventDefault();
    depositAddition();
+   internalProfitUpdate();
 });
 
 
