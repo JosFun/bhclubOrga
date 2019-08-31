@@ -210,6 +210,11 @@ document.getElementById("bottleSize").addEventListener("change", function(e) {
     costUpdate();
 });
 
+document.getElementById("bottleDeposit").addEventListener("change", function(e) {
+    e.preventDefault();
+    costUpdate();
+})
+
 /**
  * Updates the field for the internal profit the club is making with every internal sell.
  */
@@ -217,7 +222,7 @@ function internalProfitUpdate ( ) {
     let internalPrice = document.querySelector("#internalPrice").value;
     let bottleCost = document.querySelector("#costBottle").value;
     /* Calculate the profit of the sell */
-    let profit = internalPrice - bottleCost;
+    let profit = Math.round( 100 * ( internalPrice - bottleCost ) ) / 100;
 
     document.getElementById("addition").textContent = profit.toString() + "€";
 }
@@ -225,6 +230,44 @@ function internalProfitUpdate ( ) {
 document.getElementById("internalPrice").addEventListener("change", function(e) {
     e.preventDefault();
     internalProfitUpdate();
+});
+
+/**
+ * Updates the field for the price of the bottle according to the currently chosen external price for one portion
+ * of the product.
+ */
+function bottlePriceUpdate ( ) {
+    let portionPrice = doucment.querySelector("#roundedPricePortion").value;
+    let bottleSize = document.querySelector("#bottleSize").value;
+
+    let bottlePrice = Math.round ( 100 * portionPrice / parseFloat(bottleSize) ) / 100;
+
+    document.getElementById("externalBottle").textContent = bottlePrice.toString( ) + "C";
+}
+
+document.getElementById("roundedPricePortion").addEventListener("change", function(e) {
+    e.preventDefault();
+    bottlePriceUpdate();
+});
+
+/**
+ * Add the deposit to the internal price and round up as soon as a value for the deposit has been specified.
+ */
+function depositAddition ( ) {
+    let internalPrice = parseFloat(document.querySelector("#internalPrice").value);
+    let deposit = parseFloat(document.querySelector("#bottleDeposit").value);
+
+    console.log(internalPrice);
+    console.log(deposit);
+
+    let newInternalPrice = Math.round( 10 * ( internalPrice + deposit))/10;
+
+    document.getElementById("deposit_addition").textContent = newInternalPrice.toString( ) + "€";
+}
+
+document.getElementById("bottleDeposit").addEventListener("change", function(e) {
+   e.preventDefault();
+   depositAddition();
 });
 
 
