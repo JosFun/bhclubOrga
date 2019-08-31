@@ -288,4 +288,26 @@ document.getElementById("bottleDeposit").addEventListener("change", function(e) 
    internalProfitUpdate();
 });
 
+/**
+ * Calculate the price for one portion of the drink.
+ * Applied formula: price = ((bottleCost + 17€ * bottleSize) * 1.19 * 1.1)/(bottleSize * portionSize)
+ */
+function calulatePortionPrice ( ) {
+    let bottleCost = parseFloat(document.querySelector('#costBottle'));
+    let bottleSize = parseFloat(document.querySelector('#bottleSize'));
+    let portionSize = parseFloat(document.querySelector('#portionSize'));
+
+    /* Apply the correct formula to calculate the price for one portion of the drink. */
+    let portionPrice = (( bottleCost + 17 * bottleSize ) * 1.19 * 1.1)/(bottleSize * portionSize);
+    portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
+
+    document.getElementById("calcPricePortion").textContent = portionPrice.toString();
+    document.getElementById("calcPricePortionEuro").style.visibility = true;
+}
+
+document.getElementById("portionSize").addEventListener("change", function(e) {
+    e.preventDefault();
+    calulatePortionPrice();
+})
+
 

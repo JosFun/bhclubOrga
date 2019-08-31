@@ -22,7 +22,8 @@ h2{
 
 
 input {
-    width: 50%;
+    width: 40%;
+    font-size: 15px;
     font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
     font-weight: bolder;
     color: black;
@@ -135,6 +136,8 @@ table {
 
 select {
     width: auto;
+    font-size: 15px;
+    font-weight: bolder;
 }
 
 .active{
@@ -146,6 +149,7 @@ select {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: center;
+    font-weight: bolder;
 }
 
 #addDrink tr:nth-child(even), #snackTable tr:nth-child(even){
