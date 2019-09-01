@@ -178,13 +178,36 @@ ipcMain.on('snack:add', function(e,snackInfo){
 ipcMain.on('snacks:update', function(e){
     e.preventDefault();
     selectSnacks();
-})
+});
 
 // Catch update requests regarding the visualization of the drink database
 ipcMain.on('drinks:update', function(e){
     e.preventDefault();
     selectDrinks();
+});
+
+// Catch requests regarding the next id within the snack database
+ipcMain.on('snacks:nextID', function(e){
+    e.preventDefault();
+    let sqlSelect = "SELECT max(snack_id) from snacks";
+    dbConnection.query(sqlSelect,function(err, result, fields) {
+        if ( err ) throw err;
+        win.webContents.send("snacks:nextID", result);
+    });
+});
+
+// Catch requests regarding the next id within the drink database
+ipcMain.on('drinks:nextID', function(e) {
+    e.preventDefault();
+    let sqlSelect = "SELECT max(drink_id) from rohgetraenke";
+    dbConnection.query(sqlSelect, function(err, result, fields) {
+        if ( err ) throw ( err );
+        win.webContents.send("drinks:nextID", result);
+    })
 })
+
+
+
 
 if (process.env.NODE_ENV !== 'production'){
     mainMenuTemplate.push({

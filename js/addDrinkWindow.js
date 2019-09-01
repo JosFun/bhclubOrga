@@ -12,6 +12,10 @@ const DRINK_COLUMNS = 15;
  */
 const SNACK_COLUMNS = 8;
 
+/* Ask the main process to send the id for the next drink that is to be added to the system. */
+ipcRenderer.send('drinks:nextID');
+ipcRenderer.send('snacks:nextID');
+
 /* Ask the main process to send the most recent data in the database to this renderer process */
 ipcRenderer.send('drinks:update');
 ipcRenderer.send('snacks:update');
@@ -78,59 +82,62 @@ function updateDrinkData ( ...fields ) {
         /* Create a new row in the table */
         const tr = document.createElement('tr');
 
-        /* Create the columns for every property of each drink */
-        const tds = new Array(DRINK_COLUMNS);
+        /* Create the columns for every property of each drink plus its id. */
+        const tds = new Array(DRINK_COLUMNS + 1);
 
-        for (let i = 0; i < DRINK_COLUMNS; ++i) {
+        for (let i = 0; i < DRINK_COLUMNS + 1; ++i) {
             tds[i] = document.createElement('td');
             tds[i].contentEditable = 'true';
         }
 
         {
-            tds[0].appendChild(document.createTextNode(fields[0][k]["drink_name"]));
+            tds[0].appendChild(document.createTextNode("#" + fields[0][k]["drink_id"]));
             tr.appendChild(tds[0]);
 
-            tds[1].appendChild(document.createTextNode(fields[0][k]["bottle_size"]));
+            tds[1].appendChild(document.createTextNode(fields[0][k]["drink_name"]));
             tr.appendChild(tds[1]);
 
-            tds[2].appendChild(document.createTextNode(fields[0][k]["bottle_cost"]));
+            tds[2].appendChild(document.createTextNode(fields[0][k]["bottle_size"]));
             tr.appendChild(tds[2]);
 
-            tds[3].appendChild(document.createTextNode(fields[0][k]["trader"]));
+            tds[3].appendChild(document.createTextNode(fields[0][k]["bottle_cost"]));
             tr.appendChild(tds[3]);
 
-            tds[4].appendChild(document.createTextNode(fields[0][k]["internal_price"]));
+            tds[4].appendChild(document.createTextNode(fields[0][k]["trader"]));
             tr.appendChild(tds[4]);
 
-            tds[5].appendChild(document.createTextNode(fields[0][k]["portion_size"]));
+            tds[5].appendChild(document.createTextNode(fields[0][k]["internal_price"]));
             tr.appendChild(tds[5]);
 
-            tds[6].appendChild(document.createTextNode(fields[0][k]["portion_price"]));
+            tds[6].appendChild(document.createTextNode(fields[0][k]["portion_size"]));
             tr.appendChild(tds[6]);
 
-            tds[7].appendChild(document.createTextNode(fields[0][k]["external_price_bottle"]));
+            tds[7].appendChild(document.createTextNode(fields[0][k]["portion_price"]));
             tr.appendChild(tds[7]);
 
-            tds[8].appendChild(document.createTextNode(fields[0][k]["weight_bottle"]));
+            tds[8].appendChild(document.createTextNode(fields[0][k]["external_price_bottle"]));
             tr.appendChild(tds[8]);
 
-            tds[9].appendChild(document.createTextNode(fields[0][k]["deposit_bottle"]));
+            tds[9].appendChild(document.createTextNode(fields[0][k]["weight_bottle"]));
             tr.appendChild(tds[9]);
 
-            tds[10].appendChild(document.createTextNode(fields[0][k]["skListe"] == 1));
+            tds[10].appendChild(document.createTextNode(fields[0][k]["deposit_bottle"]));
             tr.appendChild(tds[10]);
 
-            tds[11].appendChild(document.createTextNode(fields[0][k]["avVerkauf"] == 1));
+            tds[11].appendChild(document.createTextNode(fields[0][k]["skListe"] == 1));
             tr.appendChild(tds[11]);
 
-            tds[12].appendChild(document.createTextNode(fields[0][k]["bierKarte"] == 1));
+            tds[12].appendChild(document.createTextNode(fields[0][k]["avVerkauf"] == 1));
             tr.appendChild(tds[12]);
 
-            tds[13].appendChild(document.createTextNode(fields[0][k]["barKarte"] == 1));
+            tds[13].appendChild(document.createTextNode(fields[0][k]["bierKarte"] == 1));
             tr.appendChild(tds[13]);
 
-            tds[14].appendChild(document.createTextNode(fields[0][k]["abrechnung"] == 1));
+            tds[14].appendChild(document.createTextNode(fields[0][k]["barKarte"] == 1));
             tr.appendChild(tds[14]);
+
+            tds[15].appendChild(document.createTextNode(fields[0][k]["abrechnung"] == 1));
+            tr.appendChild(tds[15]);
 
 
         }
@@ -150,38 +157,41 @@ function updateSnackData ( ...fields ) {
         /* Create a new row in the table */
         const tr = document.createElement('tr');
 
-        /* Create the columns for every property of each drink */
-        const tds = new Array(SNACK_COLUMNS);
+        /* Create the columns for every property of each drink plus its id. */
+        const tds = new Array(SNACK_COLUMNS + 1);
 
-        for ( let i = 0; i < SNACK_COLUMNS; ++i ) {
+        for ( let i = 0; i < SNACK_COLUMNS + 1; ++i ) {
             tds[i] = document.createElement('td');
             tds[i].contentEditable = 'true';
         }
 
         {
-            tds[0].appendChild(document.createTextNode(fields[0][k]["snack_name"]));
+            tds[0].appendChild(document.createTextNode("#" + fields[0][k]["snack_id"]));
             tr.appendChild(tds[0]);
 
-            tds[1].appendChild(document.createTextNode(fields[0][k]["snack_cost"]));
+            tds[1].appendChild(document.createTextNode(fields[0][k]["snack_name"]));
             tr.appendChild(tds[1]);
 
-            tds[2].appendChild(document.createTextNode(fields[0][k]["snack_price"]));
+            tds[2].appendChild(document.createTextNode(fields[0][k]["snack_cost"]));
             tr.appendChild(tds[2]);
 
-            tds[3].appendChild(document.createTextNode(fields[0][k]["skListe"] == 1));
+            tds[3].appendChild(document.createTextNode(fields[0][k]["snack_price"]));
             tr.appendChild(tds[3]);
 
-            tds[4].appendChild(document.createTextNode(fields[0][k]["avVerkauf"] == 1));
+            tds[4].appendChild(document.createTextNode(fields[0][k]["skListe"] == 1));
             tr.appendChild(tds[4]);
 
-            tds[5].appendChild(document.createTextNode(fields[0][k]["bierKarte"] == 1));
+            tds[5].appendChild(document.createTextNode(fields[0][k]["avVerkauf"] == 1));
             tr.appendChild(tds[5]);
 
-            tds[6].appendChild(document.createTextNode(fields[0][k]["barKarte"] == 1));
+            tds[6].appendChild(document.createTextNode(fields[0][k]["bierKarte"] == 1));
             tr.appendChild(tds[6]);
 
-            tds[7].appendChild(document.createTextNode(fields[0][k]["abrechnung"] == 1));
+            tds[7].appendChild(document.createTextNode(fields[0][k]["barKarte"] == 1));
             tr.appendChild(tds[7]);
+
+            tds[8].appendChild(document.createTextNode(fields[0][k]["abrechnung"] == 1));
+            tr.appendChild(tds[8]);
 
         }
         table.appendChild(tr);
@@ -192,11 +202,27 @@ function updateSnackData ( ...fields ) {
 /* Once the addDrinkWindow gets sent new data about snacks and drinks that are to be displayed, display them. */
 ipcRenderer.on("snacks:data", function ( e, snackFields) {
     updateSnackData(snackFields);
-})
+});
 
 ipcRenderer.on("drinks:data", function (e, drinkFields) {
     updateDrinkData(drinkFields);
-})
+});
+
+ipcRenderer.on("snacks:nextID", function(e, nextID) {
+    let newID = 1;
+    if ( nextID [ 0 ] ["max(snack_id)"] != null ) {
+        newID = nextID [ 0 ] [ "max(snack_id)"] + 1;
+    }
+    document.getElementById("nextSnackID").textContent = "#" + newID.toString();
+});
+
+ipcRenderer.on("drinks:nextID", function(e, nextID) {
+    let newID = 1;
+    if ( nextID [ 0 ] ["max(drink_id)"] != null ) {
+        newID = nextID [ 0 ] ["max(drink_id)"] + 1;
+    }
+    document.getElementById("nextDrinkID").textContent = "#" + newID.toString();
+});
 
 /**
  * Updates the field for the per litre costs of a bottle of the drink that is about to be added to the database.
