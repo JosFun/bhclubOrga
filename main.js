@@ -63,6 +63,8 @@ function createWindow () {
     const mainMenu = Menu.buildFromTemplate(mainMenuTemplate);
 
     Menu.setApplicationMenu(mainMenu);
+
+    /* Build up the connection to the underlying database. */
     dataBaseConnect();
 
 }
@@ -119,6 +121,31 @@ const mainMenuTemplate = [
     }
 ];
 
+/**
+ * Perform a sql select on the table "rohgetraenke" and send the data to the addDrinkWindow, where they are displayed.
+ */
+function selectDrinks ( ) {
+    let sqlSelect = "SELECT * FROM rohgetraenke;"
+    dbConnection.query(sqlSelect, function( err, result, fields ) {
+        if ( err ) throw err;
+        /* Send the data of all drinks to all the renderer processes. */
+        win.webContents.send("drinks:data", result);
+    });
+}
+
+/**
+ * Perform a sql select on the table "snacks" and send the data to the addDrinkWindow, where they are displayed.
+ */
+function selectSnacks() {
+    /* Get all the data of all the snacks inside the snack database */
+    let sqlSelect = "SELECT * FROM snacks;"
+    dbConnection.query(sqlSelect, function ( err, result, fields ) {
+        if ( err ) throw err;
+        /* Send the data of all the snacks to all the renderer processes. */
+        win.webContents.send("snacks:data", result);
+    });
+}
+
 // Catch newly added drinks
 ipcMain.on('drink:add', function(e,drinkInfo){
     /*TODO: Perform the sql insertion*/
@@ -129,19 +156,12 @@ ipcMain.on('drink:add', function(e,drinkInfo){
         if ( err ) throw err;
         console.log("New drink inserted!");
     } )
-
-    let sqlSelect = "SELECT * FROM rohgetraenke;"
-    dbConnection.query(sqlSelect, function( err, result, fields ) {
-       if ( err ) throw err;
-       /* Send the data of all drinks to all the renderer processes. */
-        win.webContents.send("drinks:data", result);
-    });
-
-
+    selectDrinks();
 });
 
 // Catch newly added snacks
 ipcMain.on('snack:add', function(e,snackInfo){
+    e.preventDefault();
    /* Perform the sql insertion of the data belonging to the newly added snack */
    let sqlInsert = "INSERT INTO snacks (snack_name, snack_cost, snack_price, skListe, " +
        "avVerkauf, bierKarte, barKarte, abrechnung) VALUES (?)";
@@ -151,13 +171,20 @@ ipcMain.on('snack:add', function(e,snackInfo){
    })
 
     /* Get all the data of all the snacks inside the snack database */
-    let sqlSelect = "SELECT * FROM snacks;"
-    dbConnection.query(sqlSelect, function ( err, result, fields ) {
-       if ( err ) throw err;
-       /* Send the data of all the snacks to all the renderer processes. */
-        win.webContents.send("snacks:data", result);
-    });
+    selectSnacks();
 });
+
+// Catch update requests regarding the visualization of the snack database
+ipcMain.on('snacks:update', function(e){
+    e.preventDefault();
+    selectSnacks();
+})
+
+// Catch update requests regarding the visualization of the drink database
+ipcMain.on('drinks:update', function(e){
+    e.preventDefault();
+    selectDrinks();
+})
 
 if (process.env.NODE_ENV !== 'production'){
     mainMenuTemplate.push({

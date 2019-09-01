@@ -3,9 +3,18 @@ const {ipcRenderer} = electron;
 
 /**
  * The number of columns that have to be specified for each drink
+ * @type {number}
  * */
 const DRINK_COLUMNS = 15;
+/**
+ * The number of columns that have to be specified for each snack
+ * @type {number}
+ */
 const SNACK_COLUMNS = 8;
+
+/* Ask the main process to send the most recent data in the database to this renderer process */
+ipcRenderer.send('drinks:update');
+ipcRenderer.send('snacks:update');
 
 const drinkForm = document.querySelector('#drinkForm');
 drinkForm.addEventListener('submit', submitDrinkForm);
@@ -87,16 +96,16 @@ function updateDrinkData ( ...fields ) {
             tds[2].appendChild(document.createTextNode(fields[0][k]["bottle_cost"]));
             tr.appendChild(tds[2]);
 
-            tds[3].appendChild(document.createTextNode(fields[0][k]["internal_price"]));
+            tds[3].appendChild(document.createTextNode(fields[0][k]["trader"]));
             tr.appendChild(tds[3]);
 
-            tds[4].appendChild(document.createTextNode(fields[0][k]["addition_price"]));
+            tds[4].appendChild(document.createTextNode(fields[0][k]["internal_price"]));
             tr.appendChild(tds[4]);
 
             tds[5].appendChild(document.createTextNode(fields[0][k]["portion_size"]));
             tr.appendChild(tds[5]);
 
-            tds[6].appendChild(document.createTextNode(fields[0][k]["portion_price_rounded"]));
+            tds[6].appendChild(document.createTextNode(fields[0][k]["portion_price"]));
             tr.appendChild(tds[6]);
 
             tds[7].appendChild(document.createTextNode(fields[0][k]["external_price_bottle"]));
@@ -105,20 +114,23 @@ function updateDrinkData ( ...fields ) {
             tds[8].appendChild(document.createTextNode(fields[0][k]["weight_bottle"]));
             tr.appendChild(tds[8]);
 
-            tds[9].appendChild(document.createTextNode(fields[0][k]["skListe"] == 1));
+            tds[9].appendChild(document.createTextNode(fields[0][k]["deposit_bottle"]));
             tr.appendChild(tds[9]);
 
-            tds[10].appendChild(document.createTextNode(fields[0][k]["avVerkauf"] == 1));
+            tds[10].appendChild(document.createTextNode(fields[0][k]["skListe"] == 1));
             tr.appendChild(tds[10]);
 
-            tds[11].appendChild(document.createTextNode(fields[0][k]["bierKarte"] == 1));
+            tds[11].appendChild(document.createTextNode(fields[0][k]["avVerkauf"] == 1));
             tr.appendChild(tds[11]);
 
-            tds[12].appendChild(document.createTextNode(fields[0][k]["barKarte"] == 1));
+            tds[12].appendChild(document.createTextNode(fields[0][k]["bierKarte"] == 1));
             tr.appendChild(tds[12]);
 
-            tds[13].appendChild(document.createTextNode(fields[0][k]["abrechnung"] == 1));
+            tds[13].appendChild(document.createTextNode(fields[0][k]["barKarte"] == 1));
             tr.appendChild(tds[13]);
+
+            tds[14].appendChild(document.createTextNode(fields[0][k]["abrechnung"] == 1));
+            tr.appendChild(tds[14]);
 
 
         }
@@ -177,6 +189,7 @@ function updateSnackData ( ...fields ) {
 }
 
 
+/* Once the addDrinkWindow gets sent new data about snacks and drinks that are to be displayed, display them. */
 ipcRenderer.on("snacks:data", function ( e, snackFields) {
     updateSnackData(snackFields);
 })
