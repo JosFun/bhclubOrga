@@ -138,6 +138,11 @@ select {
     width: auto;
     font-size: 15px;
     font-weight: bolder;
+    box-sizing: border-box;
+    border: 1px solid #aaa;
+    box-shadow: 0 0 0 2px #3C6F80;
+    border-radius: .5em;
+    margin-left: 10px;
 }
 
 .active{
