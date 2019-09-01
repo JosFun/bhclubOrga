@@ -122,9 +122,9 @@ const mainMenuTemplate = [
 // Catch newly added drinks
 ipcMain.on('drink:add', function(e,drinkInfo){
     /*TODO: Perform the sql insertion*/
-    let sqlInsert = "INSERT INTO rohgetraenke (drink_name, bottle_size, bottle_cost, " +
-        "internal_price, addition_price, portion_size, portion_price_rounded, external_price_bottle, " +
-        "weight_bottle, skListe, avVerkauf, bierKarte, barKarte, abrechnung) VALUES (?)";
+    let sqlInsert = "INSERT INTO rohgetraenke (drink_name, bottle_size, bottle_cost, trader, " +
+        "internal_price, portion_size, external_addition, portion_price, external_price_bottle, " +
+        "weight_bottle, deposit_bottle, skListe, avVerkauf, bierKarte, barKarte, abrechnung) VALUES (?)";
     dbConnection.query(sqlInsert, [drinkInfo], function ( err, result ) {
         if ( err ) throw err;
         console.log("New drink inserted!");

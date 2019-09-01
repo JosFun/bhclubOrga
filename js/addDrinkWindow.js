@@ -4,7 +4,7 @@ const {ipcRenderer} = electron;
 /**
  * The number of columns that have to be specified for each drink
  * */
-const DRINK_COLUMNS = 17;
+const DRINK_COLUMNS = 15;
 const SNACK_COLUMNS = 8;
 
 const drinkForm = document.querySelector('#drinkForm');
@@ -21,19 +21,18 @@ function submitDrinkForm(e){
         columnInfo[1] = document.querySelector('#bottleSize').value;
         columnInfo[2] = document.querySelector('#costBottle').value;
         columnInfo[3] = document.querySelector('#agentName').value;
-        columnInfo[4] = document.querySelector('#newInternalPrice').value;
-        columnInfo[5] = document.querySelector('#addition').value;
-        columnInfo[6] = document.querySelector('#portionSize').value;
-        columnInfo[7] = document.querySelector('#calcPricePortion').value;
-        columnInfo[8] = document.querySelector('#roundedPricePortion').value;
-        columnInfo[9] = document.querySelector('#externalBottle').value;
-        columnInfo[10] = document.querySelector('#bottleWeight').value;
-        columnInfo[11] = document.querySelector('#bottleDeposit').value;
-        columnInfo[12] = document.getElementById('abrechnung').checked;
-        columnInfo[13] = document.getElementById("skListe").checked;
-        columnInfo[14] = document.getElementById("avVerkauf").checked;
-        columnInfo[15] = document.getElementById("bierKarte").checked;
-        columnInfo[16] = document.getElementById("barKarte").checked;
+        columnInfo[4] = parseFloat(document.getElementById('newInternalPrice').textContent);
+        columnInfo[5] = document.querySelector('#portionSize').value;
+        columnInfo[6] = document.querySelector('#externalAddition').value;
+        columnInfo[7] = parseFloat(document.getElementById('calcPricePortion').textContent);
+        columnInfo[8] = parseFloat(document.getElementById('externalBottle').textContent);
+        columnInfo[9] = document.querySelector('#bottleWeight').value;
+        columnInfo[10] = document.querySelector('#bottleDeposit').value;
+        columnInfo[11] = document.getElementById('abrechnung').checked;
+        columnInfo[12] = document.getElementById("skListe").checked;
+        columnInfo[13] = document.getElementById("avVerkauf").checked;
+        columnInfo[14] = document.getElementById("bierKarte").checked;
+        columnInfo[15] = document.getElementById("barKarte").checked;
     }
 
      //send newly added drink to main.js
@@ -228,7 +227,8 @@ function internalProfitUpdate ( ) {
     /* Calculate the profit of the sell */
     let profit = Math.round( 100 * ( internalPrice - bottleCost ) ) / 100;
 
-    document.getElementById("addition").textContent = profit.toString() + "€";
+    document.getElementById("addition").textContent = profit.toString();
+    document.getElementById("internalAdditionEuro").style.visibility = "visible";
 }
 
 document.getElementById("costBottle").addEventListener("change", function(e) {
@@ -242,19 +242,21 @@ document.getElementById("costBottle").addEventListener("change", function(e) {
  * of the product.
  */
 function bottlePriceUpdate ( ) {
-    let portionPrice = doucment.querySelector("#roundedPricePortion").value;
-    let bottleSize = document.querySelector("#bottleSize").value;
+    let portionPrice = parseFloat(document.getElementById("calcPricePortion").textContent);
+    let bottleSize = parseFloat(document.querySelector("#bottleSize").value);
+    let portionSize = parseFloat(document.querySelector("#portionSize").value);
 
-    let bottlePrice = Math.round ( 100 * portionPrice / parseFloat(bottleSize) ) / 100;
 
-    document.getElementById("externalBottle").textContent = bottlePrice.toString( ) + "C";
+    /* Return from the function if either of the values above is NaN*/
+    if ( isNaN(portionPrice) || isNaN(bottleSize) || isNaN(portionSize)) {
+        return;
+    }
+
+    let bottlePrice = Math.round ( 100 * portionPrice  * bottleSize / portionSize) / 100;
+
+    document.getElementById("externalBottle").textContent = bottlePrice.toString( );
+    document.getElementById("externalBottleEuro").style.visibility = "visible";
 }
-
-/* Update the external price for a bottle if the rounded price for a portion of the drink gets changed.*/
-document.getElementById("roundedPricePortion").addEventListener("change", function(e) {
-    e.preventDefault();
-    bottlePriceUpdate();
-});
 
 /**
  * Add the deposit to the internal price and round up as soon as a value for the deposit has been specified.
@@ -288,26 +290,50 @@ document.getElementById("bottleDeposit").addEventListener("change", function(e) 
    internalProfitUpdate();
 });
 
+/* Once the internal price for a bottle gets changed manually, we have to recalculate the internal profit of the
+* bottle. */
+document.getElementById("newInternalPrice").addEventListener("input", function(e) {
+    e.preventDefault();
+    internalProfitUpdate();
+})
+
 /**
  * Calculate the price for one portion of the drink.
  * Applied formula: price = ((bottleCost + 17€ * bottleSize) * 1.19 * 1.1)/(bottleSize * portionSize)
  */
 function calulatePortionPrice ( ) {
-    let bottleCost = parseFloat(document.querySelector('#costBottle'));
-    let bottleSize = parseFloat(document.querySelector('#bottleSize'));
-    let portionSize = parseFloat(document.querySelector('#portionSize'));
 
+    let bottleCost = parseFloat(document.querySelector('#costBottle').value);
+    let bottleSize = parseFloat(document.querySelector('#bottleSize').value);
+    let portionSize = parseFloat(document.querySelector('#portionSize').value);
+    let externalAddition = parseFloat(document.querySelector("#externalAddition").value);
+
+    /* If either of the values above is NaN: Return from the function */
+    if ( isNaN(bottleCost) || isNaN(bottleSize) || isNaN((portionSize) || isNaN(externalAddition))) {
+        return;
+    }
     /* Apply the correct formula to calculate the price for one portion of the drink. */
-    let portionPrice = (( bottleCost + 17 * bottleSize ) * 1.19 * 1.1)/(bottleSize * portionSize);
+    let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
     portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
 
+    if( isNaN(portionPrice)) {
+        return;
+    }
+
     document.getElementById("calcPricePortion").textContent = portionPrice.toString();
-    document.getElementById("calcPricePortionEuro").style.visibility = true;
+    document.getElementById("calcPricePortionEuro").style.visibility = "visible";
 }
+
+document.getElementById("externalAddition").addEventListener("change", function(e) {
+    e.preventDefault();
+    calulatePortionPrice();
+    bottlePriceUpdate();
+});
 
 document.getElementById("portionSize").addEventListener("change", function(e) {
     e.preventDefault();
     calulatePortionPrice();
+    bottlePriceUpdate();
 })
 
 

@@ -96,6 +96,7 @@
                     </td>
                     <td>
                         <span style="alignment: center" id="addition"></span>
+                        <span style="margin-left:0px; visibility: hidden;" id="internalAdditionEuro">€</span>
                     </td>
                 </tr>
                 <tr>
@@ -103,7 +104,7 @@
                         Portion
                     </td>
                     <td>
-                        Preis/Portion(berechnet)
+                        Aufschlag pro l
                     </td>
                     <td>
                         Preis/Portion(gerundet)
@@ -124,15 +125,16 @@
                         <span style="margin-left:2px;">l</span>
                     </td>
                     <td>
-                        <span style="alignment: center;", id="calcPricePortion"></span>
-                        <span style="margin-left:1px" visibility="hidden" id="calcPricePortionEuro">€</span>
+                        <input type="number" step="0.01" min = "0" id="externalAddition">
+                        <span style="margin-left:2px; visibility:visible" id="externalAdditionEuro">€</span>
                     </td>
                     <td>
-                        <input type="number" step="0.01" min="0.01" id="roundedPricePortion">
-                        <span style="margin-left:2px;">€</span>
+                        <span style="alignment: center;", id="calcPricePortion"></span>
+                        <span style="margin-left:1px; visibility:hidden" id="calcPricePortionEuro">€</span>
                     </td>
                     <td>
                         <span style="alignment: center;" id="externalBottle"></span>
+                        <span style="margin-left:1px; visibility:hidden" id="externalBottleEuro">€</span>
                     </td>
                     <td>
                         <input type="number" step="1" min="1" id = "bottleWeight">
