@@ -130,17 +130,34 @@ function updateDrinkData ( ...fields ) {
 
             tds[1].appendChild(document.createTextNode(fields[0][k]["drink_name"]));
             tds[1].addEventListener('input', function(e) {
-            // Perform a sql update
+                e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
+                let newName = tds[1].textContent;
+
+                ipcRenderer.send('drinks:alter',id, "drink_name", newName);
             });
             tr.appendChild(tds[1]);
 
 
             tds[2].appendChild(document.createTextNode(fields[0][k]["bottle_size"] + "l"));
-            tds[2].addEventListener('input', function(e) {
+            tds[2].addEventListener('focusout', function(e) {
                 e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
                 let strVal = tds[2].textContent;
                 /* Parsing to float does also work if units are specified within the field */
                 let bottleSize = parseFloat(strVal);
+
+                ipcRenderer.send('drinks:alter',id, "bottle_size", bottleSize);
 
             });
             tr.appendChild(tds[2]);
@@ -148,39 +165,63 @@ function updateDrinkData ( ...fields ) {
             tds[3].appendChild(document.createTextNode(fields[0][k]["bottle_cost"] + "€"));
             tds[3].addEventListener('input', function(e) {
                 e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
                 let bottleCost = parseFloat(tds[3].textContent);
 
                 /* Now the internal price has to be checked */
                 let bottleInternal = parseFloat(tds[5].textContent);
                 /* Test whether or not the internal price is high enough to account for the VAT and the loss of deposit*/
-                if ( bottleInternal < 1.19 * parseFloat(tds[2].textContent) + parseFloat(tds[9].textContent) ) {
+                if ( bottleInternal < 1.19 * bottleCost + parseFloat(tds[11].textContent) ) {
                     tds[5].style.color = "red";
                 }
                 else {
                     tds[5].style.color = "green";
                 }
+
+                ipcRenderer.send('drinks:alter', id, "bottle_cost", bottleCost);
             });
             tr.appendChild(tds[3]);
 
             tds[4].appendChild(document.createTextNode(fields[0][k]["trader"]));
             tds[4].addEventListener('input', function(e) {
                 e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
                 let trader = tds[4].textContent;
+
+                ipcRenderer.send('drinks:alter', id, "trader", trader);
             });
             tr.appendChild(tds[4]);
 
             tds[5].appendChild(document.createTextNode(fields[0][k]["internal_price"] + "€"));
             tds[5].addEventListener('input', function(e) {
                 e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
                 let bottleInternal = parseFloat(tds[5].textContent);
 
                 /* Test whether or not the internal price is high enough to account for the VAT and the loss of deposit*/
-                if ( bottleInternal < 1.19 * parseFloat(tds[2].textContent) + parseFloat(tds[9].textContent) ) {
+                if ( bottleInternal < 1.19 * parseFloat(tds[3].textContent) + parseFloat(tds[11].textContent) ) {
                     tds[5].style.color = "red";
                 }
                 else {
                     tds[5].style.color = "green";
                 }
+
+                ipcRenderer.send('drinks:alter', id, "internal_price", bottleInternal);
             });
             tr.appendChild(tds[5]);
 
@@ -188,8 +229,14 @@ function updateDrinkData ( ...fields ) {
             /* Recalculate the price for one portion and one bottle if the external addition gets changed.*/
             tds[6].addEventListener('input', function(e) {
                 e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
                 let portion = parseFloat(tds[6].textContent);
-                let bottlecost = parseFloat(tds[3].textContent);
+                let bottleCost = parseFloat(tds[3].textContent);
                 let externalAddition = parseFloat(tds[7].textContent);
                 let bottleSize = parseFloat(tds[2].textContent);
                 let portionSize = parseFloat(tds[6].textContent);
@@ -198,8 +245,20 @@ function updateDrinkData ( ...fields ) {
                 let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
                 portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
 
-                tds[8].textContent = portionPrice.toString() + "€";
-                tds[9].textContent = (Math.ceil( 100 * portionPrice * bottleSize / portionSize ) / 100).toString() + "€";
+                let bottlePrice = (Math.ceil(100 * portionPrice * bottleSize / portionSize) / 100);
+
+                if ( !isNaN(externalAddition)){
+                    ipcRenderer.send("drinks:alter", id, "external_addition", externalAddition);
+                }
+
+                if ( !isNaN(portionPrice)) {
+                    tds[8].textContent = portionPrice.toString() + "€";
+                    ipcRenderer.send("drinks:alter", id, "portion_price", portionPrice);
+                }
+                if ( !isNaN(bottlePrice)) {
+                    tds[9].textContent = bottlePrice.toString() + "€";
+                    ipcRenderer.send("drinks:alter", id, "external_price_bottle", bottlePrice);
+                }
             });
             tr.appendChild(tds[6]);
 
@@ -207,8 +266,14 @@ function updateDrinkData ( ...fields ) {
             /* Recalculate the price for one portion and one bottle if the external addition gets changed.*/
             tds[7].addEventListener('input', function(e) {
                 e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
                 let portion = parseFloat(tds[6].textContent);
-                let bottlecost = parseFloat(tds[3].textContent);
+                let bottleCost = parseFloat(tds[3].textContent);
                 let externalAddition = parseFloat(tds[7].textContent);
                 let bottleSize = parseFloat(tds[2].textContent);
                 let portionSize = parseFloat(tds[6].textContent);
@@ -217,8 +282,19 @@ function updateDrinkData ( ...fields ) {
                 let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
                 portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
 
-                tds[8].textContent = portionPrice.toString() + "€";
-                tds[9].textContent = (Math.ceil( 100 * portionPrice * bottleSize / portionSize ) / 100).toString() * "€";
+                if ( !isNaN(externalAddition)){
+                    ipcRenderer.send("drinks:alter", id, "external_addition", externalAddition);
+                }
+
+                let bottlePrice = (Math.ceil(100 * portionPrice * bottleSize / portionSize) / 100);
+                if ( !isNaN(portionPrice)) {
+                    tds[8].textContent = portionPrice.toString() + "€";
+                    ipcRenderer.send("drinks:alter", id, "portion_price", portionPrice);
+                }
+                if ( !isNaN(bottlePrice)) {
+                    tds[9].textContent = bottlePrice.toString() + "€";
+                    ipcRenderer.send("drinks:alter", id, "external_price_bottle", bottlePrice);
+                }
             });
             tr.appendChild(tds[7]);
 
@@ -227,29 +303,116 @@ function updateDrinkData ( ...fields ) {
             tr.appendChild(tds[8]);
 
             tds[9].appendChild(document.createTextNode(fields[0][k]["external_price_bottle"] + "€"));
-            /* The external price for a bottle is being caluclated and therefore not editable at all.*/
+            /* The external price for a bottle is being calculated and therefore not editable at all.*/
             tds[9].contentEditable = "false";
             tr.appendChild(tds[9]);
 
             tds[10].appendChild(document.createTextNode(fields[0][k]["weight_bottle"] + "g"));
+            tds[10].addEventListener('focusout', function(e) {
+                e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
+                let weight = parseFloat(tds[10].textContent);
+
+                ipcRenderer.send("drinks:alter", id, "weight_bottle", weight);
+            });
             tr.appendChild(tds[10]);
 
             tds[11].appendChild(document.createTextNode(fields[0][k]["deposit_bottle"] + "€"));
+            tds[11].addEventListener('focusout', function(e) {
+                e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
+                let deposit = parseFloat(tds[11].textContent);
+
+                ipcRenderer.send("drinks:alter", id, "deposit_bottle", deposit);
+            });
             tr.appendChild(tds[11]);
 
             tds[12].appendChild(createCheckBox(fields[0][k]["skListe"],"drinkSKBox"));
+            tds[12].addEventListener('change', function(e) {
+                e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
+                /* Get a reference to the checkbox that has just been created. */
+                let sk = document.getElementById("drinkSKBox").checked;
+
+                console.log( "SK " + sk);
+
+                ipcRenderer.send("drinks:alter", id, "skListe", sk);
+            });
             tr.appendChild(tds[12]);
 
             tds[13].appendChild(createCheckBox(fields[0][k]["avVerkauf"],"drinkAVBox"));
+            tds[13].addEventListener('change', function(e) {
+                e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
+                let av = document.getElementById("drinkAVBox").checked;
+
+                ipcRenderer.send("drinks:alter", id, "avVerkauf", av);
+            });
             tr.appendChild(tds[13]);
 
             tds[14].appendChild(createCheckBox(fields[0][k]["bierKarte"],"drinkBierBox"));
+            tds[14].addEventListener('change', function(e) {
+                e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
+                let bier = document.getElementById("drinkBierBox").checked;
+
+                ipcRenderer.send("drinks:alter", id, "bierKarte", bier);
+            });
             tr.appendChild(tds[14]);
 
             tds[15].appendChild(createCheckBox(fields[0][k]["barKarte"],"drinkBarBox"));
+            tds[15].addEventListener('change', function(e) {
+                e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
+                let bar = document.getElementById("drinkBarBox").checked;
+
+                ipcRenderer.send("drinks:alter", id, "barKarte", bar);
+            });
             tr.appendChild(tds[15]);
 
             tds[16].appendChild(createCheckBox(fields[0][k]["abrechnung"],"drinkAbrechnungBox"));
+            tds[16].addEventListener('change', function(e) {
+                e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
+                let abrechnung = document.getElementById("drinkAbrechnungBox").checked;
+
+                ipcRenderer.send("drinks:alter", id, "abrechnung", abrechnung);
+            });
             tr.appendChild(tds[16]);
         }
         table.appendChild(tr);

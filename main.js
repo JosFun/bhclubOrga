@@ -146,6 +146,34 @@ function selectSnacks() {
     });
 }
 
+/**
+ * Update a drink in the database by performing a sql update request
+ * @param id The id of the drink that is to be updated
+ * @param column The property of the drink that is to be updated
+ * @param value The new value for the property
+ */
+function updateDrinks ( id, column, value ) {
+    let sqlUpdate = "UPDATE rohgetraenke SET " + column + " = ? where drink_id = ?";
+    dbConnection.query(sqlUpdate, [value, id], function( err, results, fields) {
+       if ( err ) throw ( err );
+       console.log("Drink with id " + id + " has been updated!");
+    });
+}
+
+/**
+ * Update a snack in the database by performing a sql update request
+ * @param id The id of the snack that is to be updated
+ * @param column The property of the snack that is to be updated
+ * @param value The new value for the property
+ */
+function updateSnacks ( id, column, value ) {
+    let sqlUpdate = "UPDATE snacks set " + column + " = ? where snack_id = ?";
+    dbConnection.query(sqlUpdate,  [value, id], function( err, results, fields) {
+        if ( err ) throw err;
+        console.log("Snack with id " + id + " has been updated!");
+    });
+}
+
 // Catch newly added drinks
 ipcMain.on('drink:add', function(e,drinkInfo){
     /*TODO: Perform the sql insertion*/
@@ -204,7 +232,23 @@ ipcMain.on('drinks:nextID', function(e) {
         if ( err ) throw ( err );
         win.webContents.send("drinks:nextID", result);
     })
+});
+
+// Catch requests regarding the update of a snack with a certain id in the database
+ipcMain.on('snacks:alter', function(e, id, column, value) {
+    e.preventDefault();
+    updateSnakcs(id, column, value);
 })
+
+// Catch requests regarding the update of a drink with a certain id in the database
+ipcMain.on('drinks:alter', function(e, id, column, value) {
+   e.preventDefault();
+   console.log(id);
+   console.log(column);
+   console.log(value);
+   updateDrinks(id, column, value);
+});
+
 
 
 
