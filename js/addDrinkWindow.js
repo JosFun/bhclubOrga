@@ -5,7 +5,7 @@ const {ipcRenderer} = electron;
  * The number of columns that have to be specified for each drink
  * @type {number}
  * */
-const DRINK_COLUMNS = 15;
+const DRINK_COLUMNS = 16;
 /**
  * The number of columns that have to be specified for each snack
  * @type {number}
@@ -48,6 +48,13 @@ function submitDrinkForm(e){
         columnInfo[15] = document.getElementById("barKarte").checked;
     }
 
+    for ( let i = 0; i < DRINK_COLUMNS; ++i ) {
+        if ( columnInfo [ i ] == null ) {
+            console.log("You have to specify values for all the necessary fields if you want to input a new drink.");
+            return;
+        }
+    }
+
      //send newly added drink to main.js
     ipcRenderer.send('drink:add', columnInfo);
 }
@@ -66,8 +73,33 @@ function submitSnackForm (e){
         columnInfo[7] = document.getElementById("snack_abrechnung").checked;
     }
 
+    for ( let i = 0; i < SNACK_COLUMNS; ++i ) {
+        if ( columnInfo[i] == null ) {
+            console.log("You have to specify values for all the necessary columns if you want to input a new snack.");
+            return;
+        }
+    }
+
     //send newly added snack to main.js, i.e. the main process of the electron application
     ipcRenderer.send('snack:add', columnInfo);
+}
+
+/**
+ * Dynamically creates a checkbox that can be added to any other kind of html element
+ * @return the checkbox that has been created
+ */
+function createCheckBox ( val, id_nmbr ) {
+    let checkBox = document.createElement('input');
+    with (checkBox){
+        type = "checkbox";
+        /* Try to set the checkbox to a possibly passed boolean value. */
+        if ( val==1 )
+        {
+            checked = true;
+        }
+        id = id_nmbr;
+    }
+    return checkBox;
 }
 
 /**
@@ -92,54 +124,133 @@ function updateDrinkData ( ...fields ) {
 
         {
             tds[0].appendChild(document.createTextNode("#" + fields[0][k]["drink_id"]));
+            /* Of course the id should not be editable */
+            tds[0].contentEditable = 'false';
             tr.appendChild(tds[0]);
 
             tds[1].appendChild(document.createTextNode(fields[0][k]["drink_name"]));
+            tds[1].addEventListener('input', function(e) {
+            // Perform a sql update
+            });
             tr.appendChild(tds[1]);
 
-            tds[2].appendChild(document.createTextNode(fields[0][k]["bottle_size"]));
+
+            tds[2].appendChild(document.createTextNode(fields[0][k]["bottle_size"] + "l"));
+            tds[2].addEventListener('input', function(e) {
+                e.preventDefault();
+                let strVal = tds[2].textContent;
+                /* Parsing to float does also work if units are specified within the field */
+                let bottleSize = parseFloat(strVal);
+
+            });
             tr.appendChild(tds[2]);
 
-            tds[3].appendChild(document.createTextNode(fields[0][k]["bottle_cost"]));
+            tds[3].appendChild(document.createTextNode(fields[0][k]["bottle_cost"] + "€"));
+            tds[3].addEventListener('input', function(e) {
+                e.preventDefault();
+                let bottleCost = parseFloat(tds[3].textContent);
+
+                /* Now the internal price has to be checked */
+                let bottleInternal = parseFloat(tds[5].textContent);
+                /* Test whether or not the internal price is high enough to account for the VAT and the loss of deposit*/
+                if ( bottleInternal < 1.19 * parseFloat(tds[2].textContent) + parseFloat(tds[9].textContent) ) {
+                    tds[5].style.color = "red";
+                }
+                else {
+                    tds[5].style.color = "green";
+                }
+            });
             tr.appendChild(tds[3]);
 
             tds[4].appendChild(document.createTextNode(fields[0][k]["trader"]));
+            tds[4].addEventListener('input', function(e) {
+                e.preventDefault();
+                let trader = tds[4].textContent;
+            });
             tr.appendChild(tds[4]);
 
-            tds[5].appendChild(document.createTextNode(fields[0][k]["internal_price"]));
+            tds[5].appendChild(document.createTextNode(fields[0][k]["internal_price"] + "€"));
+            tds[5].addEventListener('input', function(e) {
+                e.preventDefault();
+                let bottleInternal = parseFloat(tds[5].textContent);
+
+                /* Test whether or not the internal price is high enough to account for the VAT and the loss of deposit*/
+                if ( bottleInternal < 1.19 * parseFloat(tds[2].textContent) + parseFloat(tds[9].textContent) ) {
+                    tds[5].style.color = "red";
+                }
+                else {
+                    tds[5].style.color = "green";
+                }
+            });
             tr.appendChild(tds[5]);
 
-            tds[6].appendChild(document.createTextNode(fields[0][k]["portion_size"]));
+            tds[6].appendChild(document.createTextNode(fields[0][k]["portion_size"] + "l"));
+            /* Recalculate the price for one portion and one bottle if the external addition gets changed.*/
+            tds[6].addEventListener('input', function(e) {
+                e.preventDefault();
+                let portion = parseFloat(tds[6].textContent);
+                let bottlecost = parseFloat(tds[3].textContent);
+                let externalAddition = parseFloat(tds[7].textContent);
+                let bottleSize = parseFloat(tds[2].textContent);
+                let portionSize = parseFloat(tds[6].textContent);
+
+                /* Apply the correct formula to calculate the price for one portion of the drink. */
+                let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
+                portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
+
+                tds[8].textContent = portionPrice.toString() + "€";
+                tds[9].textContent = (Math.ceil( 100 * portionPrice * bottleSize / portionSize ) / 100).toString() + "€";
+            });
             tr.appendChild(tds[6]);
 
-            tds[7].appendChild(document.createTextNode(fields[0][k]["portion_price"]));
+            tds[7].appendChild(document.createTextNode(fields[0][k]["external_addition"] + "€"));
+            /* Recalculate the price for one portion and one bottle if the external addition gets changed.*/
+            tds[7].addEventListener('input', function(e) {
+                e.preventDefault();
+                let portion = parseFloat(tds[6].textContent);
+                let bottlecost = parseFloat(tds[3].textContent);
+                let externalAddition = parseFloat(tds[7].textContent);
+                let bottleSize = parseFloat(tds[2].textContent);
+                let portionSize = parseFloat(tds[6].textContent);
+
+                /* Apply the correct formula to calculate the price for one portion of the drink. */
+                let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
+                portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
+
+                tds[8].textContent = portionPrice.toString() + "€";
+                tds[9].textContent = (Math.ceil( 100 * portionPrice * bottleSize / portionSize ) / 100).toString() * "€";
+            });
             tr.appendChild(tds[7]);
 
-            tds[8].appendChild(document.createTextNode(fields[0][k]["external_price_bottle"]));
+            tds[8].appendChild(document.createTextNode(fields[0][k]["portion_price"] + "€"));
+            tds[8].contentEditable = "false";
             tr.appendChild(tds[8]);
 
-            tds[9].appendChild(document.createTextNode(fields[0][k]["weight_bottle"]));
+            tds[9].appendChild(document.createTextNode(fields[0][k]["external_price_bottle"] + "€"));
+            /* The external price for a bottle is being caluclated and therefore not editable at all.*/
+            tds[9].contentEditable = "false";
             tr.appendChild(tds[9]);
 
-            tds[10].appendChild(document.createTextNode(fields[0][k]["deposit_bottle"]));
+            tds[10].appendChild(document.createTextNode(fields[0][k]["weight_bottle"] + "g"));
             tr.appendChild(tds[10]);
 
-            tds[11].appendChild(document.createTextNode(fields[0][k]["skListe"] == 1));
+            tds[11].appendChild(document.createTextNode(fields[0][k]["deposit_bottle"] + "€"));
             tr.appendChild(tds[11]);
 
-            tds[12].appendChild(document.createTextNode(fields[0][k]["avVerkauf"] == 1));
+            tds[12].appendChild(createCheckBox(fields[0][k]["skListe"],"drinkSKBox"));
             tr.appendChild(tds[12]);
 
-            tds[13].appendChild(document.createTextNode(fields[0][k]["bierKarte"] == 1));
+            tds[13].appendChild(createCheckBox(fields[0][k]["avVerkauf"],"drinkAVBox"));
             tr.appendChild(tds[13]);
 
-            tds[14].appendChild(document.createTextNode(fields[0][k]["barKarte"] == 1));
+            tds[14].appendChild(createCheckBox(fields[0][k]["bierKarte"],"drinkBierBox"));
             tr.appendChild(tds[14]);
 
-            tds[15].appendChild(document.createTextNode(fields[0][k]["abrechnung"] == 1));
+            tds[15].appendChild(createCheckBox(fields[0][k]["barKarte"],"drinkBarBox"));
             tr.appendChild(tds[15]);
 
-
+            tds[16].appendChild(createCheckBox(fields[0][k]["abrechnung"],"drinkAbrechnungBox"));
+            tr.appendChild(tds[16]);
         }
         table.appendChild(tr);
     }
