@@ -237,7 +237,7 @@ ipcMain.on('drinks:nextID', function(e) {
 // Catch requests regarding the update of a snack with a certain id in the database
 ipcMain.on('snacks:alter', function(e, id, column, value) {
     e.preventDefault();
-    updateSnakcs(id, column, value);
+    updateSnacks(id, column, value);
 })
 
 // Catch requests regarding the update of a drink with a certain id in the database
