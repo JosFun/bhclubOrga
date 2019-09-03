@@ -57,6 +57,7 @@ function submitDrinkForm(e){
 
      //send newly added drink to main.js
     ipcRenderer.send('drink:add', columnInfo);
+    ipcRenderer.send('drinks:nextID');
 }
 
 function submitSnackForm (e){
@@ -82,6 +83,7 @@ function submitSnackForm (e){
 
     //send newly added snack to main.js, i.e. the main process of the electron application
     ipcRenderer.send('snack:add', columnInfo);
+    ipcRenderer.send('snacks:nextID');
 }
 
 /**
@@ -110,14 +112,19 @@ function updateDrinkData ( ...fields ) {
 
     const table = document.querySelector('#drinkTable');
 
-    for ( let k = 0; k < fields.length; ++k) {
+    /* Remove all drinks that currently get displayed by removing all children of the table */
+    while ( table.childElementCount > 1) {
+        table.removeChild(table.childNodes[table.childNodes.length - 1 ]);
+    }
+
+    for ( let k = 0; k < fields[0].length; ++k) {
         /* Create a new row in the table */
         const tr = document.createElement('tr');
 
         /* Create the columns for every property of each drink plus its id. */
-        const tds = new Array(DRINK_COLUMNS + 1);
+        const tds = new Array(DRINK_COLUMNS + 2);
 
-        for (let i = 0; i < DRINK_COLUMNS + 1; ++i) {
+        for (let i = 0; i < DRINK_COLUMNS + 2; ++i) {
             tds[i] = document.createElement('td');
             tds[i].contentEditable = 'true';
         }
@@ -413,7 +420,27 @@ function updateDrinkData ( ...fields ) {
 
                 ipcRenderer.send("drinks:alter", id, "abrechnung", abrechnung);
             });
+
             tr.appendChild(tds[16]);
+
+            /* Create the button that is used to delete drinks in the database */
+            let image = document.createElement("img");
+            image.src =
+            tds[17].addEventListener("onclick", function(e) {
+                e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
+                ipcRenderer.send("drink:delete", id);
+            });
+
+            tds[17].appendChild(button);
+            tds[17].contentEditable = 'false';
+            tr.appendChild(tds[17]);
+
         }
         table.appendChild(tr);
     }
@@ -427,14 +454,20 @@ function updateSnackData ( ...fields ) {
 
     const table = document.querySelector( '#snackDataBase');
 
+    /* Remove all snacks that currently get displayed by removing all children of the table */
+    while ( table.childElementCount > 1) {
+        table.removeChild(table.childNodes[table.childNodes.length - 1 ]);
+    }
+
+
     for ( let k = 0; k < fields[0].length; ++k) {
         /* Create a new row in the table */
         const tr = document.createElement('tr');
 
         /* Create the columns for every property of each drink plus its id. */
-        const tds = new Array(SNACK_COLUMNS + 1);
+        const tds = new Array(SNACK_COLUMNS + 2);
 
-        for ( let i = 0; i < SNACK_COLUMNS + 1; ++i ) {
+        for ( let i = 0; i < SNACK_COLUMNS + 2; ++i ) {
             tds[i] = document.createElement('td');
             tds[i].contentEditable = 'true';
         }
@@ -442,6 +475,7 @@ function updateSnackData ( ...fields ) {
         {
             tds[0].appendChild(document.createTextNode("#" + fields[0][k]["snack_id"]));
             tr.appendChild(tds[0]);
+            tds[0].contentEditable = 'false';
 
             tds[1].appendChild(document.createTextNode(fields[0][k]["snack_name"]));
             tr.appendChild(tds[1]);
@@ -459,7 +493,7 @@ function updateSnackData ( ...fields ) {
 
             });
 
-            tds[2].appendChild(document.createTextNode(fields[0][k]["snack_cost"]));
+            tds[2].appendChild(document.createTextNode(fields[0][k]["snack_cost"] + "€"));
             tr.appendChild(tds[2]);
             tds[2].addEventListener('focusout', function(e) {
                 e.preventDefault();
@@ -474,7 +508,7 @@ function updateSnackData ( ...fields ) {
                 ipcRenderer.send("snacks:alter", id, "snack_cost", snackCost );
             });
 
-            tds[3].appendChild(document.createTextNode(fields[0][k]["snack_price"]));
+            tds[3].appendChild(document.createTextNode(fields[0][k]["snack_price"] + "€"));
             tr.appendChild(tds[3]);
             tds[3].addEventListener('focusout', function(e) {
                 e.preventDefault();
@@ -492,6 +526,7 @@ function updateSnackData ( ...fields ) {
 
             tds[4].appendChild(createCheckBox(fields[0][k]["skListe"] == 1, "skSnackBox"));
             tr.appendChild(tds[4]);
+            tds[4].contentEditable = 'false';
             tds[4].addEventListener('change', function(e) {
                e.preventDefault();
 
@@ -509,6 +544,7 @@ function updateSnackData ( ...fields ) {
 
             tds[5].appendChild(createCheckBox(fields[0][k]["avVerkauf"] == 1, "avSnackBox"));
             tr.appendChild(tds[5]);
+            tds[5].contentEditable = 'false';
             tds[5].addEventListener('change', function(e) {
                 e.preventDefault();
 
@@ -524,6 +560,7 @@ function updateSnackData ( ...fields ) {
 
             tds[6].appendChild(createCheckBox(fields[0][k]["bierKarte"] == 1, "bierSnackBox"));
             tr.appendChild(tds[6]);
+            tds[6].contentEditable = 'false';
             tds[6].addEventListener('change', function(e) {
                 e.preventDefault();
 
@@ -539,6 +576,7 @@ function updateSnackData ( ...fields ) {
 
             tds[7].appendChild(createCheckBox(fields[0][k]["barKarte"] == 1, "barSnackBox"));
             tr.appendChild(tds[7]);
+            tds[7].contentEditable = 'false';
             tds[7].addEventListener('change', function(e) {
                 e.preventDefault();
 
@@ -553,6 +591,7 @@ function updateSnackData ( ...fields ) {
             });
             tds[8].appendChild(createCheckBox(fields[0][k]["abrechnung"] == 1, "abrechnungSnackBox"));
             tr.appendChild(tds[8]);
+            tds[8].contentEditable = 'false';
             tds[8].addEventListener('change', function(e) {
                 e.preventDefault();
 

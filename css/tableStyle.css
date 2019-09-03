@@ -28,6 +28,8 @@ input {
     font-weight: bolder;
     color: black;
     text-align: center;
+    border: none;
+    background-color: transparent;
 }
 
 select {

@@ -174,6 +174,31 @@ function updateSnacks ( id, column, value ) {
     });
 }
 
+/**
+ * Update a drink in the databse by performing a sql delete request
+ * @param id The id of the drink that is to be deleted
+ */
+function deleteDrink ( id ) {
+    let sqlDelete = "DELETE FROM rohgetraenke where drink_id = ?";
+    dbConnection.query(sqlDelete, [id], function( err, results, fields) {
+       if ( err ) throw err;
+       console.log("Drink with id " + id + " has been deleted!");
+    });
+}
+
+/**
+ * Update a snack in the database by performing a sql delete request
+ * @param id The id of the snack that is to be deleted
+ */
+function deleteSnack ( id ) {
+    let sqlDelete = "DELETE FROM snacks where snack_id = ?";
+    dbConnection.query(sqlDelete, [id], function(err, results, fields) {
+        if ( err ) throw err;
+        console.log("Snack with id  " + id + " has been deleted!");
+
+    })
+}
+
 // Catch newly added drinks
 ipcMain.on('drink:add', function(e,drinkInfo){
     /*TODO: Perform the sql insertion*/
@@ -238,7 +263,7 @@ ipcMain.on('drinks:nextID', function(e) {
 ipcMain.on('snacks:alter', function(e, id, column, value) {
     e.preventDefault();
     updateSnacks(id, column, value);
-})
+});
 
 // Catch requests regarding the update of a drink with a certain id in the database
 ipcMain.on('drinks:alter', function(e, id, column, value) {
@@ -249,9 +274,19 @@ ipcMain.on('drinks:alter', function(e, id, column, value) {
    updateDrinks(id, column, value);
 });
 
+// Catch requests regarding the deletion of a snack with a certain id in the database
+ipcMain.on('snack:delete', function(e,id) {
+    e.preventDefault();
+    deleteSnack(id);
+    selectSnacks();
+});
 
-
-
+// Catch requests regarding the deletion of a drink with a certain id in the database
+ipcMain.on('drink:delete', function(e,id) {
+    e.preventDefault();
+    deleteDrink(id);
+    selectDrinks();
+});
 
 if (process.env.NODE_ENV !== 'production'){
     mainMenuTemplate.push({
