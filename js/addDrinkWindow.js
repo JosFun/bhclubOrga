@@ -424,10 +424,14 @@ function updateDrinkData ( ...fields ) {
             tr.appendChild(tds[16]);
 
             /* Create the button that is used to delete drinks in the database */
-            let image = document.createElement("img");
-            image.src =
-            tds[17].addEventListener("onclick", function(e) {
+            let imageButton = document.createElement("img");
+            imageButton.src = "../pics/trash.svg";
+            imageButton.width = 70;
+            imageButton.height = 35;
+            tds[17].addEventListener("click", function(e) {
                 e.preventDefault();
+
+                console.log("Hallo");
 
                 /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
                 let idString = tds[0].textContent;
@@ -437,7 +441,7 @@ function updateDrinkData ( ...fields ) {
                 ipcRenderer.send("drink:delete", id);
             });
 
-            tds[17].appendChild(button);
+            tds[17].appendChild(imageButton);
             tds[17].contentEditable = 'false';
             tr.appendChild(tds[17]);
 
@@ -604,6 +608,26 @@ function updateSnackData ( ...fields ) {
 
                 ipcRenderer.send("snacks:alter", id, "abrechnung", abrechnung );
             })
+
+            /* Create the button that is used to delete drinks in the database */
+            let imageButton = document.createElement("img");
+            imageButton.src = "../pics/trash.svg";
+            imageButton.width = 70;
+            imageButton.height = 35;
+            tds[9].addEventListener("click", function(e) {
+                e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
+                ipcRenderer.send("snack:delete", id);
+            });
+
+            tds[9].appendChild(imageButton);
+            tds[9].contentEditable = 'false';
+            tr.appendChild(tds[9]);
 
         }
         table.appendChild(tr);
