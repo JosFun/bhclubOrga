@@ -428,6 +428,8 @@ function updateDrinkData ( ...fields ) {
             imageButton.src = "../pics/trash.svg";
             imageButton.width = 70;
             imageButton.height = 35;
+            imageButton.class = "imageButton";
+            imageButton.cursor = "pointer";
             tds[17].addEventListener("click", function(e) {
                 e.preventDefault();
 
@@ -443,6 +445,7 @@ function updateDrinkData ( ...fields ) {
 
             tds[17].appendChild(imageButton);
             tds[17].contentEditable = 'false';
+            tds[17].style.cursor = "pointer";
             tr.appendChild(tds[17]);
 
         }
@@ -612,8 +615,10 @@ function updateSnackData ( ...fields ) {
             /* Create the button that is used to delete drinks in the database */
             let imageButton = document.createElement("img");
             imageButton.src = "../pics/trash.svg";
+            imageButton.class = "imageButton";
             imageButton.width = 70;
             imageButton.height = 35;
+            imageButton.cursor = "pointer";
             tds[9].addEventListener("click", function(e) {
                 e.preventDefault();
 
@@ -627,6 +632,7 @@ function updateSnackData ( ...fields ) {
 
             tds[9].appendChild(imageButton);
             tds[9].contentEditable = 'false';
+            tds[9].style.cursor = "pointer";
             tr.appendChild(tds[9]);
 
         }
