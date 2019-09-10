@@ -121,11 +121,23 @@ const mainMenuTemplate = [
     }
 ];
 
+
 /**
- * Perform a sql select on the table "rohgetraenke" and send the data to the addDrinkWindow, where they are displayed.
+ * Perform a filtered sql select on the table "rohgetraenke" and send the data to the addDrinkWindow, w
+ * @param filter
  */
-function selectDrinks ( ) {
-    let sqlSelect = "SELECT * FROM rohgetraenke;"
+function selectDrinks ( filter ) {
+    let sqlSelect = "SELECT * FROM rohgetraenke";
+
+    if ( filter.size >= 1 ) {
+        sqlSelect += "where " + filter.keys[0] + "=" + filter.get(filter.keys[0]);
+    }
+
+    for ( let i = 1; i < filter.size; ++i ) {
+        sqlSelect += " and " + filter.keys[i] + "=" + filter.get(filter.keys[i]);
+    }
+
+    sqlSelect += ";";
     dbConnection.query(sqlSelect, function( err, result, fields ) {
         if ( err ) throw err;
         /* Send the data of all drinks to all the renderer processes. */
@@ -133,12 +145,24 @@ function selectDrinks ( ) {
     });
 }
 
+
 /**
  * Perform a sql select on the table "snacks" and send the data to the addDrinkWindow, where they are displayed.
  */
-function selectSnacks() {
+function selectSnacks( filter ) {
     /* Get all the data of all the snacks inside the snack database */
-    let sqlSelect = "SELECT * FROM snacks;"
+    let sqlSelect = "SELECT * FROM snacks";
+
+    if ( filter.size >= 1 ) {
+        sqlSelect += "where " + filter.keys[0] + "=" + filter.get(filter.keys[0]);
+    }
+
+    for ( let i = 1; i < filter.size; ++i ) {
+        sqlSelect += " and " + filter.keys[i] + "=" + filter.get(filter.keys[i]);
+    }
+
+    sqlSelect +=";";
+
     dbConnection.query(sqlSelect, function ( err, result, fields ) {
         if ( err ) throw err;
         /* Send the data of all the snacks to all the renderer processes. */
@@ -200,7 +224,7 @@ function deleteSnack ( id ) {
 }
 
 // Catch newly added drinks
-ipcMain.on('drink:add', function(e,drinkInfo){
+ipcMain.on('drink:add', function(e,drinkInfo, selectFilter){
     /*TODO: Perform the sql insertion*/
     let sqlInsert = "INSERT INTO rohgetraenke (drink_name, bottle_size, bottle_cost, trader, " +
         "internal_price, portion_size, external_addition, portion_price, external_price_bottle, " +
@@ -209,11 +233,11 @@ ipcMain.on('drink:add', function(e,drinkInfo){
         if ( err ) throw err;
         console.log("New drink inserted!");
     } )
-    selectDrinks();
+    selectDrinks(selectFilter);
 });
 
 // Catch newly added snacks
-ipcMain.on('snack:add', function(e,snackInfo){
+ipcMain.on('snack:add', function(e,snackInfo, selectFilter){
     e.preventDefault();
    /* Perform the sql insertion of the data belonging to the newly added snack */
    let sqlInsert = "INSERT INTO snacks (snack_name, snack_cost, snack_price, skListe, " +
@@ -224,19 +248,19 @@ ipcMain.on('snack:add', function(e,snackInfo){
    })
 
     /* Get all the data of all the snacks inside the snack database */
-    selectSnacks();
+    selectSnacks(selectFilter);
 });
 
 // Catch update requests regarding the visualization of the snack database
-ipcMain.on('snacks:update', function(e){
+ipcMain.on('snacks:update', function(e, snackFilter){
     e.preventDefault();
-    selectSnacks();
+    selectSnacks(snackFilter);
 });
 
 // Catch update requests regarding the visualization of the drink database
-ipcMain.on('drinks:update', function(e){
+ipcMain.on('drinks:update', function(e, drinkFilter){
     e.preventDefault();
-    selectDrinks();
+    selectDrinks(drinkFilter);
 });
 
 // Catch requests regarding the next id within the snack database

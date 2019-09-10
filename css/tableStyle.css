@@ -206,13 +206,16 @@ select {
     font-weight: bold;
 }
 
+
 #snackDataBase tr, #drinkTable tr {
     background-color: beige;
     color:black;
     font-weight: bolder;
 }
 
-
+#snackDataBase img, #drinkTable img {
+    width: 50px;
+}
 
 
 #drinkTable tr:hover, #snackDataBase tr:hover{

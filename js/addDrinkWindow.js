@@ -1,5 +1,6 @@
 const electron = require('electron');
 const {ipcRenderer} = electron;
+const List = require("collections/list");
 
 /**
  * The number of columns that have to be specified for each drink
@@ -12,13 +13,24 @@ const DRINK_COLUMNS = 16;
  */
 const SNACK_COLUMNS = 8;
 
+/**
+ * The Map that is meant to store the current filter for drink selection.
+ * @type {any[]}
+ */
+let drinkFilter = new Map();
+/**
+ * The Map that is meant to store the current filter for snack selection.
+ * @type {any[]}
+ */
+let snackFilter = new Map();
+
 /* Ask the main process to send the id for the next drink that is to be added to the system. */
 ipcRenderer.send('drinks:nextID');
 ipcRenderer.send('snacks:nextID');
 
 /* Ask the main process to send the most recent data in the database to this renderer process */
-ipcRenderer.send('drinks:update');
-ipcRenderer.send('snacks:update');
+ipcRenderer.send('drinks:update', drinkFilter);
+ipcRenderer.send('snacks:update', snackFilter);
 
 const drinkForm = document.querySelector('#drinkForm');
 drinkForm.addEventListener('submit', submitDrinkForm);
@@ -55,8 +67,11 @@ function submitDrinkForm(e){
         }
     }
 
-     //send newly added drink to main.js
-    ipcRenderer.send('drink:add', columnInfo);
+    /*
+    Send newly added drink to main.js
+    Do also append the drinkFilter, so that after the adding process
+     */
+    ipcRenderer.send('drink:add', columnInfo, drinkFilter);
     ipcRenderer.send('drinks:nextID');
 }
 
@@ -82,7 +97,7 @@ function submitSnackForm (e){
     }
 
     //send newly added snack to main.js, i.e. the main process of the electron application
-    ipcRenderer.send('snack:add', columnInfo);
+    ipcRenderer.send('snack:add', columnInfo, snackFilter);
     ipcRenderer.send('snacks:nextID');
 }
 
@@ -776,7 +791,7 @@ document.getElementById("bottleDeposit").addEventListener("change", function(e) 
 document.getElementById("newInternalPrice").addEventListener("input", function(e) {
     e.preventDefault();
     internalProfitUpdate();
-})
+});
 
 /**
  * Calculate the price for one portion of the drink.
@@ -815,4 +830,9 @@ document.getElementById("portionSize").addEventListener("change", function(e) {
     e.preventDefault();
     calulatePortionPrice();
     bottlePriceUpdate();
+});
+
+document.getElementById("drinkFilterID").addEventListener("input", function(e) {
+    e.preventDefault();
+
 });
