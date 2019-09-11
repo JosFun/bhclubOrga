@@ -123,7 +123,7 @@ const mainMenuTemplate = [
 
 
 /**
- * Perform a filtered sql select on the table "rohgetraenke" and send the data to the addDrinkWindow, w
+ * Perform a filtered sql select on the table "rohgetraenke" and send the data to the addDrinkWindow
  * @param filter
  */
 function selectDrinks ( filter ) {

@@ -213,6 +213,11 @@ select {
     font-weight: bolder;
 }
 
+#snackDataBase span, #drinkTable span {
+    color: white;
+    text-align: center;
+}
+
 #snackDataBase img, #drinkTable img {
     width: 50px;
 }
