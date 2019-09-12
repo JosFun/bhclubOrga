@@ -14,12 +14,12 @@ const DRINK_COLUMNS = 16;
 const SNACK_COLUMNS = 8;
 
 /**
- * The Map that is meant to store the current filter for drink selection.
+ * The Lists that are meant to store the current filter for drink selection.
  * @type {any[]}
  */
 let drinkFilter = new Map();
 /**
- * The Map that is meant to store the current filter for snack selection.
+ * The Lists that are meant to store the current filter for snack selection.
  * @type {any[]}
  */
 let snackFilter = new Map();
@@ -833,202 +833,78 @@ document.getElementById("portionSize").addEventListener("change", function(e) {
 });
 
 /**
- * Once the head of the drink table is altered, the text in it works as a filter, that will be applied to the next sql
- * select that is being performed on the table.
+ * This Array stores the column names of the drink table
+ * @type {string[]}
  */
-let idField = document.getElementById("drinkFilterID");
-idField.addEventListener("input", function(e) {
-    e.preventDefault();
-    /* If the user has typed in an empty filter: Reset the text of the field to ID again*/
-    if ( idField.textContent.length === 0) {
-        idField.textContent = "ID";
-    }
-    else {
-        drinkFilter.set( "drink_id", parseInt(idField.textContent));
-    }
-});
-
-let nameField = document.getElementById("drinkFilterName");
-nameField.addEventListener("input", function(e) {
-    e.preventDefault();
-
-    if ( nameField.textContent.length === 0) {
-        nameField.textContent = "Getränk";
-    }
-    else {
-        drinkFilter.set("drink_name", nameField.textContent );
-    }
-});
-
-let sizeField = document.getElementById("drinkFilterSize")
-sizeField.addEventListener("input", function(e) {
-    e.preventDefault();
-
-    if ( sizeField.textContent.length === 0 ) {
-        sizeField.textContent = "Größe";
-    }
-    else {
-        drinkFilter.set("bottle_size", parseFloat(sizeField.textContent));
-    }
-});
-
-let costField = document.getElementById("drinkFilterCost");
-costField.addEventListener("input", function(e) {
-   e.preventDefault();
-
-   if ( costField.textContent.length === 0 ) {
-       costField.textContent = "Netto Einkauf Flasche";
-   }
-   else {
-       drinkFilter.set("bottle_cost", parseFloat(costField.textContent));
-   }
-});
-
-let sellerField = document.getElementById("drinkFilterSeller");
-sellerField.addEventListener("input", function(e) {
-   e.preventDefault();
-
-   if ( sellerField.textContent.length === 0 ) {
-       sellerField.textContent = "Händler";
-   }
-   else {
-       drinkFilter.set("trader",sellerField.textContent);
-   }
-});
-
-let internField = document.getElementById("drinkFilterIntern");
-internField.addEventListener("input", function(e) {
-   e.preventDefault();
-
-   if (internField.textContent.length === 0 ) {
-       internField.textContent = "Flasche Intern";
-   }
-   else {
-       drinkFilter.set("internal_price", parseFloat(internField.textContent));
-   }
-});
-
-let portionField = document.getElementById("drinkFilterPortion");
-portionField.addEventListener("input", function(e) {
-   e.preventDefault();
-
-   if (portionField.textContent.length === 0 ) {
-      portionField.textContent = "Portion";
-   }
-   else {
-       drinkFilter.set("portion_size", parseFloat(portionField.textContent));
-   }
-});
-
-let additionField = document.getElementById("drinkFilterAddition");
-additionField.addEventListener("input", function(e) {
-   e.preventDefault();
-
-   if ( additionField.textContent.length === 0 ) {
-       additionField.textContent = "Aufschlag Liter";
-   }
-   else {
-       drinkFilter.set("external_addition", parseFloat(additionField.textContent));
-   }
-});
-
-let portionPriceField = document.getElementById("drinkFilterAddition");
-portionPriceField.addEventListener("input", function(e) {
-    e.preventDefault();
-
-    if ( portionPriceField.textContent.length === 0 ) {
-        portionPriceField.textContent = "Portion Extern";
-    }
-    else {
-        drinkFilter.set("portion_price", parseFloat(portionPriceField.textContent));
-    }
-});
-
-let bottlePriceField = document.getElementById("drinkFilterBottlePrice");
-bottlePriceField.addEventListener("input", function(e) {
-    e.preventDefault();
-
-    if ( bottlePriceField.textContent.length === 0 ) {
-        bottlePriceField.textContent = "Flasche Extern";
-    }
-    else {
-        drinkFilter.set("external_price_bottle", parseFloat(bottlePriceField.textContent));
-    }
-});
-
-let weightField = document.getElementById("drinkFilterWeight");
-weightField.addEventListener("input", function(e) {
-   e.preventDefault();
-
-   if ( weightField.textContent.length === 0 ) {
-       weightField.textContent = "Gewicht Flasche";
-   }
-   else {
-       drinkFilter.set("weight_bottle", parseFloat(weightField.textContent));
-   }
-});
-
-let depositField = document.getElementById("drinkFilterWeight");
-depositField.addEventListener("input", function(e) {
-    e.preventDefault();
-
-    if ( depositField.textContent.length === 0 ) {
-        depositField.textContent = "Pfand Flasche";
-    }
-    else {
-        drinkFilter.set("deposit_bottle", parseFloat(depositField.textContent));
-    }
-});
+let drinkFilterNames = [ "drink_id", "drink_name", "bottle_size", "bottle_cost", "trader", "internal_price", "portion_size",
+"external_addition", "portion_price", "external_price_bottle", "weight_bottle", "deposit_bottle"];
 
 /**
- * Once the head of the snack table is altered, the text in it works as a filter, that will be applied to the next sql
- * select, that is performed on the table
+ * This Array stores the default texts in the header of the drinkTable
+ * @type {string[]}
  */
+let drinkHeaderTexts = ["ID", "Getränk", "Größe", "Netto Einkauf Flasche", "Händler", "Flasche Intern", "Flasche Intern",
+"Portion", "Aufschlag Liter", "Portion Extern", "Flasche Extern", "Gewicht Flasche", "Pfand Flasche"];
 
-let snackIDField = document.getElementById("snackFilterID");
-snackIDField.addEventListener("input", function(e) {
-    e.preventDefault();
+let drinkFilterFields = document.getElementsByClassName("drinkFilterFields");
+    for ( let i = 0; i < drinkFilterFields.length; ++i ) {
 
-    if ( snackIDField.textContent.length === 0 ) {
-        snackIDField.textContent = "ID";
+        drinkFilterFields.item(i).addEventListener("focusin", function(e) {
+            /* If the filterField still has its default value: Set it to be empty, so that it can be edited. */
+            if ( drinkFilterFields.item(i).textContent.localeCompare(drinkFilterNames[i].textContent) ) {
+                /* Get access to the default header texts of the drinkTable */
+                drinkFilterFields.item(i).textContent = "";
+            }
+        });
+
+        drinkFilterFields.item(i).addEventListener("focusout", function(e) {
+           if ( drinkFilterFields.item(i).textContent.length === 0 ) {
+               drinkFilterFields.item(i).textContent = drinkHeaderTexts[i];
+           }
+        });
+
+        drinkFilterFields.item(i).addEventListener("input", function(e) {
+            /* Apply the filter, if the user alters the filter field. */
+            e.preventDefault();
+            if ( drinkFilterFields.item(i).length === 0 ) {
+                drinkFilter.delete(drinkFilterNames[i]);
+            }
+            else {
+                drinkFilter.set(drinkFilterNames[i], drinkFilterFields.item(i).textContent);
+            }
+
+            ipcRenderer.send("drinks:update", drinkFilter);
+        });
     }
-    else {
-        snackIDField.set("snack_id", parseInt(snackIDField.textContent));
-    }
-});
 
-let snackNameField = document.getElementById("snackFilterName");
-snackNameField.addEventListener("input", function(e) {
-   e.preventDefault();
+/**
+ * This Array stores the names of the columns of the snackTable
+ * @type {string[]}
+ */
+let snackFilterNames = ["snack_id", "snack_name", "snack_cost", "snack_price"];
 
-   if ( snackNameField.textContent.length === 0 ) {
-       snackNameField.textContent = "Snack";
-   }
-   else {
-       snackNameField.set("snack_name", snackNameField.textContent);
-   }
-});
+/**
+ * This Array stores the default texts in the header of the snackTable
+ * @type {string[]}
+ */
+let snackHeaderTexts = ["ID", "Snack", "Einkaufspreis", "Verkaufspreis"];
 
-let snackCostField = document.getElementById("snackFilterCost");
-snackCostField.addEventListener("input", function(e) {
-    e.preventDefault();
+let snackFilterFields = document.getElementsByClassName("snackFilterFields");
+for ( let i = 0; i < snackFilterFields.length; ++i ) {
+    snackFilterFields.item(i).addEventListener("focusin", function (e) {
+        if ( snackFilterFields.item(i).textContent.localeCompare(snackHeaderTexts[i])) {
+            snackFilterFields.item(i).textContent = "";
+        }
+    });
+    snackFilterFields.item(i).addEventListener("input", function(e) {
+       if ( snackFilterFields.item(i).textContent.length === 0 ) {
+           snackFilterFields.item(i).textContent = snackHeaderTexts[i];
+           drinkFilter.delete(snackFilterNames[i])
+       }
+       else {
+           drinkFilter.set(snackFilterNames[i],snackFilterFields.item(i).textContent);
+       }
 
-    if ( snackCostField.textContent.length === 0 ) {
-        snackCostField.textContent = "Einkaufspreis";
-    }
-    else {
-        snackCostField.set("snack_cost", parseFloat(snackCostField.textContent));
-    }
-});
-
-let snackPriceField = document.getElementById("snackFilterPrice");
-snackPriceField.addEventListener("input", function(e) {
-    e.preventDefault();
-
-    if ( snackPriceField.textContent.length === 0 ) {
-        snackPriceField.textContent = "Verkaufspreis";
-    }
-    else {
-        snackPriceField.set("snack_price", parseFloat(snackPriceField.textContent));
-    }
-})
+       ipcRenderer.send("snacks:update", snackFilter);
+    });
+};

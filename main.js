@@ -1,6 +1,8 @@
 const { app, BrowserWindow, Menu, ipcMain, webContents } = require('electron');
 const url = require('url');
 const path = require('path');
+const List = require("collections/list");
+
 
 process.env.NODE_ENV = 'development';
 let sql = require('mysql');
@@ -126,15 +128,17 @@ const mainMenuTemplate = [
  * Perform a filtered sql select on the table "rohgetraenke" and send the data to the addDrinkWindow
  * @param filter
  */
-function selectDrinks ( filter ) {
+function selectDrinks ( filterKeys, filterValues ) {
     let sqlSelect = "SELECT * FROM rohgetraenke";
-
-    if ( filter.size >= 1 ) {
-        sqlSelect += "where " + filter.keys[0] + "=" + filter.get(filter.keys[0]);
+    console.log(filterKeys);
+    if ( filterKeys != null && filterKeys.length >= 1 ) {
+        console.log("hallo");
+        sqlSelect += " where " + filterKeys[0] + "=" + filterValues[0];
     }
 
-    for ( let i = 1; i < filter.size; ++i ) {
-        sqlSelect += " and " + filter.keys[i] + "=" + filter.get(filter.keys[i]);
+    for ( let i = 1; filterKeys != null && i < filterKeys.length; ++i ) {
+        console.log("dort");
+        sqlSelect += " and " + filterKeys[i] + "=" + filterValues[i];
     }
 
     sqlSelect += ";";
@@ -149,16 +153,18 @@ function selectDrinks ( filter ) {
 /**
  * Perform a sql select on the table "snacks" and send the data to the addDrinkWindow, where they are displayed.
  */
-function selectSnacks( filter ) {
+function selectSnacks( filterKeys, filterValues ) {
     /* Get all the data of all the snacks inside the snack database */
     let sqlSelect = "SELECT * FROM snacks";
 
-    if ( filter.size >= 1 ) {
-        sqlSelect += "where " + filter.keys[0] + "=" + filter.get(filter.keys[0]);
+    if ( filterKeys != null && filterKeys.length >= 1 ) {
+        console.log("Hello");
+        sqlSelect += " where " + filterKeys[0] + "=" + filterValues[0];
     }
 
-    for ( let i = 1; i < filter.size; ++i ) {
-        sqlSelect += " and " + filter.keys[i] + "=" + filter.get(filter.keys[i]);
+    for ( let i = 1; filterKeys != null && i < filterKeys.length; ++i ) {
+        console.log("there");
+        sqlSelect += " and " + filterKeys[i] + "=" + filterValues[i];
     }
 
     sqlSelect +=";";
@@ -224,7 +230,7 @@ function deleteSnack ( id ) {
 }
 
 // Catch newly added drinks
-ipcMain.on('drink:add', function(e,drinkInfo, selectFilter){
+ipcMain.on('drink:add', function(e,drinkInfo, selectFilterKeys, selectFilterValues){
     /*TODO: Perform the sql insertion*/
     let sqlInsert = "INSERT INTO rohgetraenke (drink_name, bottle_size, bottle_cost, trader, " +
         "internal_price, portion_size, external_addition, portion_price, external_price_bottle, " +
@@ -233,11 +239,11 @@ ipcMain.on('drink:add', function(e,drinkInfo, selectFilter){
         if ( err ) throw err;
         console.log("New drink inserted!");
     } )
-    selectDrinks(selectFilter);
+    selectDrinks(selectFilterKeys, selectFilterValues);
 });
 
 // Catch newly added snacks
-ipcMain.on('snack:add', function(e,snackInfo, selectFilter){
+ipcMain.on('snack:add', function(e,snackInfo, selectFilterKeys, selectFilterValues){
     e.preventDefault();
    /* Perform the sql insertion of the data belonging to the newly added snack */
    let sqlInsert = "INSERT INTO snacks (snack_name, snack_cost, snack_price, skListe, " +
@@ -245,22 +251,22 @@ ipcMain.on('snack:add', function(e,snackInfo, selectFilter){
    dbConnection.query(sqlInsert, [snackInfo], function( err, result ){
        if ( err ) throw err;
        console.log("New snack inserted!");
-   })
+   });
 
     /* Get all the data of all the snacks inside the snack database */
-    selectSnacks(selectFilter);
+    selectSnacks(selectFilterKeys, selectFilterValues);
 });
 
 // Catch update requests regarding the visualization of the snack database
-ipcMain.on('snacks:update', function(e, snackFilter){
+ipcMain.on('snacks:update', function(e, snackFilterKeys, snackFilterValues){
     e.preventDefault();
-    selectSnacks(snackFilter);
+    selectSnacks(snackFilterKeys, snackFilterValues);
 });
 
 // Catch update requests regarding the visualization of the drink database
-ipcMain.on('drinks:update', function(e, drinkFilter){
+ipcMain.on('drinks:update', function(e, drinkFilterKeys, drinkFilterValues){
     e.preventDefault();
-    selectDrinks(drinkFilter);
+    selectDrinks(drinkFilterKeys, drinkFilterValues);
 });
 
 // Catch requests regarding the next id within the snack database
