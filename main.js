@@ -2,6 +2,7 @@ const { app, BrowserWindow, Menu, ipcMain, webContents } = require('electron');
 const url = require('url');
 const path = require('path');
 const List = require("collections/list");
+const jsonMapModule = require("./js/jsonMap");
 
 
 process.env.NODE_ENV = 'development';
@@ -128,21 +129,37 @@ const mainMenuTemplate = [
  * Perform a filtered sql select on the table "rohgetraenke" and send the data to the addDrinkWindow
  * @param filter
  */
-function selectDrinks ( filterKeys, filterValues ) {
+function selectDrinks ( drinkFilter ) {
     let sqlSelect = "SELECT * FROM rohgetraenke";
-    console.log(filterKeys);
-    if ( filterKeys != null && filterKeys.length >= 1 ) {
-        console.log("hallo");
-        sqlSelect += " where " + filterKeys[0] + "=" + filterValues[0];
+    let valueArray = new Array();
+
+    console.log("hello");
+
+    /* Get access to all the values in the map by putting the values of the iterator into a corresponding array. */
+    let iterator = drinkFilter.keys();
+    let key, i = 0;
+    console.log("what up");
+    while ( (key = iterator.next().value) !== undefined) {
+        console.log(key);
+        valueArray[i++] = drinkFilter.get(key);
     }
 
-    for ( let i = 1; filterKeys != null && i < filterKeys.length; ++i ) {
-        console.log("dort");
-        sqlSelect += " and " + filterKeys[i] + "=" + filterValues[i];
+    iterator = drinkFilter.keys();
+    if ( drinkFilter != null && drinkFilter.size >= 1 ) {
+        let key = iterator.next().value;
+        sqlSelect += " where " + key + "= ?";
+    }
+    console.log(sqlSelect);
+
+    for ( let i = 1; drinkFilter != null && i < drinkFilter.size; ++i ) {
+        let key = iterator.next().value;
+        sqlSelect += " and " + key + " = ?";
     }
 
     sqlSelect += ";";
-    dbConnection.query(sqlSelect, function( err, result, fields ) {
+
+    console.log(sqlSelect);
+    dbConnection.query(sqlSelect, [valueArray],function( err, result, fields ) {
         if ( err ) throw err;
         /* Send the data of all drinks to all the renderer processes. */
         win.webContents.send("drinks:data", result);
@@ -153,23 +170,33 @@ function selectDrinks ( filterKeys, filterValues ) {
 /**
  * Perform a sql select on the table "snacks" and send the data to the addDrinkWindow, where they are displayed.
  */
-function selectSnacks( filterKeys, filterValues ) {
+function selectSnacks( snackFilter ) {
     /* Get all the data of all the snacks inside the snack database */
     let sqlSelect = "SELECT * FROM snacks";
+    let valueArray = new Array();
 
-    if ( filterKeys != null && filterKeys.length >= 1 ) {
-        console.log("Hello");
-        sqlSelect += " where " + filterKeys[0] + "=" + filterValues[0];
+    /* Get access to all the values in the map by putting the values of the iterator into a corresponding array. */
+    let iterator = snackFilter.keys();
+    let key, i = 0;
+    while ( (key = iterator.next().value) !== undefined) {
+        valueArray[i++] = snackFilter.get(key);
     }
 
-    for ( let i = 1; filterKeys != null && i < filterKeys.length; ++i ) {
-        console.log("there");
-        sqlSelect += " and " + filterKeys[i] + "=" + filterValues[i];
+    iterator = snackFilter.keys();
+
+    if ( snackFilter != null && snackFilter.size >= 1 ) {
+        let key = iterator.next().value;
+        sqlSelect += " where " + key + "= ?";
+    }
+
+    for ( let i = 1; snackFilter != null && i < snackFilter.size; ++i ) {
+        let key = iterator.next().value;
+        sqlSelect += " and " + key + "= ?";
     }
 
     sqlSelect +=";";
 
-    dbConnection.query(sqlSelect, function ( err, result, fields ) {
+    dbConnection.query(sqlSelect, [valueArray],function ( err, result, fields ) {
         if ( err ) throw err;
         /* Send the data of all the snacks to all the renderer processes. */
         win.webContents.send("snacks:data", result);
@@ -230,7 +257,7 @@ function deleteSnack ( id ) {
 }
 
 // Catch newly added drinks
-ipcMain.on('drink:add', function(e,drinkInfo, selectFilterKeys, selectFilterValues){
+ipcMain.on('drink:add', function(e,drinkInfo, drinkFilter){
     /*TODO: Perform the sql insertion*/
     let sqlInsert = "INSERT INTO rohgetraenke (drink_name, bottle_size, bottle_cost, trader, " +
         "internal_price, portion_size, external_addition, portion_price, external_price_bottle, " +
@@ -239,11 +266,11 @@ ipcMain.on('drink:add', function(e,drinkInfo, selectFilterKeys, selectFilterValu
         if ( err ) throw err;
         console.log("New drink inserted!");
     } )
-    selectDrinks(selectFilterKeys, selectFilterValues);
+    selectDrinks(jsonMapModule.jsonToStrMap(drinkFilter));
 });
 
 // Catch newly added snacks
-ipcMain.on('snack:add', function(e,snackInfo, selectFilterKeys, selectFilterValues){
+ipcMain.on('snack:add', function(e,snackInfo, snackFilter){
     e.preventDefault();
    /* Perform the sql insertion of the data belonging to the newly added snack */
    let sqlInsert = "INSERT INTO snacks (snack_name, snack_cost, snack_price, skListe, " +
@@ -254,21 +281,19 @@ ipcMain.on('snack:add', function(e,snackInfo, selectFilterKeys, selectFilterValu
    });
 
     /* Get all the data of all the snacks inside the snack database */
-    selectSnacks(selectFilterKeys, selectFilterValues);
+    selectSnacks(jsonMapModule.jsonToStrMap(snackFilter));
 });
 
 // Catch update requests regarding the visualization of the snack database
 ipcMain.on('snacks:update', function(e, snackFilter){
     e.preventDefault();
-    selectSnacks(snackFilter);
+    selectSnacks(jsonMapModule.jsonToStrMap(snackFilter));
 });
 
 // Catch update requests regarding the visualization of the drink database
 ipcMain.on('drinks:update', function(e, drinkFilter){
     e.preventDefault();
-    console.log("Hallo");
-    console.log(drinkFilter);
-    selectDrinks(drinkFilter);
+    selectDrinks(jsonMapModule.jsonToStrMap(drinkFilter));
 });
 
 // Catch requests regarding the next id within the snack database

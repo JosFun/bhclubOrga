@@ -1,7 +1,7 @@
 const electron = require('electron');
 const {ipcRenderer} = electron;
 const List = require("collections/list");
-
+const jsonMapModule = require("../js/jsonMap");
 /**
  * The number of columns that have to be specified for each drink
  * @type {number}
@@ -29,8 +29,8 @@ ipcRenderer.send('drinks:nextID');
 ipcRenderer.send('snacks:nextID');
 
 /* Ask the main process to send the most recent data in the database to this renderer process */
-ipcRenderer.send('drinks:update', drinkFilter);
-ipcRenderer.send('snacks:update', snackFilter);
+ipcRenderer.send('drinks:update', jsonMapModule.strMapToJson(drinkFilter));
+ipcRenderer.send('snacks:update', jsonMapModule.strMapToJson(snackFilter));
 
 const drinkForm = document.querySelector('#drinkForm');
 drinkForm.addEventListener('submit', submitDrinkForm);
@@ -862,19 +862,28 @@ let drinkFilterFields = document.getElementsByClassName("drinkFilterFields");
         drinkFilterFields.item(i).addEventListener("focusout", function(e) {
            if ( drinkFilterFields.item(i).textContent.length !== 0 && drinkFilterFields.item(i).textContent.localeCompare(drinkHeaderTexts[i] !== 0 )) {
                drinkFilter.set(drinkFilterNames[i], drinkFilterFields.item(i).textContent);
+               ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter));
                console.log(drinkFilter);
            }
            else if ( drinkFilterFields.item(i).textContent.length === 0 ) {
                drinkFilterFields.item(i).textContent = drinkHeaderTexts[i];
-               drinkFilter.delete(drinkFilterNames[i]);
+               if ( drinkFilter.has(drinkFilterNames[i])) {
+                   drinkFilter.delete(drinkFilterNames[i]);
+                   ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter));
+
+               }
                console.log("Filter reset");
            }
            else if ( drinkFilterFields.item(i).textContent.localeCompare(drinkHeaderTexts[i]) === 0) {
-               drinkFilter.delete(drinkFilterNames[i]);
+               if ( drinkFilter.has(drinkFilterNames[i])) {
+                   drinkFilter.delete(drinkFilterNames[i]);
+                   ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter));
+
+               }
                console.log("Filter reset");
            }
 
-           ipcRenderer.send("drinks:update", drinkFilter);
+
         });
     }
 
@@ -903,19 +912,27 @@ for ( let i = 0; i < snackFilterFields.length; ++i ) {
     snackFilterFields.item(i).addEventListener("focusout", function(e) {
         if ( snackFilterFields.item(i).textContent.length !== 0 && snackFilterFields.item(i).textContent.localeCompare(snackHeaderTexts[i]) !== 0 ){
             snackFilter.set(snackFilterNames[i],snackFilterFields.item(i).textContent);
+            ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter));
             console.log(snackFilter);
         }
         else if ( snackFilterFields.item(i).textContent.length === 0 ) {
             snackFilterFields.item(i).textContent = snackHeaderTexts[i];
-            snackFilter.delete(snackFilterNames[i]);
+            if ( snackFilter.has(snackFilterNames[i])) {
+                snackFilter.delete(snackFilterNames[i]);
+                ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter));
+            }
+
             console.log("Filter reset");
         }
         else if (snackFilterFields.item(i).textContent.localeCompare(snackHeaderTexts[i]) === 0){
-            snackFilter.delete(snackFilterNames[i]);
+            if ( snackFilter.has(snackFilterNames[i])) {
+                snackFilter.delete(snackFilterNames[i]);
+                ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter));
+            }
             console.log("Filter reset");
         }
 
-        ipcRenderer.send("snacks:update", snackFilter);
+
 
     });
 

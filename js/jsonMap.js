@@ -3,7 +3,7 @@
  * @param strMap
  * @returns {any}
  */
-function strMapToObj(strMap) {
+exports.strMapToObj = function(strMap) {
     let obj = Object.create( null );
     for ( let [k,v] of strMap ) {
         obj[k] = v;
@@ -17,7 +17,7 @@ function strMapToObj(strMap) {
  * @param obj
  * @returns {Map<String, String>}
  */
-function objToStrMap(obj) {
+exports.objToStrMap = function(obj) {
     let strMap = new Map();
     for ( let k of Object.keys(obj)) {
         strMap.set(k, obj[k]);
@@ -31,8 +31,8 @@ function objToStrMap(obj) {
  * @param strMap
  * @returns {string}
  */
-function strMapToJson(strMap) {
-    return JSON.stringify(strMapToObj(strMap));
+exports.strMapToJson = function(strMap) {
+    return JSON.stringify(exports.strMapToObj(strMap));
 }
 
 /**
@@ -40,6 +40,6 @@ function strMapToJson(strMap) {
  * @param jsonStr
  * @returns {Map<String, String>}
  */
-function jsonToStrMap(jsonStr) {
-    return objToStrMap(JSON.parse(jsonStr));
+exports.jsonToStrMap = function(jsonStr) {
+    return exports.objToStrMap(JSON.parse(jsonStr));
 }
