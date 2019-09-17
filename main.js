@@ -259,7 +259,7 @@ function deleteSnack ( id ) {
 // Catch newly added drinks
 ipcMain.on('drink:add', function(e,drinkInfo, drinkFilter){
     /*TODO: Perform the sql insertion*/
-    let sqlInsert = "INSERT INTO rohgetraenke (drink_name, bottle_size, bottle_cost, trader, " +
+    let sqlInsert = "INSERT INTO rohgetraenke (drink_name, drink_type, bottle_size, bottle_cost, trader, " +
         "internal_price, portion_size, external_addition, portion_price, external_price_bottle, " +
         "weight_bottle, deposit_bottle, skListe, avVerkauf, bierKarte, barKarte, abrechnung) VALUES (?)";
     dbConnection.query(sqlInsert, [drinkInfo], function ( err, result ) {

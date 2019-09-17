@@ -1,6 +1,7 @@
 create table rohgetraenke(
     drink_id int not null auto_increment,
     drink_name varchar(100) not null,
+    drink_type varchar(100) not null,
     bottle_size float not null,
     bottle_cost float not null,
     trader varchar(100) not null,

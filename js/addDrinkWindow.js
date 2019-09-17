@@ -6,7 +6,7 @@ const jsonMapModule = require("../js/jsonMap");
  * The number of columns that have to be specified for each drink
  * @type {number}
  * */
-const DRINK_COLUMNS = 16;
+const DRINK_COLUMNS = 17;
 /**
  * The number of columns that have to be specified for each snack
  * @type {number}
@@ -43,21 +43,22 @@ function submitDrinkForm(e){
     const columnInfo = new Array ( DRINK_COLUMNS );
     {
         columnInfo[0] = document.querySelector('#drink').value;
-        columnInfo[1] = document.querySelector('#bottleSize').value;
-        columnInfo[2] = document.querySelector('#costBottle').value;
-        columnInfo[3] = document.querySelector('#agentName').value;
-        columnInfo[4] = parseFloat(document.getElementById('newInternalPrice').textContent);
-        columnInfo[5] = document.querySelector('#portionSize').value;
-        columnInfo[6] = document.querySelector('#externalAddition').value;
-        columnInfo[7] = parseFloat(document.getElementById('calcPricePortion').textContent);
-        columnInfo[8] = parseFloat(document.getElementById('externalBottle').textContent);
-        columnInfo[9] = document.querySelector('#bottleWeight').value;
-        columnInfo[10] = document.querySelector('#bottleDeposit').value;
-        columnInfo[11] = document.getElementById('abrechnung').checked;
-        columnInfo[12] = document.getElementById("skListe").checked;
-        columnInfo[13] = document.getElementById("avVerkauf").checked;
-        columnInfo[14] = document.getElementById("bierKarte").checked;
-        columnInfo[15] = document.getElementById("barKarte").checked;
+        columnInfo[1] = document.querySelector('#drinkType').value;
+        columnInfo[2] = document.querySelector('#bottleSize').value;
+        columnInfo[3] = document.querySelector('#costBottle').value;
+        columnInfo[4] = document.querySelector('#agentName').value;
+        columnInfo[5] = parseFloat(document.getElementById('newInternalPrice').textContent);
+        columnInfo[6] = document.querySelector('#portionSize').value;
+        columnInfo[7] = document.querySelector('#externalAddition').value;
+        columnInfo[8] = parseFloat(document.getElementById('calcPricePortion').textContent);
+        columnInfo[9] = parseFloat(document.getElementById('externalBottle').textContent);
+        columnInfo[10] = document.querySelector('#bottleWeight').value;
+        columnInfo[11] = document.querySelector('#bottleDeposit').value;
+        columnInfo[12] = document.getElementById('abrechnung').checked;
+        columnInfo[13] = document.getElementById("skListe").checked;
+        columnInfo[14] = document.getElementById("avVerkauf").checked;
+        columnInfo[15] = document.getElementById("bierKarte").checked;
+        columnInfo[16] = document.getElementById("barKarte").checked;
     }
 
     for ( let i = 0; i < DRINK_COLUMNS; ++i ) {
@@ -69,9 +70,12 @@ function submitDrinkForm(e){
 
     /*
     Send newly added drink to main.js
-    Do also append the drinkFilter, so that after the adding process
+    Do also append the drinkFilter, so that after the adding process the current filter is still active
      */
-    ipcRenderer.send('drink:add', columnInfo, drinkFilter);
+    ipcRenderer.send('drink:add', columnInfo, jsonMapModule.strMapToJson(drinkFilter));
+    /*
+    Request the next ID from the database
+     */
     ipcRenderer.send('drinks:nextID');
 }
 
@@ -97,7 +101,7 @@ function submitSnackForm (e){
     }
 
     //send newly added snack to main.js, i.e. the main process of the electron application
-    ipcRenderer.send('snack:add', columnInfo, snackFilter);
+    ipcRenderer.send('snack:add', columnInfo, jsonMapModule.strMapToJson(snackFilter));
     ipcRenderer.send('snacks:nextID');
 }
 
@@ -165,9 +169,23 @@ function updateDrinkData ( ...fields ) {
             });
             tr.appendChild(tds[1]);
 
-
-            tds[2].appendChild(document.createTextNode(fields[0][k]["bottle_size"] + "l"));
+            tds[2].appendChild(document.createTextNode(fields[0][k]["drink_type"]));
             tds[2].addEventListener('focusout', function(e) {
+               e.preventDefault();
+
+               let idString = tds[0].textContent;
+               idString = idString.slice(1, idString.length);
+               let id = parseInt( idString );
+
+               let drinkType = tds[2].textContent;
+
+               ipcRenderer.send('drinks:alter',id, "drink_type", drinkType);
+            });
+            tr.appendChild(tds[2]);
+
+
+            tds[3].appendChild(document.createTextNode(fields[0][k]["bottle_size"] + "l"));
+            tds[3].addEventListener('focusout', function(e) {
                 e.preventDefault();
 
                 /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
@@ -182,10 +200,10 @@ function updateDrinkData ( ...fields ) {
                 ipcRenderer.send('drinks:alter',id, "bottle_size", bottleSize);
 
             });
-            tr.appendChild(tds[2]);
+            tr.appendChild(tds[3]);
 
-            tds[3].appendChild(document.createTextNode(fields[0][k]["bottle_cost"] + "€"));
-            tds[3].addEventListener('input', function(e) {
+            tds[4].appendChild(document.createTextNode(fields[0][k]["bottle_cost"] + "€"));
+            tds[4].addEventListener('input', function(e) {
                 e.preventDefault();
 
                 /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
@@ -207,10 +225,10 @@ function updateDrinkData ( ...fields ) {
 
                 ipcRenderer.send('drinks:alter', id, "bottle_cost", bottleCost);
             });
-            tr.appendChild(tds[3]);
+            tr.appendChild(tds[4]);
 
-            tds[4].appendChild(document.createTextNode(fields[0][k]["trader"]));
-            tds[4].addEventListener('input', function(e) {
+            tds[5].appendChild(document.createTextNode(fields[0][k]["trader"]));
+            tds[5].addEventListener('input', function(e) {
                 e.preventDefault();
 
                 /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
@@ -222,10 +240,10 @@ function updateDrinkData ( ...fields ) {
 
                 ipcRenderer.send('drinks:alter', id, "trader", trader);
             });
-            tr.appendChild(tds[4]);
+            tr.appendChild(tds[5]);
 
-            tds[5].appendChild(document.createTextNode(fields[0][k]["internal_price"] + "€"));
-            tds[5].addEventListener('input', function(e) {
+            tds[6].appendChild(document.createTextNode(fields[0][k]["internal_price"] + "€"));
+            tds[6].addEventListener('input', function(e) {
                 e.preventDefault();
 
                 /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
@@ -245,46 +263,9 @@ function updateDrinkData ( ...fields ) {
 
                 ipcRenderer.send('drinks:alter', id, "internal_price", bottleInternal);
             });
-            tr.appendChild(tds[5]);
-
-            tds[6].appendChild(document.createTextNode(fields[0][k]["portion_size"] + "l"));
-            /* Recalculate the price for one portion and one bottle if the external addition gets changed.*/
-            tds[6].addEventListener('input', function(e) {
-                e.preventDefault();
-
-                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
-                let idString = tds[0].textContent;
-                idString = idString.slice(1,idString.length);
-                let id = parseInt ( idString );
-
-                let portion = parseFloat(tds[6].textContent);
-                let bottleCost = parseFloat(tds[3].textContent);
-                let externalAddition = parseFloat(tds[7].textContent);
-                let bottleSize = parseFloat(tds[2].textContent);
-                let portionSize = parseFloat(tds[6].textContent);
-
-                /* Apply the correct formula to calculate the price for one portion of the drink. */
-                let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
-                portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
-
-                let bottlePrice = (Math.ceil(100 * portionPrice * bottleSize / portionSize) / 100);
-
-                if ( !isNaN(externalAddition)){
-                    ipcRenderer.send("drinks:alter", id, "external_addition", externalAddition);
-                }
-
-                if ( !isNaN(portionPrice)) {
-                    tds[8].textContent = portionPrice.toString() + "€";
-                    ipcRenderer.send("drinks:alter", id, "portion_price", portionPrice);
-                }
-                if ( !isNaN(bottlePrice)) {
-                    tds[9].textContent = bottlePrice.toString() + "€";
-                    ipcRenderer.send("drinks:alter", id, "external_price_bottle", bottlePrice);
-                }
-            });
             tr.appendChild(tds[6]);
 
-            tds[7].appendChild(document.createTextNode(fields[0][k]["external_addition"] + "€"));
+            tds[7].appendChild(document.createTextNode(fields[0][k]["portion_size"] + "l"));
             /* Recalculate the price for one portion and one bottle if the external addition gets changed.*/
             tds[7].addEventListener('input', function(e) {
                 e.preventDefault();
@@ -304,11 +285,12 @@ function updateDrinkData ( ...fields ) {
                 let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
                 portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
 
+                let bottlePrice = (Math.ceil(100 * portionPrice * bottleSize / portionSize) / 100);
+
                 if ( !isNaN(externalAddition)){
                     ipcRenderer.send("drinks:alter", id, "external_addition", externalAddition);
                 }
 
-                let bottlePrice = (Math.ceil(100 * portionPrice * bottleSize / portionSize) / 100);
                 if ( !isNaN(portionPrice)) {
                     tds[8].textContent = portionPrice.toString() + "€";
                     ipcRenderer.send("drinks:alter", id, "portion_price", portionPrice);
@@ -320,17 +302,53 @@ function updateDrinkData ( ...fields ) {
             });
             tr.appendChild(tds[7]);
 
-            tds[8].appendChild(document.createTextNode(fields[0][k]["portion_price"] + "€"));
-            tds[8].contentEditable = "false";
+            tds[8].appendChild(document.createTextNode(fields[0][k]["external_addition"] + "€"));
+            /* Recalculate the price for one portion and one bottle if the external addition gets changed.*/
+            tds[8].addEventListener('input', function(e) {
+                e.preventDefault();
+
+                /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
+                let idString = tds[0].textContent;
+                idString = idString.slice(1,idString.length);
+                let id = parseInt ( idString );
+
+                let portion = parseFloat(tds[6].textContent);
+                let bottleCost = parseFloat(tds[3].textContent);
+                let externalAddition = parseFloat(tds[7].textContent);
+                let bottleSize = parseFloat(tds[2].textContent);
+                let portionSize = parseFloat(tds[6].textContent);
+
+                /* Apply the correct formula to calculate the price for one portion of the drink. */
+                let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
+                portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
+
+                if ( !isNaN(externalAddition)){
+                    ipcRenderer.send("drinks:alter", id, "external_addition", externalAddition);
+                }
+
+                let bottlePrice = (Math.ceil(100 * portionPrice * bottleSize / portionSize) / 100);
+                if ( !isNaN(portionPrice)) {
+                    tds[9].textContent = portionPrice.toString() + "€";
+                    ipcRenderer.send("drinks:alter", id, "portion_price", portionPrice);
+                }
+                if ( !isNaN(bottlePrice)) {
+                    tds[10].textContent = bottlePrice.toString() + "€";
+                    ipcRenderer.send("drinks:alter", id, "external_price_bottle", bottlePrice);
+                }
+            });
             tr.appendChild(tds[8]);
 
-            tds[9].appendChild(document.createTextNode(fields[0][k]["external_price_bottle"] + "€"));
-            /* The external price for a bottle is being calculated and therefore not editable at all.*/
+            tds[9].appendChild(document.createTextNode(fields[0][k]["portion_price"] + "€"));
             tds[9].contentEditable = "false";
             tr.appendChild(tds[9]);
 
-            tds[10].appendChild(document.createTextNode(fields[0][k]["weight_bottle"] + "g"));
-            tds[10].addEventListener('focusout', function(e) {
+            tds[10].appendChild(document.createTextNode(fields[0][k]["external_price_bottle"] + "€"));
+            /* The external price for a bottle is being calculated and therefore not editable at all.*/
+            tds[10].contentEditable = "false";
+            tr.appendChild(tds[10]);
+
+            tds[11].appendChild(document.createTextNode(fields[0][k]["weight_bottle"] + "g"));
+            tds[11].addEventListener('focusout', function(e) {
                 e.preventDefault();
 
                 /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
@@ -342,10 +360,10 @@ function updateDrinkData ( ...fields ) {
 
                 ipcRenderer.send("drinks:alter", id, "weight_bottle", weight);
             });
-            tr.appendChild(tds[10]);
+            tr.appendChild(tds[11]);
 
-            tds[11].appendChild(document.createTextNode(fields[0][k]["deposit_bottle"] + "€"));
-            tds[11].addEventListener('focusout', function(e) {
+            tds[12].appendChild(document.createTextNode(fields[0][k]["deposit_bottle"] + "€"));
+            tds[12].addEventListener('focusout', function(e) {
                 e.preventDefault();
 
                 /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
@@ -357,10 +375,10 @@ function updateDrinkData ( ...fields ) {
 
                 ipcRenderer.send("drinks:alter", id, "deposit_bottle", deposit);
             });
-            tr.appendChild(tds[11]);
+            tr.appendChild(tds[12]);
 
-            tds[12].appendChild(createCheckBox(fields[0][k]["skListe"],"drinkSKBox"));
-            tds[12].addEventListener('change', function(e) {
+            tds[13].appendChild(createCheckBox(fields[0][k]["skListe"],"drinkSKBox"));
+            tds[13].addEventListener('change', function(e) {
                 e.preventDefault();
 
                 /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
@@ -375,10 +393,10 @@ function updateDrinkData ( ...fields ) {
 
                 ipcRenderer.send("drinks:alter", id, "skListe", sk);
             });
-            tr.appendChild(tds[12]);
+            tr.appendChild(tds[13]);
 
-            tds[13].appendChild(createCheckBox(fields[0][k]["avVerkauf"],"drinkAVBox"));
-            tds[13].addEventListener('change', function(e) {
+            tds[14].appendChild(createCheckBox(fields[0][k]["avVerkauf"],"drinkAVBox"));
+            tds[14].addEventListener('change', function(e) {
                 e.preventDefault();
 
                 /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
@@ -390,10 +408,10 @@ function updateDrinkData ( ...fields ) {
 
                 ipcRenderer.send("drinks:alter", id, "avVerkauf", av);
             });
-            tr.appendChild(tds[13]);
+            tr.appendChild(tds[14]);
 
-            tds[14].appendChild(createCheckBox(fields[0][k]["bierKarte"],"drinkBierBox"));
-            tds[14].addEventListener('change', function(e) {
+            tds[15].appendChild(createCheckBox(fields[0][k]["bierKarte"],"drinkBierBox"));
+            tds[15].addEventListener('change', function(e) {
                 e.preventDefault();
 
                 /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
@@ -405,10 +423,10 @@ function updateDrinkData ( ...fields ) {
 
                 ipcRenderer.send("drinks:alter", id, "bierKarte", bier);
             });
-            tr.appendChild(tds[14]);
+            tr.appendChild(tds[15]);
 
-            tds[15].appendChild(createCheckBox(fields[0][k]["barKarte"],"drinkBarBox"));
-            tds[15].addEventListener('change', function(e) {
+            tds[16].appendChild(createCheckBox(fields[0][k]["barKarte"],"drinkBarBox"));
+            tds[16].addEventListener('change', function(e) {
                 e.preventDefault();
 
                 /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
@@ -420,10 +438,10 @@ function updateDrinkData ( ...fields ) {
 
                 ipcRenderer.send("drinks:alter", id, "barKarte", bar);
             });
-            tr.appendChild(tds[15]);
+            tr.appendChild(tds[16]);
 
-            tds[16].appendChild(createCheckBox(fields[0][k]["abrechnung"],"drinkAbrechnungBox"));
-            tds[16].addEventListener('change', function(e) {
+            tds[17].appendChild(createCheckBox(fields[0][k]["abrechnung"],"drinkAbrechnungBox"));
+            tds[17].addEventListener('change', function(e) {
                 e.preventDefault();
 
                 /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
@@ -436,7 +454,7 @@ function updateDrinkData ( ...fields ) {
                 ipcRenderer.send("drinks:alter", id, "abrechnung", abrechnung);
             });
 
-            tr.appendChild(tds[16]);
+            tr.appendChild(tds[17]);
 
             /* Create the button that is used to delete drinks in the database */
             let imageButton = document.createElement("img");
@@ -445,7 +463,7 @@ function updateDrinkData ( ...fields ) {
             imageButton.height = 35;
             imageButton.class = "imageButton";
             imageButton.cursor = "pointer";
-            tds[17].addEventListener("click", function(e) {
+            tds[18].addEventListener("click", function(e) {
                 e.preventDefault();
 
                 console.log("Hallo");
@@ -458,10 +476,10 @@ function updateDrinkData ( ...fields ) {
                 ipcRenderer.send("drink:delete", id);
             });
 
-            tds[17].appendChild(imageButton);
-            tds[17].contentEditable = 'false';
-            tds[17].style.cursor = "pointer";
-            tr.appendChild(tds[17]);
+            tds[18].appendChild(imageButton);
+            tds[18].contentEditable = 'false';
+            tds[18].style.cursor = "pointer";
+            tr.appendChild(tds[18]);
 
         }
         table.appendChild(tr);
@@ -833,17 +851,26 @@ document.getElementById("portionSize").addEventListener("change", function(e) {
 });
 
 /**
+ * Tests wheter or not the specified argument n is a float
+ * @param n
+ * @returns {boolean}
+ */
+function isFloat ( n ) {
+    return Number(n) === n && n % 1 !== 0;
+}
+
+/**
  * This Array stores the column names of the drink table
  * @type {string[]}
  */
-let drinkFilterNames = [ "drink_id", "drink_name", "bottle_size", "bottle_cost", "trader", "internal_price", "portion_size",
+let drinkFilterNames = [ "drink_id", "drink_name", "drink_type", "bottle_size", "bottle_cost", "trader", "internal_price", "portion_size",
 "external_addition", "portion_price", "external_price_bottle", "weight_bottle", "deposit_bottle"];
 
 /**
  * This Array stores the default texts in the header of the drinkTable
  * @type {string[]}
  */
-let drinkHeaderTexts = ["ID", "Getränk", "Größe", "Netto Einkauf Flasche", "Händler", "Flasche Intern", "Portion",
+let drinkHeaderTexts = ["ID", "Getränk", "Typ", "Größe", "Netto Einkauf Flasche", "Händler", "Flasche Intern", "Portion",
     "Aufschlag Liter", "Portion Extern", "Flasche Extern", "Gewicht Flasche", "Pfand Flasche"];
 
 let drinkFilterFields = document.getElementsByClassName("drinkFilterFields");
@@ -861,7 +888,13 @@ let drinkFilterFields = document.getElementsByClassName("drinkFilterFields");
 
         drinkFilterFields.item(i).addEventListener("focusout", function(e) {
            if ( drinkFilterFields.item(i).textContent.length !== 0 && drinkFilterFields.item(i).textContent.localeCompare(drinkHeaderTexts[i] !== 0 )) {
-               drinkFilter.set(drinkFilterNames[i], drinkFilterFields.item(i).textContent);
+               if ( isFloat(drinkFilterFields.item(i).textContent)){
+                    drinkFilter.set(drinkFilterNames[i], parseFloat(drinkFilterFields.item(i).textContent));
+               }
+               else {
+                   drinkFilter.set(drinkFilterNames[i], drinkFilterFields.item(i).textContent);
+
+               }
                ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter));
                console.log(drinkFilter);
            }
@@ -911,7 +944,12 @@ for ( let i = 0; i < snackFilterFields.length; ++i ) {
 
     snackFilterFields.item(i).addEventListener("focusout", function(e) {
         if ( snackFilterFields.item(i).textContent.length !== 0 && snackFilterFields.item(i).textContent.localeCompare(snackHeaderTexts[i]) !== 0 ){
-            snackFilter.set(snackFilterNames[i],snackFilterFields.item(i).textContent);
+            if ( isFloat(snackFilterFields.item(i).textContent)) {
+                snackFilter.set(snackFilterNames[i],parseFloat(snackFilterFields.item(i).textContent));
+            }
+            else {
+                snackFilter.set(snackFilterNames[i],snackFilterFields.item(i).textContent);
+            }
             ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter));
             console.log(snackFilter);
         }
@@ -931,9 +969,6 @@ for ( let i = 0; i < snackFilterFields.length; ++i ) {
             }
             console.log("Filter reset");
         }
-
-
-
     });
 
 }
