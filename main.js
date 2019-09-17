@@ -258,15 +258,17 @@ ipcMain.on('snack:add', function(e,snackInfo, selectFilterKeys, selectFilterValu
 });
 
 // Catch update requests regarding the visualization of the snack database
-ipcMain.on('snacks:update', function(e, snackFilterKeys, snackFilterValues){
+ipcMain.on('snacks:update', function(e, snackFilter){
     e.preventDefault();
-    selectSnacks(snackFilterKeys, snackFilterValues);
+    selectSnacks(snackFilter);
 });
 
 // Catch update requests regarding the visualization of the drink database
-ipcMain.on('drinks:update', function(e, drinkFilterKeys, drinkFilterValues){
+ipcMain.on('drinks:update', function(e, drinkFilter){
     e.preventDefault();
-    selectDrinks(drinkFilterKeys, drinkFilterValues);
+    console.log("Hallo");
+    console.log(drinkFilter);
+    selectDrinks(drinkFilter);
 });
 
 // Catch requests regarding the next id within the snack database

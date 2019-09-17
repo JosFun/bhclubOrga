@@ -843,37 +843,38 @@ let drinkFilterNames = [ "drink_id", "drink_name", "bottle_size", "bottle_cost",
  * This Array stores the default texts in the header of the drinkTable
  * @type {string[]}
  */
-let drinkHeaderTexts = ["ID", "Getränk", "Größe", "Netto Einkauf Flasche", "Händler", "Flasche Intern", "Flasche Intern",
-"Portion", "Aufschlag Liter", "Portion Extern", "Flasche Extern", "Gewicht Flasche", "Pfand Flasche"];
+let drinkHeaderTexts = ["ID", "Getränk", "Größe", "Netto Einkauf Flasche", "Händler", "Flasche Intern", "Portion",
+    "Aufschlag Liter", "Portion Extern", "Flasche Extern", "Gewicht Flasche", "Pfand Flasche"];
 
 let drinkFilterFields = document.getElementsByClassName("drinkFilterFields");
     for ( let i = 0; i < drinkFilterFields.length; ++i ) {
 
+        drinkFilterFields.item(i).textContent = drinkHeaderTexts[i];
+
         drinkFilterFields.item(i).addEventListener("focusin", function(e) {
             /* If the filterField still has its default value: Set it to be empty, so that it can be edited. */
-            if ( drinkFilterFields.item(i).textContent.localeCompare(drinkFilterNames[i].textContent) ) {
+            if ( drinkFilterFields.item(i).textContent.localeCompare(drinkHeaderTexts[i]) === 0 ) {
                 /* Get access to the default header texts of the drinkTable */
                 drinkFilterFields.item(i).textContent = "";
             }
         });
 
         drinkFilterFields.item(i).addEventListener("focusout", function(e) {
-           if ( drinkFilterFields.item(i).textContent.length === 0 ) {
-               drinkFilterFields.item(i).textContent = drinkHeaderTexts[i];
+           if ( drinkFilterFields.item(i).textContent.length !== 0 && drinkFilterFields.item(i).textContent.localeCompare(drinkHeaderTexts[i] !== 0 )) {
+               drinkFilter.set(drinkFilterNames[i], drinkFilterFields.item(i).textContent);
+               console.log(drinkFilter);
            }
-        });
+           else if ( drinkFilterFields.item(i).textContent.length === 0 ) {
+               drinkFilterFields.item(i).textContent = drinkHeaderTexts[i];
+               drinkFilter.delete(drinkFilterNames[i]);
+               console.log("Filter reset");
+           }
+           else if ( drinkFilterFields.item(i).textContent.localeCompare(drinkHeaderTexts[i]) === 0) {
+               drinkFilter.delete(drinkFilterNames[i]);
+               console.log("Filter reset");
+           }
 
-        drinkFilterFields.item(i).addEventListener("input", function(e) {
-            /* Apply the filter, if the user alters the filter field. */
-            e.preventDefault();
-            if ( drinkFilterFields.item(i).length === 0 ) {
-                drinkFilter.delete(drinkFilterNames[i]);
-            }
-            else {
-                drinkFilter.set(drinkFilterNames[i], drinkFilterFields.item(i).textContent);
-            }
-
-            ipcRenderer.send("drinks:update", drinkFilter);
+           ipcRenderer.send("drinks:update", drinkFilter);
         });
     }
 
@@ -891,20 +892,31 @@ let snackHeaderTexts = ["ID", "Snack", "Einkaufspreis", "Verkaufspreis"];
 
 let snackFilterFields = document.getElementsByClassName("snackFilterFields");
 for ( let i = 0; i < snackFilterFields.length; ++i ) {
+
+    snackFilterFields.item(i).textContent = snackHeaderTexts[i];
     snackFilterFields.item(i).addEventListener("focusin", function (e) {
-        if ( snackFilterFields.item(i).textContent.localeCompare(snackHeaderTexts[i])) {
+        if ( snackFilterFields.item(i).textContent.localeCompare(snackHeaderTexts[i]) === 0) {
             snackFilterFields.item(i).textContent = "";
         }
     });
-    snackFilterFields.item(i).addEventListener("input", function(e) {
-       if ( snackFilterFields.item(i).textContent.length === 0 ) {
-           snackFilterFields.item(i).textContent = snackHeaderTexts[i];
-           drinkFilter.delete(snackFilterNames[i])
-       }
-       else {
-           drinkFilter.set(snackFilterNames[i],snackFilterFields.item(i).textContent);
-       }
 
-       ipcRenderer.send("snacks:update", snackFilter);
+    snackFilterFields.item(i).addEventListener("focusout", function(e) {
+        if ( snackFilterFields.item(i).textContent.length !== 0 && snackFilterFields.item(i).textContent.localeCompare(snackHeaderTexts[i]) !== 0 ){
+            snackFilter.set(snackFilterNames[i],snackFilterFields.item(i).textContent);
+            console.log(snackFilter);
+        }
+        else if ( snackFilterFields.item(i).textContent.length === 0 ) {
+            snackFilterFields.item(i).textContent = snackHeaderTexts[i];
+            snackFilter.delete(snackFilterNames[i]);
+            console.log("Filter reset");
+        }
+        else if (snackFilterFields.item(i).textContent.localeCompare(snackHeaderTexts[i]) === 0){
+            snackFilter.delete(snackFilterNames[i]);
+            console.log("Filter reset");
+        }
+
+        ipcRenderer.send("snacks:update", snackFilter);
+
     });
-};
+
+}
