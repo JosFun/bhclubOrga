@@ -129,7 +129,7 @@ const mainMenuTemplate = [
  * Perform a filtered sql select on the table "rohgetraenke" and send the data to the addDrinkWindow
  * @param filter
  */
-function selectDrinks ( drinkFilter ) {
+function selectDrinks ( drinkFilter, drinkOrder ) {
     let sqlSelect = "SELECT * FROM rohgetraenke";
     let valueArray = new Array();
 
@@ -156,6 +156,11 @@ function selectDrinks ( drinkFilter ) {
         sqlSelect += " and " + key + " = ?";
     }
 
+    if ( drinkOrder.size === 1 ) {
+        let column = drinkOrder.keys().next.value;
+        sqlSelect += " order by " + column + " " + drinkOrder.get(column);
+    }
+
     sqlSelect += ";";
 
     console.log(sqlSelect);
@@ -170,7 +175,7 @@ function selectDrinks ( drinkFilter ) {
 /**
  * Perform a sql select on the table "snacks" and send the data to the addDrinkWindow, where they are displayed.
  */
-function selectSnacks( snackFilter ) {
+function selectSnacks( snackFilter, snackOrder ) {
     /* Get all the data of all the snacks inside the snack database */
     let sqlSelect = "SELECT * FROM snacks";
     let valueArray = new Array();
@@ -194,6 +199,12 @@ function selectSnacks( snackFilter ) {
         sqlSelect += " and " + key + "= ?";
     }
 
+    /* If the user has specified an order for the elements in the snackDataBase */
+    if ( snackOrder.size === 1 ) {
+        let column = snackOrder.keys().next().value;
+
+        sqlSelect += " order by " + column + " " + snackOrder.get(column);
+    }
     sqlSelect +=";";
 
     dbConnection.query(sqlSelect, [valueArray],function ( err, result, fields ) {
@@ -257,7 +268,7 @@ function deleteSnack ( id ) {
 }
 
 // Catch newly added drinks
-ipcMain.on('drink:add', function(e,drinkInfo, drinkFilter){
+ipcMain.on('drink:add', function(e,drinkInfo, drinkFilter, drinkOrder){
     /*TODO: Perform the sql insertion*/
     let sqlInsert = "INSERT INTO rohgetraenke (drink_name, drink_type, bottle_size, bottle_cost, trader, " +
         "internal_price, portion_size, external_addition, portion_price, external_price_bottle, " +
@@ -266,11 +277,11 @@ ipcMain.on('drink:add', function(e,drinkInfo, drinkFilter){
         if ( err ) throw err;
         console.log("New drink inserted!");
     } )
-    selectDrinks(jsonMapModule.jsonToStrMap(drinkFilter));
+    selectDrinks(jsonMapModule.jsonToStrMap(drinkFilter), jsonMapModule.jsonToStrMap(drinkOrder));
 });
 
 // Catch newly added snacks
-ipcMain.on('snack:add', function(e,snackInfo, snackFilter){
+ipcMain.on('snack:add', function(e,snackInfo, snackFilter, snackOrder){
     e.preventDefault();
    /* Perform the sql insertion of the data belonging to the newly added snack */
    let sqlInsert = "INSERT INTO snacks (snack_name, snack_cost, snack_price, skListe, " +
@@ -281,19 +292,19 @@ ipcMain.on('snack:add', function(e,snackInfo, snackFilter){
    });
 
     /* Get all the data of all the snacks inside the snack database */
-    selectSnacks(jsonMapModule.jsonToStrMap(snackFilter));
+    selectSnacks(jsonMapModule.jsonToStrMap(snackFilter), jsonMapModule.jsonToStrMap(snackOrder));
 });
 
 // Catch update requests regarding the visualization of the snack database
-ipcMain.on('snacks:update', function(e, snackFilter){
+ipcMain.on('snacks:update', function(e, snackFilter, snackOrder){
     e.preventDefault();
-    selectSnacks(jsonMapModule.jsonToStrMap(snackFilter));
+    selectSnacks(jsonMapModule.jsonToStrMap(snackFilter), jsonMapModule.jsonToStrMap(snackOrder));
 });
 
 // Catch update requests regarding the visualization of the drink database
-ipcMain.on('drinks:update', function(e, drinkFilter){
+ipcMain.on('drinks:update', function(e, drinkFilter, drinkOrder){
     e.preventDefault();
-    selectDrinks(jsonMapModule.jsonToStrMap(drinkFilter));
+    selectDrinks(jsonMapModule.jsonToStrMap(drinkFilter), jsonMapModule.jsonToStrMap(drinkOrder));
 });
 
 // Catch requests regarding the next id within the snack database
@@ -332,17 +343,17 @@ ipcMain.on('drinks:alter', function(e, id, column, value) {
 });
 
 // Catch requests regarding the deletion of a snack with a certain id in the database
-ipcMain.on('snack:delete', function(e,id) {
+ipcMain.on('snack:delete', function(e,id,snackFilter) {
     e.preventDefault();
     deleteSnack(id);
-    selectSnacks();
+    selectSnacks(jsonMapModule.jsonToStrMap(snackFilter));
 });
 
 // Catch requests regarding the deletion of a drink with a certain id in the database
-ipcMain.on('drink:delete', function(e,id) {
+ipcMain.on('drink:delete', function(e,id,drinkFilter) {
     e.preventDefault();
     deleteDrink(id);
-    selectDrinks();
+    selectDrinks(jsonMapModule.jsonToStrMap(drinkFilter));
 });
 
 if (process.env.NODE_ENV !== 'production'){

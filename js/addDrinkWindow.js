@@ -14,29 +14,65 @@ const DRINK_COLUMNS = 17;
 const SNACK_COLUMNS = 8;
 
 /**
- * The Lists that are meant to store the current filter for drink selection.
- * @type {any[]}
+ * The Maps that are meant to store the current filter for drink selection.
+ * @type {Map<string, string>}
  */
 let drinkFilter = new Map();
 /**
- * The Lists that are meant to store the current filter for snack selection.
- * @type {any[]}
+ * The Maps that are meant to store the current filter for snack selection.
+ * @type {Map<string, string>}
  */
 let snackFilter = new Map();
+/**
+ * The Map that is meant to store the current order for drink selection.
+ * @type {Map<string, string>}
+ */
+let drinkOrder = new Map();
+
+/**
+ * The Map that is meant to store the current order for snack selection.
+ * @type {Map<string, string>}
+ */
+let snackOrder = new Map();
 
 /* Ask the main process to send the id for the next drink that is to be added to the system. */
 ipcRenderer.send('drinks:nextID');
 ipcRenderer.send('snacks:nextID');
 
 /* Ask the main process to send the most recent data in the database to this renderer process */
-ipcRenderer.send('drinks:update', jsonMapModule.strMapToJson(drinkFilter));
-ipcRenderer.send('snacks:update', jsonMapModule.strMapToJson(snackFilter));
+ipcRenderer.send('drinks:update', jsonMapModule.strMapToJson(drinkFilter), jsonMapModule.strMapToJson(drinkOrder));
+ipcRenderer.send('snacks:update', jsonMapModule.strMapToJson(snackFilter), jsonMapModule.strMapToJson(snackOrder));
 
 const drinkForm = document.querySelector('#drinkForm');
 drinkForm.addEventListener('submit', submitDrinkForm);
 
 const snackForm = document.querySelector('#snackForm');
 snackForm.addEventListener('submit', submitSnackForm);
+
+/**
+ * Clear the fields that are used to input new drinks into the database
+ */
+function clearDrinkFields ( ) {
+    let inputFields = document.getElementsByClassName("drinkInput");
+    for ( let i = 0; i < inputFields.length; ++i ) {
+        inputFields.item(i).innerHTML = ""
+    }
+
+    let checkFields = document.getElementsByClassName("drinkCheckInput");
+    for ( let i = 0; i < checkFields.length; ++i ) {
+        checkFields.item(i).setAttribute("checked", "true");
+    }
+}
+
+/**
+ * Clear the fields that are used to input new snack into the database
+ */
+function clearSnackFields ( ) {
+    let snackFields = document.getElementsByClassName("snackInput");
+    for ( let i = 0; i < snackFields.length; ++i ) {
+        snackFields.item(i).textContent = "";
+    }
+}
 
 function submitDrinkForm(e){
     e.preventDefault();
@@ -60,6 +96,7 @@ function submitDrinkForm(e){
         columnInfo[15] = document.getElementById("bierKarte").checked;
         columnInfo[16] = document.getElementById("barKarte").checked;
     }
+
 
     for ( let i = 0; i < DRINK_COLUMNS; ++i ) {
         if ( columnInfo [ i ] == null ) {
@@ -473,7 +510,7 @@ function updateDrinkData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                ipcRenderer.send("drink:delete", id);
+                ipcRenderer.send("drink:delete", id, jsonMapModule.strMapToJson(drinkFilter));
             });
 
             tds[18].appendChild(imageButton);
@@ -660,7 +697,7 @@ function updateSnackData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                ipcRenderer.send("snack:delete", id);
+                ipcRenderer.send("snack:delete", id, jsonMapModule.strMapToJson(snackFilter));
             });
 
             tds[9].appendChild(imageButton);
@@ -878,6 +915,29 @@ let drinkFilterFields = document.getElementsByClassName("drinkFilterFields");
 
         drinkFilterFields.item(i).textContent = drinkHeaderTexts[i];
 
+        drinkFilterFields.item(i).addEventListener("click", function(e) {
+            if ( !drinkOrder.has(drinkFilterNames[i])) {
+                drinkOrder.clear();
+                drinkOrder.set(drinkFilterNames[i], "asc");
+
+                console.log(snackOrder);
+
+                ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter),
+                    jsonMapModule.strMapToJson(snackOrder));
+            }
+            else if ( drinkOrder.get(drinkFilterNames[i]).localeCompare("asc") === 0 ) {
+                drinkOrder.set(drinkFilterNames[i], "desc");
+                ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter),
+                    jsonMapModule.strMapToJson(snackOrder));
+            }
+            else {
+                drinkOrder.clear();
+                ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter),
+                    jsonMapModule.strMapToJson(snackOrder));
+            }
+
+        });
+
         drinkFilterFields.item(i).addEventListener("focusin", function(e) {
             /* If the filterField still has its default value: Set it to be empty, so that it can be edited. */
             if ( drinkFilterFields.item(i).textContent.localeCompare(drinkHeaderTexts[i]) === 0 ) {
@@ -895,14 +955,16 @@ let drinkFilterFields = document.getElementsByClassName("drinkFilterFields");
                    drinkFilter.set(drinkFilterNames[i], drinkFilterFields.item(i).textContent);
 
                }
-               ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter));
+               ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter),
+                   jsonMapModule.strMapToJson(snackOrder));
                console.log(drinkFilter);
            }
            else if ( drinkFilterFields.item(i).textContent.length === 0 ) {
                drinkFilterFields.item(i).textContent = drinkHeaderTexts[i];
                if ( drinkFilter.has(drinkFilterNames[i])) {
                    drinkFilter.delete(drinkFilterNames[i]);
-                   ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter));
+                   ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter),
+                       jsonMapModule.strMapToJson(snackOrder));
 
                }
                console.log("Filter reset");
@@ -910,7 +972,8 @@ let drinkFilterFields = document.getElementsByClassName("drinkFilterFields");
            else if ( drinkFilterFields.item(i).textContent.localeCompare(drinkHeaderTexts[i]) === 0) {
                if ( drinkFilter.has(drinkFilterNames[i])) {
                    drinkFilter.delete(drinkFilterNames[i]);
-                   ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter));
+                   ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter),
+                       jsonMapModule.strMapToJson(snackOrder));
 
                }
                console.log("Filter reset");
@@ -919,6 +982,32 @@ let drinkFilterFields = document.getElementsByClassName("drinkFilterFields");
 
         });
     }
+
+document.addEventListener("keypress", function onEvent(event) {
+
+    console.log("hallo");
+    for ( let i = 0; i < drinkFilterFields.length; ++i) {
+        if (event.key === "ArrowDown" && document.activeElement === drinkFilterFields.item(i).firstChild) {
+            if (drinkOrder.has(drinkFilterNames[i])) {
+                drinkOrder.clear();
+            } else {
+                drinkOrder.clear();
+                drinkOrder.set(drinkFilterNames[i], "asc");
+            }
+            ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter),
+                jsonMapModule.strMapToJson(snackOrder));
+        } else if (event.key === "ArrowUp" && document.activeElement === drinkFilterFields.item(i).firstChild) {
+            if (drinkOrder.has(drinkFilterNames[i])) {
+                drinkOrder.clear();
+            } else {
+                drinkOrder.clear();
+                drinkOrder.set(drinkFilterNames[i], "desc");
+            }
+            ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter),
+                jsonMapModule.strMapToJson(snackOrder));
+        }
+    }
+});
 
 /**
  * This Array stores the names of the columns of the snackTable
@@ -936,6 +1025,23 @@ let snackFilterFields = document.getElementsByClassName("snackFilterFields");
 for ( let i = 0; i < snackFilterFields.length; ++i ) {
 
     snackFilterFields.item(i).textContent = snackHeaderTexts[i];
+
+    snackFilterFields.item(i).addEventListener("dblclick", function(e) {
+        if ( !snackOrder.has(snackFilterNames[i])) {
+            snackOrder.clear();
+            snackOrder.set(snackFilterNames[i], "asc");
+            ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter), jsonMapModule.strMapToJson(snackOrder));
+        }
+        else if ( snackOrder.get(snackFilterNames[i]).localeCompare("asc") === 0 ) {
+            snackOrder.set(snackFilterNames[i], "desc");
+            ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter), jsonMapModule.strMapToJson(snackOrder));
+        }
+        else {
+            snackOrder.clear();
+            ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter), jsonMapModule.strMapToJson(snackOrder));
+        }
+    });
+
     snackFilterFields.item(i).addEventListener("focusin", function (e) {
         if ( snackFilterFields.item(i).textContent.localeCompare(snackHeaderTexts[i]) === 0) {
             snackFilterFields.item(i).textContent = "";
@@ -950,14 +1056,14 @@ for ( let i = 0; i < snackFilterFields.length; ++i ) {
             else {
                 snackFilter.set(snackFilterNames[i],snackFilterFields.item(i).textContent);
             }
-            ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter));
+            ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter), jsonMapModule.strMapToJson(snackOrder));
             console.log(snackFilter);
         }
         else if ( snackFilterFields.item(i).textContent.length === 0 ) {
             snackFilterFields.item(i).textContent = snackHeaderTexts[i];
             if ( snackFilter.has(snackFilterNames[i])) {
                 snackFilter.delete(snackFilterNames[i]);
-                ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter));
+                ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter), jsonMapModule.strMapToJson(snackOrder));
             }
 
             console.log("Filter reset");
@@ -965,7 +1071,7 @@ for ( let i = 0; i < snackFilterFields.length; ++i ) {
         else if (snackFilterFields.item(i).textContent.localeCompare(snackHeaderTexts[i]) === 0){
             if ( snackFilter.has(snackFilterNames[i])) {
                 snackFilter.delete(snackFilterNames[i]);
-                ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter));
+                ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter), jsonMapModule.strMapToJson(snackOrder));
             }
             console.log("Filter reset");
         }

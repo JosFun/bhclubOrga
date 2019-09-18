@@ -70,37 +70,42 @@
                 </tr>
                 <tr>
                     <td>
-                        <input type="text" id="drink">
+                        <input type="text" id="drink" class="drinkInput">
                     </td>
                     <td>
-                       <input type="number" step="0.001" min="0.001" id="bottleSize">
+                       <input type="number" step="0.001" min="0.001" id="bottleSize"  class="drinkInput">
                         <span style="margin-left:3px;">l</span>
-                        <select name="type" size="1" id="drinkType">
-                            <option>Schnaps</option>
+                        <select name="type" size="1" id="drinkType"  class="drinkInput">
+                            <option>Barschnaps</option>
+                            <option>Schnaps-eiskalt</option>
+                            <option>Likör-gekühlt</option>
+                            <option>Wein/Sekt</option>
+                            <option>Bier</option>
                             <option>AFG</option>
+                            <option>Saft</option>
                         </select>
                     </td>
 
                     <td>
-                        <input type="number" step="0.01" min="0.01" id="costBottle">
+                        <input type="number" step="0.01" min="0.01" id="costBottle" class="drinkInput">
                         <span style="margin-left:1px;">€</span>
-                        <select name="agent" size="1" id="agentName">
+                        <select name="agent" size="1" id="agentName" class="drinkInput">
                             <option>W</option>
                             <option>M</option>
                             <option>J</option>
                         </select>
                     </td>
                     <td>
-                        <span style="alignment: center" id="costLitre"></span>
+                        <span style="alignment: center" id="costLitre" class="drinkInput"></span>
                     </td>
                     <td>
-                        <span style="margin-left:3px;" id="internalPrice"></span>
+                        <span style="margin-left:3px;" id="internalPrice" class="drinkInput"></span>
                         <span style="margin-left:0px; visibility: hidden" id="internalEuro">€</span>
-                        <span style="margin-left:3px;" contenteditable="true" id="newInternalPrice"></span>
+                        <span style="margin-left:3px;" contenteditable="true" id="newInternalPrice" class="drinkInput"></span>
                         <span style="margin-left:0px; visibility: hidden" id="newInternalEuro" >€</span>
                     </td>
                     <td>
-                        <span style="alignment: center" id="addition"></span>
+                        <span style="alignment: center" id="addition" class="drinkInput"></span>
                         <span style="margin-left:0px; visibility: hidden;" id="internalAdditionEuro">€</span>
                     </td>
                 </tr>
@@ -126,27 +131,27 @@
                 </tr>
                 <tr>
                     <td>
-                       <input type="number" step="0.01" min="0.01" id="portionSize">
+                       <input type="number" step="0.01" min="0.01" id="portionSize" class="drinkInput">
                         <span style="margin-left:2px;">l</span>
                     </td>
                     <td>
-                        <input type="number" step="0.01" min = "0" id="externalAddition">
+                        <input type="number" step="0.01" min = "0" id="externalAddition" class="drinkInput">
                         <span style="margin-left:2px; visibility:visible" id="externalAdditionEuro">€</span>
                     </td>
                     <td>
-                        <span style="alignment: center;", id="calcPricePortion"></span>
+                        <span style="alignment: center;", id="calcPricePortion" class="drinkInput"></span>
                         <span style="margin-left:1px; visibility:hidden" id="calcPricePortionEuro">€</span>
                     </td>
                     <td>
-                        <span style="alignment: center;" id="externalBottle"></span>
+                        <span style="alignment: center;" id="externalBottle" class="drinkInput"></span>
                         <span style="margin-left:1px; visibility:hidden" id="externalBottleEuro">€</span>
                     </td>
                     <td>
-                        <input type="number" step="1" min="1" id = "bottleWeight">
+                        <input type="number" step="1" min="1" id = "bottleWeight" class="drinkInput">
                         <span style="margin-left:2px;">g</span>
                     </td>
                     <td>
-                        <input type="number" step="0.01" min="0.01" id="bottleDeposit">
+                        <input type="number" step="0.01" min="0.00" id="bottleDeposit" class="drinkInput">
                         <span style="margin-left:2px;">€</span>
                     </td>
                 </tr>
@@ -172,19 +177,19 @@
                 </tr>
                 <tr>
                     <td>
-                        <input type="checkbox" id="abrechnung">
+                        <input type="checkbox" id="abrechnung" class="drinkCheckInput">
                     </td>
                     <td>
-                        <input type="checkbox" id="skListe">
+                        <input type="checkbox" id="skListe" class="drinkCheckInput">
                     </td>
                     <td>
-                        <input type="checkbox" id="avVerkauf">
+                        <input type="checkbox" id="avVerkauf" class="drinkCheckInput">
                     </td>
                     <td>
-                        <input type="checkbox" id="bierKarte">
+                        <input type="checkbox" id="bierKarte" class="drinkCheckInput">
                     </td>
                     <td>
-                        <input type="checkbox" id="barKarte">
+                        <input type="checkbox" id="barKarte" class="drinkCheckInput">
                     </td>
                     <td>
                         <span style="alignment:center;" id="nextDrinkID"></span>
@@ -232,30 +237,30 @@
                         <input type="text" id="snackName">
                     </td>
                     <td>
-                        <input type="number" step="0.01" min="0.01" id="snackPrice">
+                        <input type="number" step="0.01" min="0.01" id="snackPrice" class="snackInput">
                         <span style="margin-left:2px;">€</span>
                     </td>
                     <td>
-                        <input type="number" step="0.01" min="0.01" id="snackSellPrice">
+                        <input type="number" step="0.01" min="0.01" id="snackSellPrice" class="snackInput">
                         <span style="margin-left:2px;">€</span>
                     </td>
                     <td>
-                        <input type="checkbox" id="snack_sk">
+                        <input type="checkbox" id="snack_sk" class="snackCheckInput">
                     </td>
                     <td>
-                        <input type="checkbox" id="snack_av">
+                        <input type="checkbox" id="snack_av" class="snackCheckInput">
                     </td>
                     <td>
-                        <input type="checkbox" id="snack_bier">
+                        <input type="checkbox" id="snack_bier" class="snackCheckInput">
                     </td>
                     <td>
-                        <input type="checkbox" id="snack_bar">
+                        <input type="checkbox" id="snack_bar" class="snackCheckInput">
                     </td>
                     <td>
-                        <input type="checkbox" id="snack_abrechnung">
+                        <input type="checkbox" id="snack_abrechnung" class="snackCheckInput">
                     </td>
                     <td>
-                        <span style="alignment: center" id="nextSnackID"></span>;
+                        <span style="alignment: center" id="nextSnackID" class="snackCheckInput"></span>;
                     </td>
                 </tr>
             </table>
@@ -278,7 +283,7 @@
                     </td>
                     <td>
                         <span id="drinkFilterType" class="drinkFilterFields"
-                              contenteditable="true" style="alignment: center"
+                              contenteditable="true" style="alignment: center"></span>
                     </td>
                     <td>
                         <span id="drinkFilterSize" class="drinkFilterFields"
