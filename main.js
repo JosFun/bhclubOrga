@@ -133,7 +133,7 @@ function selectDrinks ( drinkFilter, drinkOrder ) {
     let sqlSelect = "SELECT * FROM rohgetraenke";
     let valueArray = new Array();
 
-    console.log("hello");
+    console.log( drinkOrder );
 
     /* Get access to all the values in the map by putting the values of the iterator into a corresponding array. */
     let iterator = drinkFilter.keys();
@@ -157,7 +157,7 @@ function selectDrinks ( drinkFilter, drinkOrder ) {
     }
 
     if ( drinkOrder.size === 1 ) {
-        let column = drinkOrder.keys().next.value;
+        let column = drinkOrder.keys().next().value;
         sqlSelect += " order by " + column + " " + drinkOrder.get(column);
     }
 

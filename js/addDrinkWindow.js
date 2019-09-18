@@ -983,32 +983,6 @@ let drinkFilterFields = document.getElementsByClassName("drinkFilterFields");
         });
     }
 
-document.addEventListener("keypress", function onEvent(event) {
-
-    console.log("hallo");
-    for ( let i = 0; i < drinkFilterFields.length; ++i) {
-        if (event.key === "ArrowDown" && document.activeElement === drinkFilterFields.item(i).firstChild) {
-            if (drinkOrder.has(drinkFilterNames[i])) {
-                drinkOrder.clear();
-            } else {
-                drinkOrder.clear();
-                drinkOrder.set(drinkFilterNames[i], "asc");
-            }
-            ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter),
-                jsonMapModule.strMapToJson(snackOrder));
-        } else if (event.key === "ArrowUp" && document.activeElement === drinkFilterFields.item(i).firstChild) {
-            if (drinkOrder.has(drinkFilterNames[i])) {
-                drinkOrder.clear();
-            } else {
-                drinkOrder.clear();
-                drinkOrder.set(drinkFilterNames[i], "desc");
-            }
-            ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter),
-                jsonMapModule.strMapToJson(snackOrder));
-        }
-    }
-});
-
 /**
  * This Array stores the names of the columns of the snackTable
  * @type {string[]}
@@ -1076,5 +1050,110 @@ for ( let i = 0; i < snackFilterFields.length; ++i ) {
             console.log("Filter reset");
         }
     });
+}
 
+let sortButtons = document.getElementsByClassName("sortFields");
+let buttonStates = new Array(sortButtons.length);
+
+for ( let i = 0; i < sortButtons.length; ++i ) {
+    buttonStates[i] = 0;
+
+    sortButtons.item(i).addEventListener("click", function(e) {
+        console.log(sortButtons.item(i).src);
+        if ( buttonStates[i] === 0) {
+            buttonStates[i] = 1;
+            sortButtons.item(i).src ="../pics/sort_up.svg";
+            resetSortButtons(i);
+
+            drinkOrder.clear();
+            drinkOrder.set(drinkFilterNames[i], "asc");
+
+            console.log(drinkOrder);
+            ipcRenderer.send("drinks:update",
+                jsonMapModule.strMapToJson(drinkFilter), jsonMapModule.strMapToJson(drinkOrder));
+
+        }
+        else if ( buttonStates[i] === 1) {
+            buttonStates[i] = 2;
+            sortButtons.item(i).src = "../pics/sort_down.svg";
+            resetSortButtons(i);
+
+            drinkOrder.clear();
+            drinkOrder.set(drinkFilterNames[i], "desc");
+            ipcRenderer.send("drinks:update",
+                jsonMapModule.strMapToJson(drinkFilter), jsonMapModule.strMapToJson(drinkOrder));
+        }
+        else if ( buttonStates[i] === 2) {
+            buttonStates[i] = 0;
+            sortButtons.item(i).src = "../pics/no_sort.svg";
+            resetSortButtons(i);
+
+            drinkOrder.clear();
+            ipcRenderer.send("drinks:update",
+                jsonMapModule.strMapToJson(drinkFilter), jsonMapModule.strMapToJson(drinkOrder));
+        }
+    });
+}
+
+/**
+ * Reset the state of all the existing sortButtons, except for the passed index
+ * @param exceptFor The index that does not need to be reset
+ */
+function resetSortButtons(exceptFor) {
+    for ( let j = 0; j < sortButtons.length; ++j ) {
+        if ( j !== exceptFor ) {
+            buttonStates[j] = 0;
+            sortButtons.item(j).src = "../pics/no_sort.svg";
+        }
+    }
+}
+
+let snackSortButtons = document.getElementsByClassName("snackSortFields");
+let snackButtonStates = new Array(snackSortButtons.length);
+
+for ( let i = 0; i < snackSortButtons.length; ++i ) {
+    snackButtonStates[i] = 0;
+
+    snackSortButtons.item(i).addEventListener("click", function(e) {
+        console.log(snackSortButtons.item(i).src);
+        if ( snackButtonStates[i] === 0) {
+            snackButtonStates[i] = 1;
+            snackSortButtons.item(i).src ="../pics/sort_up.svg";
+            resetSnackSortButtons(i);
+
+            snackOrder.clear();
+            snackOrder.set(snackFilterNames[i], "asc");
+            ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter), jsonMapModule.strMapToJson(snackOrder));
+        }
+        else if ( snackButtonStates[i] === 1) {
+            snackButtonStates[i] = 2;
+            snackSortButtons.item(i).src = "../pics/sort_down.svg";
+            resetSnackSortButtons(i);
+
+            snackOrder.clear();
+            snackOrder.set(snackFilterNames[i], "desc");
+            ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter), jsonMapModule.strMapToJson(snackOrder));
+        }
+        else if ( snackButtonStates[i] === 2) {
+            snackButtonStates[i] = 0;
+            snackSortButtons.item(i).src = "../pics/no_sort.svg";
+            resetSnackSortButtons(i);
+
+            snackOrder.clear();
+            ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter), jsonMapModule.strMapToJson(snackOrder));
+        }
+    });
+}
+
+/**
+ * Reset the state of all the existing sortButtons, except for the passed index
+ * @param exceptFor The index that does not need to be reset
+ */
+function resetSnackSortButtons(exceptFor) {
+    for ( let j = 0; j < snackSortButtons.length; ++j ) {
+        if ( j !== exceptFor ) {
+            snackButtonStates[j] = 0;
+            snackSortButtons.item(j).src = "../pics/no_sort.svg";
+        }
+    }
 }

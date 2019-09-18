@@ -152,6 +152,16 @@ select {
     background-color: #3C6F80;
 }
 
+.sortFields {
+    cursor: pointer;
+    width: 100%;
+}
+
+.snackSortFields {
+    cursor: pointer;
+    width: 100%;
+}
+
 #addDrink td, #addDrink th, #snackTable td, #snackTable th {
     border: 1px solid #ddd;
     padding: 8px;
