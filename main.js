@@ -91,8 +91,17 @@ function windowExtend (){
 const mainMenuTemplate = [
     {
         label: 'Print',
+        accelerator: process.platform == 'darwin' ? 'Command + P':'Ctrl + P',
         click() {
-            win.webContents.printToPDF({}, function (error, data) {
+            win.webContents.printToPDF(
+                {
+                    marginsType: 0,
+                    pageSize: "A4",
+                    printBackground: true,
+                    printSelectionOnly: true,
+                    landscape: false
+                },
+                function (error, data) {
                if ( error ) throw error;
                fs.writeFile(path.join(__dirname, 'print.pdf'), data, function(e) {
                    if ( e ) throw e;
