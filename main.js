@@ -72,28 +72,6 @@ function createWindow () {
 
 }
 
-// Handle createAddWindow
-function createAddDrinkWindow ( ) {
-    windowShrink();
-
-    addWin = new BrowserWindow( {
-        title:"Add a new Database Entry",
-        webPreferences: {
-            nodeIntegration: true
-        }
-
-    });
-
-    addWin.maximize();
-
-    addWin.loadURL(url.format({
-        pathname: path.join(__dirname, 'html/addDrinkWindow.html'),
-        protocol:'file',
-        slashes: true
-    }));
-
-}
-
 /**
  * Minimize the main window
  */
@@ -110,12 +88,6 @@ function windowExtend (){
 
 // Create a new main menu template
 const mainMenuTemplate = [
-    {
-        label: 'File',
-        click(){
-            createAddDrinkWindow();
-        }
-    },
     {
         label: 'Quit',
         click(){
