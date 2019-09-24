@@ -135,7 +135,7 @@ span {
 }
 
 table {
-    box-shadow: 0 0 10px 0 blacK;
+    box-shadow: 0 0 10px 0 black;
 }
 
 select {
@@ -167,8 +167,12 @@ td {
     cursor: pointer;
     width: 100%;
 }
+.skListeCategory {
+    background-color: lightgray;
+    font-style: italic;
+}
 
-#addDrink td, #addDrink th, #snackTable td, #snackTable th {
+#addDrink td, #addDrink th, #snackTable td, #snackTable th{
     border: 1px solid #ddd;
     padding: 8px;
     text-align: center;
@@ -198,7 +202,7 @@ td {
     width: 100%;
 }
 
-#drinkTable, #snackDataBase {
+#drinkTable, #snackDataBase, #skListe {
     font-weight: bold;
     border-collapse: collapse;
     padding-top: 12px;
@@ -209,20 +213,20 @@ td {
     width: 75%;
 }
 
-#drinkTable td, #addDrink td, #snackTable td, #snackDataBase td {
+#drinkTable td, #addDrink td, #snackTable td, #snackDataBase td, #skListe td {
     border: 1px solid #ddd;
     padding: 8px;
 }
 
 
-#snackDataBase tr:first-child, #drinkTable tr:first-child {
+#snackDataBase tr:first-child, #drinkTable tr:first-child, #skListe tr:first-child {
     background-color: #3C6F80;
     color: white;
     font-weight: bold;
 }
 
 
-#snackDataBase tr, #drinkTable tr {
+#snackDataBase tr, #drinkTable tr, #skListe tr {
     background-color: beige;
     color:black;
     font-weight: bolder;
@@ -238,7 +242,7 @@ td {
 }
 
 
-#drinkTable tr:hover, #snackDataBase tr:hover{
+#drinkTable tr:hover, #snackDataBase tr:hover, #skListe tr:hover{
     background-color: #ddd;
 }
 

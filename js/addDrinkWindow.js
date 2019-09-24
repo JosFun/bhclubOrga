@@ -221,7 +221,7 @@ function updateDrinkData ( ...fields ) {
             tr.appendChild(tds[2]);
 
 
-            tds[3].appendChild(document.createTextNode(fields[0][k]["bottle_size"] + "l"));
+            tds[3].appendChild(document.createTextNode(fields[0][k]["bottle_size"].toFixed(2) + "l"));
             tds[3].addEventListener('focusout', function(e) {
                 e.preventDefault();
 
@@ -239,7 +239,7 @@ function updateDrinkData ( ...fields ) {
             });
             tr.appendChild(tds[3]);
 
-            tds[4].appendChild(document.createTextNode(fields[0][k]["bottle_cost"] + "€"));
+            tds[4].appendChild(document.createTextNode(fields[0][k]["bottle_cost"].toFixed(2) + "€"));
             tds[4].addEventListener('input', function(e) {
                 e.preventDefault();
 
@@ -279,7 +279,7 @@ function updateDrinkData ( ...fields ) {
             });
             tr.appendChild(tds[5]);
 
-            tds[6].appendChild(document.createTextNode(fields[0][k]["internal_price"] + "€"));
+            tds[6].appendChild(document.createTextNode(fields[0][k]["internal_price"].toFixed(2) + "€"));
             tds[6].addEventListener('input', function(e) {
                 e.preventDefault();
 
@@ -302,7 +302,7 @@ function updateDrinkData ( ...fields ) {
             });
             tr.appendChild(tds[6]);
 
-            tds[7].appendChild(document.createTextNode(fields[0][k]["portion_size"] + "l"));
+            tds[7].appendChild(document.createTextNode(fields[0][k]["portion_size"].toFixed(2) + "l"));
             /* Recalculate the price for one portion and one bottle if the external addition gets changed.*/
             tds[7].addEventListener('input', function(e) {
                 e.preventDefault();
@@ -339,7 +339,7 @@ function updateDrinkData ( ...fields ) {
             });
             tr.appendChild(tds[7]);
 
-            tds[8].appendChild(document.createTextNode(fields[0][k]["external_addition"] + "€"));
+            tds[8].appendChild(document.createTextNode(fields[0][k]["external_addition"].toFixed(2) + "€"));
             /* Recalculate the price for one portion and one bottle if the external addition gets changed.*/
             tds[8].addEventListener('input', function(e) {
                 e.preventDefault();
@@ -375,11 +375,11 @@ function updateDrinkData ( ...fields ) {
             });
             tr.appendChild(tds[8]);
 
-            tds[9].appendChild(document.createTextNode(fields[0][k]["portion_price"] + "€"));
+            tds[9].appendChild(document.createTextNode(fields[0][k]["portion_price"].toFixed(2) + "€"));
             tds[9].contentEditable = "false";
             tr.appendChild(tds[9]);
 
-            tds[10].appendChild(document.createTextNode(fields[0][k]["external_price_bottle"] + "€"));
+            tds[10].appendChild(document.createTextNode(fields[0][k]["external_price_bottle"].toFixed(2) + "€"));
             /* The external price for a bottle is being calculated and therefore not editable at all.*/
             tds[10].contentEditable = "false";
             tr.appendChild(tds[10]);
@@ -399,7 +399,7 @@ function updateDrinkData ( ...fields ) {
             });
             tr.appendChild(tds[11]);
 
-            tds[12].appendChild(document.createTextNode(fields[0][k]["deposit_bottle"] + "€"));
+            tds[12].appendChild(document.createTextNode(fields[0][k]["deposit_bottle"].toFixed(2) + "€"));
             tds[12].addEventListener('focusout', function(e) {
                 e.preventDefault();
 
@@ -570,7 +570,7 @@ function updateSnackData ( ...fields ) {
 
             });
 
-            tds[2].appendChild(document.createTextNode(fields[0][k]["snack_cost"] + "€"));
+            tds[2].appendChild(document.createTextNode(fields[0][k]["snack_cost"].toFixed(2) + "€"));
             tr.appendChild(tds[2]);
             tds[2].addEventListener('focusout', function(e) {
                 e.preventDefault();
@@ -585,7 +585,7 @@ function updateSnackData ( ...fields ) {
                 ipcRenderer.send("snacks:alter", id, "snack_cost", snackCost );
             });
 
-            tds[3].appendChild(document.createTextNode(fields[0][k]["snack_price"] + "€"));
+            tds[3].appendChild(document.createTextNode(fields[0][k]["snack_price"].toFixed(2) + "€"));
             tr.appendChild(tds[3]);
             tds[3].addEventListener('focusout', function(e) {
                 e.preventDefault();
