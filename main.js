@@ -3,6 +3,7 @@ const url = require('url');
 const path = require('path');
 const List = require("collections/list");
 const jsonMapModule = require("./js/jsonMap");
+const fs = require("fs");
 
 
 process.env.NODE_ENV = 'development';
@@ -88,6 +89,18 @@ function windowExtend (){
 
 // Create a new main menu template
 const mainMenuTemplate = [
+    {
+        label: 'Print',
+        click() {
+            win.webContents.printToPDF({}, function (error, data) {
+               if ( error ) throw error;
+               fs.writeFile(path.join(__dirname, 'print.pdf'), data, function(e) {
+                   if ( e ) throw e;
+                   console.log("Written to PDF successfully");
+               })
+            });
+        }
+    },
     {
         label: 'Quit',
         click(){
