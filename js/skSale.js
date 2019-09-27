@@ -124,7 +124,8 @@ function addItems( mode, ...data ) {
         }
         else if ( mode === MODE.SNACKS ) {
             tds[0].textContent = data[0][i]["snack_name"];
-            tds[1].textContent = data[0][i]["snack_price"];
+            tds[1].textContent = "1 Packung";
+            tds[2].textContent = data[0][i]["snack_price"].toFixed(2) + "€";
         }
 
 
