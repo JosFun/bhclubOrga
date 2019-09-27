@@ -167,7 +167,7 @@ td {
     cursor: pointer;
     width: 100%;
 }
-.skListeCategory, .avListeCategory {
+.skListeCategory, .avInnenListeCategory, .avAußenListeCategory {
     background-color: lightgray;
     font-style: italic;
 }

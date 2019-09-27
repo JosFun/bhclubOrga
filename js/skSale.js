@@ -136,23 +136,6 @@ function addItems( mode, ...data ) {
     }
 }
 
-function addSnacks(...snackData) {
-    const table = document.getElementsById('avAußen');
-    const startRow = document.createElement('tr');
-
-    for ( let k = 0; k < COL_COUNT; ++k ) {
-
-    }
-}
-
-/**
- * Add the passed snackData to the SK-Liste
- * @param snackData
- */
-function addSnacks(...snackData) {
-
-}
-
 ipcRenderer.on("drinks:data", function(e, drinkData) {
     addItems(MODE.DRIKNKS, drinkData);
 });
