@@ -49,10 +49,22 @@ let categoryIndex = 0;
 const drinkFilter = new Map ();
 
 /**
+ * The filter map, that is about to be passed on to the main process of the app
+ * @type {Map<string, string>}
+ */
+const snackFilter = new Map();
+
+/**
  * The name of the type column of the rohgetraenke-table
  * @type {string}
  */
 const typeColumnName = "drink_type";
+
+/**
+ * The name of the column indicating whether or not a specific drink is to be sold in the AV-Verkauf
+ * @type {string}
+ */
+const avColumnName = "avVerkauf";
 
 /**
  * The order map, that is about to be passed on to the main process of the app, so that the items are being put out
@@ -79,6 +91,9 @@ const snackOrderColumn = "snack_name";
 drinkOrder.set(drinkOrderColumn,"asc");
 snackOrder.set(snackOrderColumn, "asc");
 
+drinkFilter.set(avColumnName, 1);
+snackFilter.set(avColumnName, 1);
+
 /* Iterate through all the drinkCategories that are supposed to be printed out on the outer side of the TED and send
 corresponding update requests to the sql database in the backend.
  */
@@ -90,7 +105,7 @@ for ( let i = 0; i < drinkOuterCategories.length; ++i ) {
     drinkFilter.delete(typeColumnName);
 }
 
-ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(new Map()), jsonMapModule.strMapToJson(snackOrder));
+ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter), jsonMapModule.strMapToJson(snackOrder));
 
 /* Iterate through all the drinkCategories that are supposed to be printed out on the inner side of the TED and send
 * update requests to the sql database in the backend.

@@ -202,7 +202,7 @@ td {
     width: 100%;
 }
 
-#drinkTable, #snackDataBase, #skListe, #avAußen, #avInnen {
+#drinkTable, #snackDataBase{
     font-weight: bold;
     border-collapse: collapse;
     padding-top: 12px;
@@ -213,9 +213,26 @@ td {
     width: 75%;
 }
 
+#skListe, #avAußen, #avInnen {
+    font-weight: bold;
+    border-collapse: collapse;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align:center;
+    background-color: #3C6F80;
+    color: white;
+    width: 95%;
+}
+
 #drinkTable td, #addDrink td, #snackTable td, #snackDataBase td, #skListe td, #avAußen td, #avInnen td {
     border: 1px solid #ddd;
     padding: 8px;
+}
+
+#skListe td, #avAußen td, #avInnen td {
+    border: 1px solid #ddd;
+    padding: 4px;
+    font-size: 10px;
 }
 
 

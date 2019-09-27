@@ -128,6 +128,7 @@ function selectDrinks ( drinkFilter, drinkOrder ) {
     let valueArray = new Array();
 
     console.log( drinkOrder );
+    console.log(drinkFilter);
 
     /* Get access to all the values in the map by putting the values of the iterator into a corresponding array. */
     let iterator = drinkFilter.keys();
@@ -136,6 +137,7 @@ function selectDrinks ( drinkFilter, drinkOrder ) {
     while ( (key = iterator.next().value) !== undefined) {
         console.log(key);
         valueArray[i++] = drinkFilter.get(key);
+        console.log(valueArray[i - 1]);
     }
 
     iterator = drinkFilter.keys();
@@ -157,8 +159,10 @@ function selectDrinks ( drinkFilter, drinkOrder ) {
 
     sqlSelect += ";";
 
+    console.log ( valueArray );
+
     console.log(sqlSelect);
-    dbConnection.query(sqlSelect, [valueArray],function( err, result, fields ) {
+    dbConnection.query(sqlSelect, valueArray,function( err, result, fields ) {
         if ( err ) throw err;
         /* Send the data of all drinks to all the renderer processes. */
         win.webContents.send("drinks:data", result);
@@ -201,7 +205,7 @@ function selectSnacks( snackFilter, snackOrder ) {
     }
     sqlSelect +=";";
 
-    dbConnection.query(sqlSelect, [valueArray],function ( err, result, fields ) {
+    dbConnection.query(sqlSelect, valueArray,function ( err, result, fields ) {
         if ( err ) throw err;
         /* Send the data of all the snacks to all the renderer processes. */
         win.webContents.send("snacks:data", result);

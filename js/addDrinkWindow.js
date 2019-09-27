@@ -99,8 +99,8 @@ function submitDrinkForm(e){
 
 
     for ( let i = 0; i < DRINK_COLUMNS; ++i ) {
-        if ( columnInfo [ i ] == null ) {
-            console.log("You have to specify values for all the necessary fields if you want to input a new drink.");
+        if ( columnInfo [ i ] == null || columnInfo[i].length === 0 ) {
+            alert ("You have to specify values for all the necessary fields if you want to input a new drink.");
             return;
         }
     }
@@ -109,7 +109,7 @@ function submitDrinkForm(e){
     Send newly added drink to main.js
     Do also append the drinkFilter, so that after the adding process the current filter is still active
      */
-    ipcRenderer.send('drink:add', columnInfo, jsonMapModule.strMapToJson(drinkFilter));
+    ipcRenderer.send('drink:add', columnInfo, jsonMapModule.strMapToJson(drinkFilter), jsonMapModule.strMapToJson(drinkOrder));
     /*
     Request the next ID from the database
      */
@@ -131,14 +131,14 @@ function submitSnackForm (e){
     }
 
     for ( let i = 0; i < SNACK_COLUMNS; ++i ) {
-        if ( columnInfo[i] == null ) {
-            console.log("You have to specify values for all the necessary columns if you want to input a new snack.");
+        if ( columnInfo[i] == null || columnInfo[i].length === 0 ) {
+            alert ("You have to specify values for all the necessary fields if you want to input a new snack.");
             return;
         }
     }
 
     //send newly added snack to main.js, i.e. the main process of the electron application
-    ipcRenderer.send('snack:add', columnInfo, jsonMapModule.strMapToJson(snackFilter));
+    ipcRenderer.send('snack:add', columnInfo, jsonMapModule.strMapToJson(snackFilter), jsonMapModule.strMapToJson(snackOrder));
     ipcRenderer.send('snacks:nextID');
 }
 
@@ -447,7 +447,7 @@ function updateDrinkData ( ...fields ) {
             });
             tr.appendChild(tds[12]);
 
-            tds[13].appendChild(createCheckBox(fields[0][k]["skListe"],"drinkSKBox"));
+            tds[13].appendChild(createCheckBox(fields[0][k]["skListe"],"drinkSKBox" + k));
             tds[13].addEventListener('change', function(e) {
                 e.preventDefault();
 
@@ -457,7 +457,7 @@ function updateDrinkData ( ...fields ) {
                 let id = parseInt ( idString );
 
                 /* Get a reference to the checkbox that has just been created. */
-                let sk = document.getElementById("drinkSKBox").checked;
+                let sk = document.getElementById("drinkSKBox" + k).checked;
 
                 console.log( "SK " + sk);
 
@@ -465,7 +465,7 @@ function updateDrinkData ( ...fields ) {
             });
             tr.appendChild(tds[13]);
 
-            tds[14].appendChild(createCheckBox(fields[0][k]["avVerkauf"],"drinkAVBox"));
+            tds[14].appendChild(createCheckBox(fields[0][k]["avVerkauf"],"drinkAVBox" + k));
             tds[14].addEventListener('change', function(e) {
                 e.preventDefault();
 
@@ -474,13 +474,15 @@ function updateDrinkData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let av = document.getElementById("drinkAVBox").checked;
+                let av = document.getElementById("drinkAVBox" + k).checked;
+
+                console.log(av);
 
                 ipcRenderer.send("drinks:alter", id, "avVerkauf", av);
             });
             tr.appendChild(tds[14]);
 
-            tds[15].appendChild(createCheckBox(fields[0][k]["bierKarte"],"drinkBierBox"));
+            tds[15].appendChild(createCheckBox(fields[0][k]["bierKarte"],"drinkBierBox" + k));
             tds[15].addEventListener('change', function(e) {
                 e.preventDefault();
 
@@ -489,13 +491,13 @@ function updateDrinkData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let bier = document.getElementById("drinkBierBox").checked;
+                let bier = document.getElementById("drinkBierBox" + k).checked;
 
                 ipcRenderer.send("drinks:alter", id, "bierKarte", bier);
             });
             tr.appendChild(tds[15]);
 
-            tds[16].appendChild(createCheckBox(fields[0][k]["barKarte"],"drinkBarBox"));
+            tds[16].appendChild(createCheckBox(fields[0][k]["barKarte"],"drinkBarBox" + k));
             tds[16].addEventListener('change', function(e) {
                 e.preventDefault();
 
@@ -504,13 +506,13 @@ function updateDrinkData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let bar = document.getElementById("drinkBarBox").checked;
+                let bar = document.getElementById("drinkBarBox" + k).checked;
 
                 ipcRenderer.send("drinks:alter", id, "barKarte", bar);
             });
             tr.appendChild(tds[16]);
 
-            tds[17].appendChild(createCheckBox(fields[0][k]["abrechnung"],"drinkAbrechnungBox"));
+            tds[17].appendChild(createCheckBox(fields[0][k]["abrechnung"],"drinkAbrechnungBox" + k));
             tds[17].addEventListener('change', function(e) {
                 e.preventDefault();
 
@@ -519,7 +521,7 @@ function updateDrinkData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let abrechnung = document.getElementById("drinkAbrechnungBox").checked;
+                let abrechnung = document.getElementById("drinkAbrechnungBox" + k).checked;
 
                 ipcRenderer.send("drinks:alter", id, "abrechnung", abrechnung);
             });
@@ -652,7 +654,7 @@ function updateSnackData ( ...fields ) {
 
             });
 
-            tds[5].appendChild(createCheckBox(fields[0][k]["avVerkauf"] == 1, "avSnackBox"));
+            tds[5].appendChild(createCheckBox(fields[0][k]["avVerkauf"] == 1, "avSnackBox" + k));
             tr.appendChild(tds[5]);
             tds[5].contentEditable = 'false';
             tds[5].addEventListener('change', function(e) {
@@ -663,12 +665,12 @@ function updateSnackData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let av = document.getElementById("avVerkauf").checked;
+                let av = document.getElementById("avVerkauf" + k).checked;
 
                 ipcRenderer.send("snacks:alter", id, "avVerkauf", av );
             });
 
-            tds[6].appendChild(createCheckBox(fields[0][k]["bierKarte"] == 1, "bierSnackBox"));
+            tds[6].appendChild(createCheckBox(fields[0][k]["bierKarte"] == 1, "bierSnackBox" + k));
             tr.appendChild(tds[6]);
             tds[6].contentEditable = 'false';
             tds[6].addEventListener('change', function(e) {
@@ -679,12 +681,12 @@ function updateSnackData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let bier = document.getElementById("bierKarte").checked;
+                let bier = document.getElementById("bierKarte" + k).checked;
 
                 ipcRenderer.send("snacks:alter", id, "bierKarte", bier);
             });
 
-            tds[7].appendChild(createCheckBox(fields[0][k]["barKarte"] == 1, "barSnackBox"));
+            tds[7].appendChild(createCheckBox(fields[0][k]["barKarte"] == 1, "barSnackBox" + k));
             tr.appendChild(tds[7]);
             tds[7].contentEditable = 'false';
             tds[7].addEventListener('change', function(e) {
@@ -695,11 +697,11 @@ function updateSnackData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let bar = document.getElementById("barKarte").checked;
+                let bar = document.getElementById("barKarte" + k).checked;
 
                 ipcRenderer.send( "snacks:alter", id, "barKarte", bar );
             });
-            tds[8].appendChild(createCheckBox(fields[0][k]["abrechnung"] == 1, "abrechnungSnackBox"));
+            tds[8].appendChild(createCheckBox(fields[0][k]["abrechnung"] == 1, "abrechnungSnackBox" + k));
             tr.appendChild(tds[8]);
             tds[8].contentEditable = 'false';
             tds[8].addEventListener('change', function(e) {
@@ -710,7 +712,7 @@ function updateSnackData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let abrechnung = document.getElementById("abrechnungSnackBox").checked;
+                let abrechnung = document.getElementById("abrechnungSnackBox" + k).checked;
 
                 ipcRenderer.send("snacks:alter", id, "abrechnung", abrechnung );
             })
@@ -758,6 +760,12 @@ ipcRenderer.on("snacks:nextID", function(e, nextID) {
     if ( nextID [ 0 ] ["max(snack_id)"] != null ) {
         newID = nextID [ 0 ] [ "max(snack_id)"] + 1;
     }
+
+    const snackInputs = document.getElementsByClassName("snackInput");
+    for ( let i = 0; i < snackInputs.length; ++i ) {
+        snackInputs.item(i).textContent = "";
+    }
+
     document.getElementById("nextSnackID").textContent = "#" + newID.toString();
 });
 
@@ -765,6 +773,14 @@ ipcRenderer.on("drinks:nextID", function(e, nextID) {
     let newID = 1;
     if ( nextID [ 0 ] ["max(drink_id)"] != null ) {
         newID = nextID [ 0 ] ["max(drink_id)"] + 1;
+    }
+
+    const drinkInputs = document.getElementsByClassName("drinkInput");
+    for ( let i = 0; i < drinkInputs.length; ++i ) {
+        console.log(i);
+        if ( drinkInputs.item(i).id.localeCompare("drinkType") !== 0 && drinkInputs.item(i).id.localeCompare("agentName") !== 0 ) {
+            drinkInputs.item(i).textContent = "";
+        }
     }
     document.getElementById("nextDrinkID").textContent = "#" + newID.toString();
 });
