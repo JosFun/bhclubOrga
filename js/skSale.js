@@ -10,6 +10,16 @@ const jsonMapModule = require("../js/jsonMap");
 const COL_COUNT = 13;
 
 /**
+ * The mode enumerator for receiving the sql update.
+ * A sql update is either of drink or snack mode
+ * @type {{DRIKNKS: string, SNACKS: string}}
+ */
+const MODE = {
+    DRIKNKS: "drinks",
+    SNACKS: "snacks"
+};
+
+/**
  * This Array contains all the categories a drink in the system can belong to.
  * @type {string[]}
  */
@@ -66,18 +76,17 @@ for ( let i = 0; i < drinkCategories.length; ++i ) {
     ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter), jsonMapModule.strMapToJson(drinkOrder));
     /* Reset the drinkFilter again.*/
     drinkFilter.delete(typeColumnName);
-
-
 }
 
 /* Since a snackFilter is not present at all, an empty Map is passed on to the main process. */
 ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(new Map()), jsonMapModule.strMapToJson(snackOrder));
 
 /**
- * Add the passed drinkData to the SK-Liste
- * @param drinkData
+ * Add the passed data to the SK-Liste
+ * @param mode -  Whether or not the
+ * @param data
  */
-function addDrinks(...drinkData) {
+function addItems( mode, ...data ) {
     const table = document.getElementById('skListe');
     const startRow = document.createElement('tr');
 
@@ -85,7 +94,12 @@ function addDrinks(...drinkData) {
         const td = document.createElement('td');
         if ( k === 0 ) {
             /* Set the first column in the first row of the current category to contain the name of the category itself. */
-            td.textContent = drinkCategories[categoryIndex++];
+           if ( mode === MODE.DRIKNKS ) {
+               td.textContent = drinkCategories[categoryIndex++];
+           }
+           else if ( mode === MODE.SNACKS ) {
+               td.textContent = "Snacks";
+           }
         }
         td.className="skListeCategory";
 
@@ -94,7 +108,7 @@ function addDrinks(...drinkData) {
     }
     table.appendChild(startRow);
 
-    for ( let i = 0; i < drinkData[0].length; ++i ) {
+    for ( let i = 0; i < data[0].length; ++i ) {
         const tr = document.createElement( 'tr' );
         const tds = new Array(COL_COUNT);
 
@@ -103,14 +117,30 @@ function addDrinks(...drinkData) {
             tds[k].contentEditable = false;
         }
 
-        tds[0].textContent = drinkData[0][i]["drink_name"];
-        tds[1].textContent = drinkData[0][i]["bottle_size"].toFixed(2) + "l";
-        tds[2].textContent = drinkData[0][i]["internal_price"].toFixed(2) + "€";
+        if ( mode === MODE.DRIKNKS ) {
+            tds[0].textContent = data[0][i]["drink_name"];
+            tds[1].textContent = data[0][i]["bottle_size"].toFixed(2) + "l";
+            tds[2].textContent = data[0][i]["internal_price"].toFixed(2) + "€";
+        }
+        else if ( mode === MODE.SNACKS ) {
+            tds[0].textContent = data[0][i]["snack_name"];
+            tds[1].textContent = data[0][i]["snack_price"];
+        }
+
 
         for ( let k = 0; k < COL_COUNT; ++k ) {
             tr.appendChild(tds[k]);
         }
         table.appendChild(tr);
+    }
+}
+
+function addSnacks(...snackData) {
+    const table = document.getElementsById('avAußen');
+    const startRow = document.createElement('tr');
+
+    for ( let k = 0; k < COL_COUNT; ++k ) {
+
     }
 }
 
@@ -123,12 +153,11 @@ function addSnacks(...snackData) {
 }
 
 ipcRenderer.on("drinks:data", function(e, drinkData) {
-    console.log("hello");
-    addDrinks(drinkData);
+    addItems(MODE.DRIKNKS, drinkData);
 });
 
 ipcRenderer.on("snacks:data", function(e, snackData) {
-   addSnacks(snackData);
+    addItems(MODE.SNACKS, snackData);
 });
 
 

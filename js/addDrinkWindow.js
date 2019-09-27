@@ -202,7 +202,9 @@ function updateDrinkData ( ...fields ) {
 
                 let newName = tds[1].textContent;
 
-                ipcRenderer.send('drinks:alter',id, "drink_name", newName);
+                if ( newName.toString().length !== 0 ) {
+                    ipcRenderer.send('drinks:alter',id, "drink_name", newName);
+                }
             });
             tr.appendChild(tds[1]);
 
@@ -215,8 +217,9 @@ function updateDrinkData ( ...fields ) {
                let id = parseInt( idString );
 
                let drinkType = tds[2].textContent;
-
-               ipcRenderer.send('drinks:alter',id, "drink_type", drinkType);
+               if ( drinkType.toString().length !== 0 ) {
+                   ipcRenderer.send('drinks:alter',id, "drink_type", drinkType);
+               }
             });
             tr.appendChild(tds[2]);
 
@@ -230,11 +233,13 @@ function updateDrinkData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let strVal = tds[2].textContent;
+                let strVal = tds[3].textContent;
                 /* Parsing to float does also work if units are specified within the field */
                 let bottleSize = parseFloat(strVal);
 
-                ipcRenderer.send('drinks:alter',id, "bottle_size", bottleSize);
+                if ( !isNaN(bottleSize) ) {
+                    ipcRenderer.send('drinks:alter',id, "bottle_size", bottleSize);
+                }
 
             });
             tr.appendChild(tds[3]);
@@ -248,19 +253,40 @@ function updateDrinkData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let bottleCost = parseFloat(tds[3].textContent);
+                let bottleCost = parseFloat(tds[4].textContent);
 
-                /* Now the internal price has to be checked */
-                let bottleInternal = parseFloat(tds[5].textContent);
-                /* Test whether or not the internal price is high enough to account for the VAT and the loss of deposit*/
-                if ( bottleInternal < 1.19 * bottleCost + parseFloat(tds[11].textContent) ) {
-                    tds[5].style.color = "red";
-                }
-                else {
-                    tds[5].style.color = "green";
+                /* Recalculate the new internal price for a bottle*/
+                if ( !isNaN(bottleCost)) {
+                    let newPrice = Math.ceil ( 10 * ( bottleCost * 1.19 + parseFloat(tds[12].textContent))) / 10;
+                    tds[6].textContent = newPrice.toFixed(2) + "€";
+                    ipcRenderer.send("drinks:alter", id, "internal_price", newPrice );
                 }
 
-                ipcRenderer.send('drinks:alter', id, "bottle_cost", bottleCost);
+                let externalAddition = parseFloat(tds[8].textContent);
+                let bottleSize = parseFloat(tds[3].textContent);
+                let portionSize = parseFloat(tds[7].textContent);
+
+                /* Apply the correct formula to calculate the price for one portion of the drink. */
+                let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
+                portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
+
+                if ( !isNaN(externalAddition)){
+                    ipcRenderer.send("drinks:alter", id, "external_addition", externalAddition);
+                }
+
+                let bottlePrice = (Math.ceil(100 * portionPrice * bottleSize / portionSize) / 100);
+                if ( !isNaN(portionPrice)) {
+                    tds[9].textContent = portionPrice.toFixed(2) + "€";
+                    ipcRenderer.send("drinks:alter", id, "portion_price", portionPrice);
+                }
+                if ( !isNaN(bottlePrice)) {
+                    tds[10].textContent = bottlePrice.toFixed(2) + "€";
+                    ipcRenderer.send("drinks:alter", id, "external_price_bottle", bottlePrice);
+                }
+
+                if ( !isNaN(bottleCost)) {
+                    ipcRenderer.send('drinks:alter', id, "bottle_cost", bottleCost);
+                }
             });
             tr.appendChild(tds[4]);
 
@@ -275,7 +301,9 @@ function updateDrinkData ( ...fields ) {
 
                 let trader = tds[4].textContent;
 
-                ipcRenderer.send('drinks:alter', id, "trader", trader);
+                if ( !isNaN(trader)) {
+                    ipcRenderer.send('drinks:alter', id, "trader", trader);
+                }
             });
             tr.appendChild(tds[5]);
 
@@ -291,14 +319,16 @@ function updateDrinkData ( ...fields ) {
                 let bottleInternal = parseFloat(tds[5].textContent);
 
                 /* Test whether or not the internal price is high enough to account for the VAT and the loss of deposit*/
-                if ( bottleInternal < 1.19 * parseFloat(tds[3].textContent) + parseFloat(tds[11].textContent) ) {
-                    tds[5].style.color = "red";
+                if ( bottleInternal < 1.19 * parseFloat(tds[4].textContent) + parseFloat(tds[12].textContent) ) {
+                    tds[6].style.color = "red";
                 }
                 else {
-                    tds[5].style.color = "green";
+                    tds[6].style.color = "green";
                 }
 
-                ipcRenderer.send('drinks:alter', id, "internal_price", bottleInternal);
+                if ( !isNaN(bottleInternal)) {
+                    ipcRenderer.send('drinks:alter', id, "internal_price", bottleInternal);
+                }
             });
             tr.appendChild(tds[6]);
 
@@ -312,11 +342,10 @@ function updateDrinkData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let portion = parseFloat(tds[6].textContent);
-                let bottleCost = parseFloat(tds[3].textContent);
-                let externalAddition = parseFloat(tds[7].textContent);
-                let bottleSize = parseFloat(tds[2].textContent);
-                let portionSize = parseFloat(tds[6].textContent);
+                let bottleCost = parseFloat(tds[4].textContent);
+                let externalAddition = parseFloat(tds[8].textContent);
+                let bottleSize = parseFloat(tds[3].textContent);
+                let portionSize = parseFloat(tds[7].textContent);
 
                 /* Apply the correct formula to calculate the price for one portion of the drink. */
                 let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
@@ -329,11 +358,11 @@ function updateDrinkData ( ...fields ) {
                 }
 
                 if ( !isNaN(portionPrice)) {
-                    tds[8].textContent = portionPrice.toString() + "€";
+                    tds[9].textContent = portionPrice.toFixed(2) + "€";
                     ipcRenderer.send("drinks:alter", id, "portion_price", portionPrice);
                 }
                 if ( !isNaN(bottlePrice)) {
-                    tds[9].textContent = bottlePrice.toString() + "€";
+                    tds[10].textContent = bottlePrice.toFixed(2) + "€";
                     ipcRenderer.send("drinks:alter", id, "external_price_bottle", bottlePrice);
                 }
             });
@@ -349,11 +378,10 @@ function updateDrinkData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let portion = parseFloat(tds[6].textContent);
-                let bottleCost = parseFloat(tds[3].textContent);
-                let externalAddition = parseFloat(tds[7].textContent);
-                let bottleSize = parseFloat(tds[2].textContent);
-                let portionSize = parseFloat(tds[6].textContent);
+                let bottleCost = parseFloat(tds[4].textContent);
+                let externalAddition = parseFloat(tds[8].textContent);
+                let bottleSize = parseFloat(tds[3].textContent);
+                let portionSize = parseFloat(tds[7].textContent);
 
                 /* Apply the correct formula to calculate the price for one portion of the drink. */
                 let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
@@ -365,11 +393,11 @@ function updateDrinkData ( ...fields ) {
 
                 let bottlePrice = (Math.ceil(100 * portionPrice * bottleSize / portionSize) / 100);
                 if ( !isNaN(portionPrice)) {
-                    tds[9].textContent = portionPrice.toString() + "€";
+                    tds[9].textContent = portionPrice.toFixed(2) + "€";
                     ipcRenderer.send("drinks:alter", id, "portion_price", portionPrice);
                 }
                 if ( !isNaN(bottlePrice)) {
-                    tds[10].textContent = bottlePrice.toString() + "€";
+                    tds[10].textContent = bottlePrice.toFixed(2) + "€";
                     ipcRenderer.send("drinks:alter", id, "external_price_bottle", bottlePrice);
                 }
             });
@@ -393,9 +421,12 @@ function updateDrinkData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let weight = parseFloat(tds[10].textContent);
+                let weight = parseFloat(tds[11].textContent);
 
-                ipcRenderer.send("drinks:alter", id, "weight_bottle", weight);
+                if ( !isNaN(weight) ) {
+                    ipcRenderer.send("drinks:alter", id, "weight_bottle", weight);
+                }
+
             });
             tr.appendChild(tds[11]);
 
@@ -408,9 +439,11 @@ function updateDrinkData ( ...fields ) {
                 idString = idString.slice(1,idString.length);
                 let id = parseInt ( idString );
 
-                let deposit = parseFloat(tds[11].textContent);
+                let deposit = parseFloat(tds[12].textContent);
 
-                ipcRenderer.send("drinks:alter", id, "deposit_bottle", deposit);
+                if ( !isNaN(deposit) ) {
+                    ipcRenderer.send("drinks:alter", id, "deposit_bottle", deposit);
+                }
             });
             tr.appendChild(tds[12]);
 
