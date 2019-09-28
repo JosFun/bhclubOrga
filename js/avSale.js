@@ -202,15 +202,6 @@ function addItems ( mode, ...data ) {
         }
         table.appendChild(tr);
     }
-    /* Add an empty row at the end. */
-    table.appendChild(document.createElement('tr'));
-
-    let lastRow = document.createElement('tr');
-    for ( let i = 0; i < COL_COUNT; ++i ) {
-        lastRow.appendChild(document.createElement('td'));
-    }
-    /* Add an empty row at the end. */
-    table.appendChild(lastRow);
 
 
 }

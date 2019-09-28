@@ -87,7 +87,14 @@ ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(new Map()), jsonMap
  * @param data
  */
 function addItems( mode, ...data ) {
-    const table = document.getElementById('skListe');
+    let table;
+    if (categoryIndex <= 2 ) {
+        table = document.getElementById('skListeSchnaps');
+    }
+    else {
+        table = document.getElementById('skListeRest');
+    }
+
     const startRow = document.createElement('tr');
 
     for ( let k = 0; k < COL_COUNT; ++k ){
