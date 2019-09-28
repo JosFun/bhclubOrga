@@ -206,7 +206,7 @@ td {
     width: 100%;
 }
 
-#drinkTable, #snackDataBase{
+#drinkTable, #snackDataBase, #avGeldzaehlen{
     font-weight: bold;
     border-collapse: collapse;
     padding-top: 12px;
@@ -228,7 +228,7 @@ td {
     width: 95%;
 }
 
-#drinkTable td, #addDrink td, #snackTable td, #snackDataBase td {
+#drinkTable td, #addDrink td, #snackTable td, #snackDataBase td, #avGeldzaehlen td {
     border: 1px solid #ddd;
     padding: 8px;
 }
@@ -253,14 +253,15 @@ td {
 
 
 #snackDataBase tr:first-child, #drinkTable tr:first-child, #skListeSchnaps tr:first-child,
-#skListeRest tr:first-child, #avAußen tr:first-child, #avInnen tr:first-child {
+#skListeRest tr:first-child, #avAußen tr:first-child, #avInnen tr:first-child,
+#avGeldzaehlen tr:first-child{
     background-color: #3C6F80;
     color: white;
     font-weight: bold;
 }
 
 
-#snackDataBase tr, #drinkTable tr, #skListeSchnaps tr, #skListeRest tr, #avAußen tr, #avInnen tr{
+#snackDataBase tr, #drinkTable tr, #skListeSchnaps tr, #skListeRest tr, #avAußen tr, #avInnen tr, #avGeldzaehlen tr{
     background-color: beige;
     color:black;
     font-weight: bolder;
