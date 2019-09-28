@@ -1052,7 +1052,7 @@ for ( let i = 0; i < snackFilterFields.length; ++i ) {
 
     snackFilterFields.item(i).textContent = snackHeaderTexts[i];
 
-    snackFilterFields.item(i).addEventListener("dblclick", function(e) {
+    snackFilterFields.item(i).addEventListener("click", function(e) {
         if ( !snackOrder.has(snackFilterNames[i])) {
             snackOrder.clear();
             snackOrder.set(snackFilterNames[i], "asc");

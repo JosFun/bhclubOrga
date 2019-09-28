@@ -22,6 +22,7 @@ h2{
 h3{
     font-weight: bolder;
     color: #577580;
+    font-size: 30px;
 }
 
 input {
@@ -69,19 +70,26 @@ header {
     box-shadow: 0 0 25px 0 black;
 }
 
-header * {
+header *, aside * {
     display: inline;
 }
 
-header ul {
+
+header ul, aside ul {
     list-style-type: none;
     overflow: hidden;
-    background-color: white;
+
 }
-header li {
+header li{
     float: left;
     height: 100%;
     margin: 20px;
+}
+
+aside li {
+    float: left;
+    height: 100%;
+    padding: 0;
 }
 
 header li a {
@@ -104,6 +112,35 @@ header img {
     height: 70px;
     margin: 30px;
 }
+
+aside {
+    position: fixed;
+    background-color: white;
+
+    box-shadow: 0 0 10px 0 black;
+    width: available;
+    height: min-content;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+aside li a {
+    color: black;
+    text-decoration: none;
+    font-weight: bolder;
+    font-size: 25px;
+    display: block;
+    line-height: 50px;
+    text-align: center;
+    padding: 0px 10px;
+}
+
+aside li a:hover:not(.active) {
+    color:white;
+    background-color: #3C6F80;
+}
+
 footer {
     align-self: center;
     width: fit-content;
