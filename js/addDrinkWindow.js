@@ -764,6 +764,7 @@ ipcRenderer.on("snacks:nextID", function(e, nextID) {
     const snackInputs = document.getElementsByClassName("snackInput");
     for ( let i = 0; i < snackInputs.length; ++i ) {
         snackInputs.item(i).textContent = "";
+        snackInputs.item(i).value = "";
     }
 
     document.getElementById("nextSnackID").textContent = "#" + newID.toString();
@@ -777,9 +778,11 @@ ipcRenderer.on("drinks:nextID", function(e, nextID) {
 
     const drinkInputs = document.getElementsByClassName("drinkInput");
     for ( let i = 0; i < drinkInputs.length; ++i ) {
-        console.log(i);
-        if ( drinkInputs.item(i).id.localeCompare("drinkType") !== 0 && drinkInputs.item(i).id.localeCompare("agentName") !== 0 ) {
+       if ( drinkInputs.item(i).id.localeCompare("drinkType") !== 0 && drinkInputs.item(i).id.localeCompare("agentName") !== 0 ) {
+            /* Make sure that both the input fields and other items are */
+            drinkInputs.item(i).value = "";
             drinkInputs.item(i).textContent = "";
+            drinkInputs.item(i).checked = false;
         }
     }
     document.getElementById("nextDrinkID").textContent = "#" + newID.toString();
@@ -914,7 +917,7 @@ function calulatePortionPrice ( ) {
     }
     /* Apply the correct formula to calculate the price for one portion of the drink. */
     let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
-    portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
+    portionPrice = Math.ceil ( 10 * portionPrice ) / 10;
 
     if( isNaN(portionPrice)) {
         return;

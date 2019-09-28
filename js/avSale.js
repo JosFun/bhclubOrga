@@ -118,6 +118,7 @@ for ( let i = 0; i < drinkInnerCategories.length; ++i ) {
     drinkFilter.delete ( typeColumnName );
 }
 
+
 /**
  * Add the passed items to the corresponding tables for the inner and outer list of the TEDDI
  * @param mode Whether the passed items are snacks or drinks
@@ -201,6 +202,15 @@ function addItems ( mode, ...data ) {
         }
         table.appendChild(tr);
     }
+    /* Add an empty row at the end. */
+    table.appendChild(document.createElement('tr'));
+
+    let lastRow = document.createElement('tr');
+    for ( let i = 0; i < COL_COUNT; ++i ) {
+        lastRow.appendChild(document.createElement('td'));
+    }
+    /* Add an empty row at the end. */
+    table.appendChild(lastRow);
 
 
 }
