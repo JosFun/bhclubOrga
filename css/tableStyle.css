@@ -119,7 +119,6 @@ aside {
 
     box-shadow: 0 0 10px 0 black;
     width: available;
-    height: min-content;
     display: flex;
     justify-content: flex-start;
     align-items: flex-start;

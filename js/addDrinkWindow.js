@@ -1004,7 +1004,7 @@ let drinkFilterFields = document.getElementsByClassName("drinkFilterFields");
                     drinkFilter.set(drinkFilterNames[i], parseFloat(drinkFilterFields.item(i).textContent));
                }
                else {
-                   drinkFilter.set(drinkFilterNames[i], drinkFilterFields.item(i).textContent);
+                   drinkFilter.set(drinkFilterNames[i], "%" + drinkFilterFields.item(i).textContent + "%");
 
                }
                ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(drinkFilter),
@@ -1080,7 +1080,7 @@ for ( let i = 0; i < snackFilterFields.length; ++i ) {
                 snackFilter.set(snackFilterNames[i],parseFloat(snackFilterFields.item(i).textContent));
             }
             else {
-                snackFilter.set(snackFilterNames[i],snackFilterFields.item(i).textContent);
+                snackFilter.set(snackFilterNames[i], "%" + snackFilterFields.item(i).textContent + "%");
             }
             ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(snackFilter), jsonMapModule.strMapToJson(snackOrder));
             console.log(snackFilter);

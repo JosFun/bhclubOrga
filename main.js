@@ -143,13 +143,13 @@ function selectDrinks ( drinkFilter, drinkOrder ) {
     iterator = drinkFilter.keys();
     if ( drinkFilter != null && drinkFilter.size >= 1 ) {
         let key = iterator.next().value;
-        sqlSelect += " where " + key + "= ?";
+        sqlSelect += " where " + key + " like ?";
     }
     console.log(sqlSelect);
 
     for ( let i = 1; drinkFilter != null && i < drinkFilter.size; ++i ) {
         let key = iterator.next().value;
-        sqlSelect += " and " + key + " = ?";
+        sqlSelect += " and " + key + " like ?";
     }
 
     if ( drinkOrder.size === 1 ) {
@@ -189,12 +189,12 @@ function selectSnacks( snackFilter, snackOrder ) {
 
     if ( snackFilter != null && snackFilter.size >= 1 ) {
         let key = iterator.next().value;
-        sqlSelect += " where " + key + "= ?";
+        sqlSelect += " where " + key + " like ?";
     }
 
     for ( let i = 1; snackFilter != null && i < snackFilter.size; ++i ) {
         let key = iterator.next().value;
-        sqlSelect += " and " + key + "= ?";
+        sqlSelect += " and " + key + " like ?";
     }
 
     /* If the user has specified an order for the elements in the snackDataBase */
