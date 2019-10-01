@@ -360,6 +360,11 @@ td {
     html, body {
         margin-top: 30px;
     }
+    aside li a {
+        font-size: 12px;
+        line-height: 25px;
+        padding: 0px 4px;
+    }
 }
 
 @media screen and ( max-width: 950px ) {
@@ -423,6 +428,11 @@ td {
     }
     html, body {
         margin-top: 40px;
+    }
+    aside li a {
+        font-size: 15px;
+        line-height: 28px;
+        padding: 0px 5px;
     }
 }
 
@@ -488,6 +498,11 @@ td {
     html, body {
         margin-top: 50px;
     }
+    aside li a {
+        font-size: 16px;
+        line-height: 33px;
+        padding: 0px 6px;
+    }
 }
 
 @media screen and ( max-width: 1300px ) and ( min-width: 1101px ) {
@@ -551,6 +566,11 @@ td {
     }
     html, body {
         margin-top: 60px;
+    }
+    aside li a {
+        font-size: 17px;
+        line-height: 37px;
+        padding: 0px 6px;
     }
 }
 
@@ -616,6 +636,11 @@ td {
     html, body {
         margin-top: 70px;
     }
+    aside li a {
+        font-size: 19px;
+        line-height: 40px;
+        padding: 0px 8px;
+    }
 }
 
 @media screen and ( max-width: 1700px ) and ( min-width: 1501px ) {
@@ -639,6 +664,11 @@ td {
         line-height: 85px;
         font-size: 19px;
         padding: 0px 10px;
+    }
+    aside li a {
+        font-size: 19px;
+        line-height: 43px;
+        padding: 0px 8px;
     }
 
 }
