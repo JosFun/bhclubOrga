@@ -32,7 +32,9 @@ console.log(moneyCounts.length);
 for ( let i = 0; i < moneyCounts.length; ++i ) {
     moneyCounts.item(i).addEventListener( "focusin", function(e) {
         e.preventDefault();
-       moneyCounts.item(i).textContent = "";
+        if ( moneyCounts.item(i).textContent === "ANZAHL" ) {
+            moneyCounts.item(i).textContent = "";
+        }
     });
     moneyCounts.item(i).addEventListener("focusout", function(e) {
         e.preventDefault();
@@ -41,6 +43,9 @@ for ( let i = 0; i < moneyCounts.length; ++i ) {
             if ( !isNaN(parseInt(numString))) {
                 moneyOverAll+= parseInt(numString) * moneyValues [i];
             }
-            moneyOverallField.textContent = moneyOverAll + "€";
+            else if ( numString === "") {
+                moneyCounts.item(i).textContent = "ANZAHL";
+            }
+            moneyOverallField.textContent = moneyOverAll.toFixed(2) + "€";
     });
 }
