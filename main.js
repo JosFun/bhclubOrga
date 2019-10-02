@@ -265,6 +265,18 @@ function deleteSnack ( id ) {
     })
 }
 
+/**
+ * Get all the avVerkaufAbrechnungen from the sql database
+ */
+function getAVVerkaufAbrechnungen ( ) {
+    let sqlSelect = "SELECT * FROM av_verkauf;"
+    dbConnection.query(sqlSelect, function( err, results, fields) {
+        if ( err ) throw err;
+        console.log("AV-Abrechnungen have been fetched from the system!");
+        win.webContents.send("av_verkauf_abrechnungen:deliver", results);
+    })
+}
+
 // Catch newly added drinks
 ipcMain.on('drink:add', function(e,drinkInfo, drinkFilter, drinkOrder){
     /*TODO: Perform the sql insertion*/
@@ -352,6 +364,12 @@ ipcMain.on('drink:delete', function(e,id,drinkFilter) {
     e.preventDefault();
     deleteDrink(id);
     selectDrinks(jsonMapModule.jsonToStrMap(drinkFilter));
+});
+
+// Catch requests regarding the fetch request of all the av-Verkauf-abrechnungen that exist in the database
+ipcMain.on('av_verkauf_abrechnungen:get', function(e) {
+    getAVVerkaufAbrechnungen();
+    e.preventDefault();
 });
 
 if (process.env.NODE_ENV !== 'production'){

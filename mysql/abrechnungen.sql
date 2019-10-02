@@ -1,6 +1,6 @@
 create table av_verkauf(
     av_abrechnung_id int not null auto_increment,
-    av_abrechnung_datum date not null,
+    av_abrechnung_datum varchar(100) not null,
 
     PRIMARY KEY(av_abrechnung_id)
 );

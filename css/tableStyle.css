@@ -191,6 +191,7 @@ select {
 
 #select_av_abrechnung {
     width: 20%;
+    font-size: 18px;
 }
 
 td {
@@ -438,6 +439,9 @@ td {
         line-height: 28px;
         padding: 0px 5px;
     }
+    #select_av_abrechnung {
+        font-size: 10px;
+    }
 }
 
 @media screen and ( max-width: 1100px ) and ( min-width: 951px ) {
@@ -506,6 +510,9 @@ td {
         font-size: 16px;
         line-height: 33px;
         padding: 0px 6px;
+    }
+    #select_av_abrechnung {
+        font-size: 12px;
     }
 }
 
@@ -576,6 +583,9 @@ td {
         line-height: 37px;
         padding: 0px 6px;
     }
+    #select_av_abrechnung {
+        font-size: 14px;
+    }
 }
 
 @media screen and ( max-width: 1500px ) and ( min-width: 1301px ) {
@@ -645,6 +655,9 @@ td {
         line-height: 40px;
         padding: 0px 8px;
     }
+    #select_av_abrechnung {
+        font-size: 13px;
+    }
 }
 
 @media screen and ( max-width: 1700px ) and ( min-width: 1501px ) {
@@ -673,6 +686,9 @@ td {
         font-size: 19px;
         line-height: 43px;
         padding: 0px 8px;
+    }
+    #select_av_abrechnung {
+        font-size: 16px;
     }
 
 }

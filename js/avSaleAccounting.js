@@ -34,7 +34,6 @@ let moneyOverAll = 0;
  */
 const selectAbrechnung = document.getElementById("select_av_abrechnung");
 
-
 for ( let i = 0; i < moneyCounts.length; ++i ) {
     moneyCounts.item(i).addEventListener( "focusin", function(e) {
         e.preventDefault();
@@ -54,4 +53,32 @@ for ( let i = 0; i < moneyCounts.length; ++i ) {
             }
             moneyOverallField.textContent = moneyOverAll.toFixed(2) + "€";
     });
+}
+
+/* Create a new options entry with the current date as the description string. */
+let newOption = document.createElement("option");
+newOption.appendChild(document.createTextNode("#NEU : " + useFulFunctions.getDate()));
+selectAbrechnung.appendChild(newOption);
+
+/* Fetch the options for the select button from the database. */
+ipcRenderer.send("av_verkauf_abrechnungen:get");
+
+ipcRenderer.on("av_verkauf_abrechnungen:deliver", function (e, data) {
+    console.log("hello");
+    addAbrechnungSelectOptions(data);
+});
+
+/**
+ * Use the passed data in order to add select options to the select field for selecting the avVerkaufAbrechnung
+ * @param data
+ */
+function addAbrechnungSelectOptions ( ...data ) {
+    for ( let i = 0; i < data[0].length; ++i ) {
+        console.log(i);
+        let option = document.createElement("option");
+        let optionText = "#" + data[0][i]["av_abrechnung_id"] + " : " + data[0][i]["av_abrechnung_datum"];
+        option.appendChild(document.createTextNode(optionText));
+
+        selectAbrechnung.appendChild(option);
+    }
 }
