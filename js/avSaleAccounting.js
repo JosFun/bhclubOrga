@@ -28,7 +28,13 @@ const moneyValues = [ 100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01 
  */
 let moneyOverAll = 0;
 
-console.log(moneyCounts.length);
+/**
+ * A reference to the select field for selecting the current AV-Abrechnung
+ * @type {HTMLElement}
+ */
+const selectAbrechnung = document.getElementById("select_av_abrechnung");
+
+
 for ( let i = 0; i < moneyCounts.length; ++i ) {
     moneyCounts.item(i).addEventListener( "focusin", function(e) {
         e.preventDefault();

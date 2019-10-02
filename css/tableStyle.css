@@ -189,6 +189,10 @@ select {
     margin-left: 10px;
 }
 
+#select_av_abrechnung {
+    width: 20%;
+}
+
 td {
     font-size: 15px;
 }
