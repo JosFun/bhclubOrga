@@ -166,9 +166,9 @@ module.exports.addItems = function (mode, tableAussen, tableInnen, ...data) {
             if (i === 0) {
                 td.textContent = avDb.drinkInnerCategories[avDb.categoryIndex++ - avDb.drinkOuterCategories.length - 1];
             }
-            td.className = "avAbrechnungAussenCategory";
+            td.className = "avAbrechnungInnenCategory";
 
-            startRow.className = "avAbrechnungAussenCategory";
+            startRow.className = "avAbrechnungInnenCategory";
             startRow.appendChild(td);
         }
         table.appendChild(startRow);
@@ -224,10 +224,13 @@ module.exports.addItems = function (mode, tableAussen, tableInnen, ...data) {
 
                     tds[4].textContent = gesamtPrice.toFixed(2) + "€";
                 }
+                else {
+                    tds[4].textContent = "0.00€";
+                }
             });
             tds[3].appendChild(span);
 
-            tds[4].textContent = "0€";
+            tds[4].textContent = "0.00€";
         }
         else if (mode === avDb.MODE.ABRECHNUNG_SNACKS_OUTER) {
             tds[0].textContent = data[0][i]["snack_name"];
@@ -252,10 +255,13 @@ module.exports.addItems = function (mode, tableAussen, tableInnen, ...data) {
 
                     tds[4].textContent = gesamtPrice.toFixed(2) + "€";
                 }
+                else  {
+                    tds[4].textContent = "0.00€";
+                }
             });
             tds[3].appendChild(span);
 
-            tds[4].textContent = "0€";
+            tds[4].textContent = "0.00€";
 
         }
 

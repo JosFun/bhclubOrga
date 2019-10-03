@@ -89,6 +89,7 @@ ipcRenderer.on("snacks:data", function( e, data ) {
    avDb.addItems( avDb.MODE.ABRECHNUNG_SNACKS_OUTER, "avVerkaufAbrechnungStrichlisteAussen", "avVerkaufAbrechnungStrichlisteInnen", data );
 });
 
+/* Take care of the table for counting the money in the register in the AV-Raum */
 for ( let i = 0; i < moneyCounts.length; ++i ) {
     moneyCounts.item(i).addEventListener( "focusin", function(e) {
         e.preventDefault();
@@ -121,6 +122,7 @@ selectAbrechnung.appendChild(newOption);
 /* Fetch the options for the select button from the database. */
 ipcRenderer.send("av_verkauf_abrechnungen:get");
 
+/* React to the avAbrechnung data this process receives from the underlying database. */
 ipcRenderer.on("av_verkauf_abrechnungen:deliver", function (e, data) {
     console.log("hello");
     addAbrechnungSelectOptions(data);

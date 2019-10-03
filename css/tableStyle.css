@@ -212,7 +212,7 @@ td {
     cursor: pointer;
     width: 100%;
 }
-.skListeCategory, .avInnenListeCategory, .avAußenListeCategory {
+.skListeCategory, .avInnenListeCategory, .avAußenListeCategory, .avAbrechnungAussenCategory, .avAbrechnungInnenCategory {
     background-color: lightgray;
     font-style: italic;
 }
