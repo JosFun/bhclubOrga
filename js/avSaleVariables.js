@@ -202,7 +202,7 @@ module.exports.addItems = function (mode, tableAussen, tableInnen, ...data) {
             tds[0].textContent = data[0][i]["drink_name"];
             tds[1].textContent = data[0][i]["bottle_size"].toFixed(2) + "l";
             tds[2].textContent = data[0][i]["internal_price"].toFixed(2) + "€";
-        } else if (mode === avDb.MODE.ABRECHNUNG_DRINKS_OUTER) {
+        } else if (mode === avDb.MODE.ABRECHNUNG_DRINKS_OUTER || mode === avDb.MODE.ABRECHNUNG_DRINKS_INNER) {
             tds[0].textContent = data[0][i]["drink_name"];
             tds[1].textContent = data[0][i]["bottle_size"].toFixed(2) + "l";
             tds[2].textContent = data[0][i]["internal_price"].toFixed(2) + "€";
@@ -228,6 +228,35 @@ module.exports.addItems = function (mode, tableAussen, tableInnen, ...data) {
             tds[3].appendChild(span);
 
             tds[4].textContent = "0€";
+        }
+        else if (mode === avDb.MODE.ABRECHNUNG_SNACKS_OUTER) {
+            tds[0].textContent = data[0][i]["snack_name"];
+            tds[1].textContent = "1 Packung";
+            tds[2].textContent = data[0][i]["snack_price"].toFixed(2) + "€";
+
+            let span = document.createElement("span");
+            span.contentEditable = true;
+            span.addEventListener("focusin", function (e) {
+                if (span.textContent === "ANZAHL") {
+                    span.textContent = "";
+                }
+            });
+            span.addEventListener("focusout", function (e) {
+                let numString = span.textContent;
+                if (!isNaN(parseInt(numString))) {
+                    let gesamtPrice = parseFloat(tds[4].textContent);
+                    let price = parseFloat(tds[2].textContent);
+                    let count = parseInt(numString);
+
+                    gesamtPrice += count * price;
+
+                    tds[4].textContent = gesamtPrice.toFixed(2) + "€";
+                }
+            });
+            tds[3].appendChild(span);
+
+            tds[4].textContent = "0€";
+
         }
 
         for (let k = 0; k < tds.length; ++k) {

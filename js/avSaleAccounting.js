@@ -37,7 +37,12 @@ const selectAbrechnung = document.getElementById("select_av_abrechnung");
 
 selectAbrechnung.addEventListener("change", function(e) {
    e.preventDefault();
-   console.log(selectAbrechnung.options[selectAbrechnung.selectedIndex].text);
+
+   for ( let i = 0; i < selectAbrechnung.children.length; ++i ) {
+       if ( selectAbrechnung.children.item(i).textContent === "BITTE AUSWÄHLEN!") {
+           selectAbrechnung.children.item(i).remove();
+       }
+   }
    /* If the user has choosen to do a new accounting of the avVerkauf. */
    if ( selectAbrechnung.options[selectAbrechnung.selectedIndex].text === abrechnungNeu ) {
        console.log(34565)
@@ -50,7 +55,7 @@ selectAbrechnung.addEventListener("change", function(e) {
        avDb.drinkFilter.set(avDb.avColumnName, 1);
        avDb.drinkFilter.set(avDb.avColumnName, 1);
 
-       for ( let k = 0; k < avDb.drinkOuterCategories; ++k ) {
+       for ( let i = 0; i < avDb.drinkOuterCategories.length; ++i ) {
            avDb.drinkFilter.set(avDb.typeColumnName, avDb.drinkOuterCategories[i]);
            ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(avDb.drinkFilter), jsonMapModule.strMapToJson(avDb.drinkOrder));
            avDb.drinkFilter.delete(avDb.typeColumnName);
@@ -58,7 +63,7 @@ selectAbrechnung.addEventListener("change", function(e) {
 
        ipcRenderer.send("snacks:update", jsonMapModule.strMapToJson(avDb.snackFilter), jsonMapModule.strMapToJson(avDb.snackOrder));
 
-       for ( let i = 0; i < avDb.drinkInnerCategories; ++i ) {
+       for ( let i = 0; i < avDb.drinkInnerCategories.length; ++i ) {
            avDb.drinkFilter.set(avDb.typeColumnName, avDb.drinkInnerCategories[i]);
            ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(avDb.drinkFilter), jsonMapModule.strMapToJson(avDb.drinkOrder));
            avDb.drinkFilter.delete(avDb.typeColumnName);
@@ -70,9 +75,9 @@ selectAbrechnung.addEventListener("change", function(e) {
    }
 });
 
-ipcRenderer.on("drinks:update", function ( e, data ) {
-    e.preventDefault();
+ipcRenderer.on("drinks:data", function ( e, data ) {
     if ( avDb.categoryIndex <= 4 ) {
+        console.log(avDb.categoryIndex);
         avDb.addItems( avDb.MODE.ABRECHNUNG_DRINKS_OUTER, "avVerkaufAbrechnungStrichlisteAussen", "avVerkaufAbrechnungStrichlisteInnen", data );
     }
     else {
@@ -80,8 +85,7 @@ ipcRenderer.on("drinks:update", function ( e, data ) {
     }
 });
 
-ipcRenderer.on("snacks:update", function( e, data ) {
-   e.preventDefault();
+ipcRenderer.on("snacks:data", function( e, data ) {
    avDb.addItems( avDb.MODE.ABRECHNUNG_SNACKS_OUTER, "avVerkaufAbrechnungStrichlisteAussen", "avVerkaufAbrechnungStrichlisteInnen", data );
 });
 
