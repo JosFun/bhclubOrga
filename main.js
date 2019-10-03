@@ -277,6 +277,23 @@ function getAVVerkaufAbrechnungen ( ) {
     })
 }
 
+/**
+ * Create a new AVVerkaufAbrechnung by inserting a new set of data into the database.
+ * Send the id of the new Abrechnung to the renderer process afterwards.
+ * @param data
+ */
+function createNewAVVerkaufAbrechnung ( data ) {
+    let sqlInsert = "INSERT INTO av_verkauf (av_abrechnung_datum, money_count_100, money_count_50, money_count_20, " +
+        "money_count_10, money_count_5, money_count_2, money_count_1, money_count_05, money_count_02, money_count_01, " +
+        "money_count_005, money_count_002, money_count_001) VALUES (?)";
+    dbConnection.query(sqlInsert, [data], function( err, result) {
+       if ( err ) throw err;
+       console.log("New Abrechnung created!");
+    });
+
+    win.webContents.send("av_verkauf_abrechnung:confirm_abrechnung_creation");
+}
+
 // Catch newly added drinks
 ipcMain.on('drink:add', function(e,drinkInfo, drinkFilter, drinkOrder){
     /*TODO: Perform the sql insertion*/
@@ -286,7 +303,7 @@ ipcMain.on('drink:add', function(e,drinkInfo, drinkFilter, drinkOrder){
     dbConnection.query(sqlInsert, [drinkInfo], function ( err, result ) {
         if ( err ) throw err;
         console.log("New drink inserted!");
-    } )
+    } );
     selectDrinks(jsonMapModule.jsonToStrMap(drinkFilter), jsonMapModule.jsonToStrMap(drinkOrder));
 });
 
@@ -370,6 +387,10 @@ ipcMain.on('drink:delete', function(e,id,drinkFilter) {
 ipcMain.on('av_verkauf_abrechnungen:get', function(e) {
     getAVVerkaufAbrechnungen();
     e.preventDefault();
+});
+
+ipcMain.on("av_verkauf_abrechnungen:create_abrechnung", function(e, abrechnungData) {
+    createNewAVVerkaufAbrechnung(abrechnungData);
 });
 
 if (process.env.NODE_ENV !== 'production'){

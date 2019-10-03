@@ -28,7 +28,7 @@ const COL_INNEN_COUNT = 10;
  * The number of columns in the list for AV-Abrechnungen
  * @type {number}
  */
-const COL_ABRECHNUNG_COUNT = 5;
+const COL_ABRECHNUNG_COUNT = 6;
 
 /**
  * The categories of drinks that are to be printed out on the outer side of the TED
@@ -200,9 +200,10 @@ const snackOrderColumn = "snack_name";
             tds[1].textContent = data[0][i]["bottle_size"].toFixed(2) + "l";
             tds[2].textContent = data[0][i]["internal_price"].toFixed(2) + "€";
         } else if (mode === avDb.MODE.ABRECHNUNG_DRINKS_OUTER || mode === avDb.MODE.ABRECHNUNG_DRINKS_INNER) {
-            tds[0].textContent = data[0][i]["drink_name"];
-            tds[1].textContent = data[0][i]["bottle_size"].toFixed(2) + "l";
-            tds[2].textContent = data[0][i]["internal_price"].toFixed(2) + "€";
+            tds[0].textContent = "#" + data[0][i]["drink_id"];
+            tds[1].textContent = data[0][i]["drink_name"];
+            tds[2].textContent = data[0][i]["bottle_size"].toFixed(2) + "l";
+            tds[3].textContent = data[0][i]["internal_price"].toFixed(2) + "€";
             let span = document.createElement("span");
             span.contentEditable = true;
             span.addEventListener("focusin", function (e) {
@@ -213,29 +214,30 @@ const snackOrderColumn = "snack_name";
             span.addEventListener("focusout", function (e) {
                 let numString = span.textContent;
                 if (!isNaN(parseInt(numString))) {
-                    let price = parseFloat(tds[2].textContent);
+                    let price = parseFloat(tds[3].textContent);
                     let count = parseInt(numString);
 
                     let gesamtPrice = count * price;
 
-                    tds[4].textContent = gesamtPrice.toFixed(2) + "€";
+                    tds[5].textContent = gesamtPrice.toFixed(2) + "€";
                 }
                 else {
-                    tds[4].textContent = "0.00€";
+                    tds[5].textContent = "0.00€";
                 }
 
                 /* Finish the accounting by doing the profit and loss account */
                 finishAccounting();
 
             });
-            tds[3].appendChild(span);
+            tds[4].appendChild(span);
 
-            tds[4].textContent = "0.00€";
+            tds[5].textContent = "0.00€";
         }
         else if (mode === avDb.MODE.ABRECHNUNG_SNACKS_OUTER) {
-            tds[0].textContent = data[0][i]["snack_name"];
-            tds[1].textContent = "1 Packung";
-            tds[2].textContent = data[0][i]["snack_price"].toFixed(2) + "€";
+            tds[0].textContent = "#" + data[0][i]["snack_id"];
+            tds[1].textContent = data[0][i]["snack_name"];
+            tds[2].textContent = "1 Packung";
+            tds[3].textContent = data[0][i]["snack_price"].toFixed(2) + "€";
 
             let span = document.createElement("span");
             span.contentEditable = true;
@@ -247,22 +249,22 @@ const snackOrderColumn = "snack_name";
             span.addEventListener("focusout", function (e) {
                 let numString = span.textContent;
                 if (!isNaN(parseInt(numString))) {
-                    let price = parseFloat(tds[2].textContent);
+                    let price = parseFloat(tds[3].textContent);
                     let count = parseInt(numString);
 
                     let gesamtPrice = count * price;
 
-                    tds[4].textContent = gesamtPrice.toFixed(2) + "€";
+                    tds[5].textContent = gesamtPrice.toFixed(2) + "€";
                 }
                 else  {
-                    tds[4].textContent = "0.00€";
+                    tds[5].textContent = "0.00€";
                 }
                 /* Finish the accounting by doing the profit and loss account */
                 finishAccounting();
             });
             tds[3].appendChild(span);
 
-            tds[4].textContent = "0.00€";
+            tds[5].textContent = "0.00€";
 
         }
 

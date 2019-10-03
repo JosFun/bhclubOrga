@@ -29,6 +29,12 @@ const moneyValues = [ 100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01 
  */
 let moneyOverAll = 0;
 
+
+/**
+ * The text in the select element that represents a new Abrechnung the user can make.
+ */
+let abrechnungNeu;
+
 /**
  * A reference to the select field for selecting the current AV-Abrechnung
  * @type {HTMLElement}
@@ -117,16 +123,23 @@ for ( let i = 0; i < moneyCounts.length; ++i ) {
     });
 }
 
-/* Create a new options entry with the current date as the description string. */
-let newOption = document.createElement("option");
-newOption.appendChild(document.createTextNode("#NEU : " + useFulFunctions.getDate()));
-/* Store the string value of the select option for a new Abrechnung inside a variable in order to access it later for
-* comparison.*/
-let abrechnungNeu = "#NEU : " + useFulFunctions.getDate();
-selectAbrechnung.appendChild(newOption);
+updateSelectAbrechnung();
+/**
+ * Update the selectAbrechnung-element with a row for a new abrechnung
+ */
+function updateSelectAbrechnung ( ) {
+    /* Create a new options entry with the current date as the description string. */
+    let newOption = document.createElement("option");
+    newOption.appendChild(document.createTextNode("#NEU : " + useFulFunctions.getDate()));
+    /* Store the string value of the select option for a new Abrechnung inside a variable in order to access it later for
+    * comparison.*/
+    abrechnungNeu = "#NEU : " + useFulFunctions.getDate();
+    selectAbrechnung.appendChild(newOption);
 
-/* Fetch the options for the select button from the database. */
-ipcRenderer.send("av_verkauf_abrechnungen:get");
+    /* Fetch the options for the select button from the database. */
+    ipcRenderer.send("av_verkauf_abrechnungen:get");
+}
+
 
 /* React to the avAbrechnung data this process receives from the underlying database. */
 ipcRenderer.on("av_verkauf_abrechnungen:deliver", function (e, data) {
@@ -146,3 +159,43 @@ function addAbrechnungSelectOptions ( ...data ) {
         selectAbrechnung.appendChild(option);
     }
 }
+
+/* Once the storeButton has been hit, the abrechnung is being put into the database. */
+let storeButton = document.getElementById("storeAbrechnung");
+storeButton.addEventListener( "click", function(e) {
+   e.preventDefault();
+   if ( selectAbrechnung.options[selectAbrechnung.selectedIndex].text === "BITTE AUSWÄHLEN!") {
+       alert("Wähle bitte zuerst eine gültige Abrechnung aus oder erstelle eine neue!");
+       location.reload();
+       return;
+   }
+   let avAbrechnungFields = new Array (moneyCounts.length + 1 );
+
+   avAbrechnungFields[0] = useFulFunctions.getDate();
+   /* Get access to the different moneyCountings for the different bank notes and coin values.  */
+    for ( let i = 1; i < moneyCounts.length +1; ++i ) {
+        let moneyVal = parseInt(moneyCounts.item(i-1).textContent);
+        if ( !isNaN(moneyVal)) {
+            avAbrechnungFields[i] = moneyVal;
+        }
+        else {
+            avAbrechnungFields[i] = 0;
+        }
+    }
+
+    /* Send the moneyData to the database. */
+    ipcRenderer.send("av_verkauf_abrechnungen:create_abrechnung", avAbrechnungFields);
+
+    /* Get access to the dfferent amounts of all the ordered drinks. */
+
+
+});
+
+ipcRenderer.on("av_verkauf_abrechnung:confirm_abrechnung_creation", function(e, data ) {
+
+    if ( confirm("Möchtest du die Abrechnung fertigstellen?") ) {
+        location.reload();
+    }
+
+
+});

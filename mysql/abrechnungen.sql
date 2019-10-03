@@ -1,6 +1,19 @@
 create table av_verkauf(
     av_abrechnung_id int not null auto_increment,
     av_abrechnung_datum varchar(100) not null,
+    money_count_100 int not null,
+    money_count_50 int not null,
+    money_count_20 int not null,
+    money_count_10 int not null,
+    money_count_5 int not null,
+    money_count_2 int not null,
+    money_count_1 int not null,
+    money_count_05 int not null,
+    money_count_02 int not null,
+    money_count_01 int not null,
+    money_count_005 int not null,
+    money_count_002 int not null,
+    money_count_001 int not null,
 
     PRIMARY KEY(av_abrechnung_id)
 );
