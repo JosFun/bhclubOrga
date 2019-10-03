@@ -93,15 +93,12 @@ const snackOrder = new Map ();
  */
 const snackOrderColumn = "snack_name";
 
-module.exports = {MODE, COL_AUSSEN_COUNT, COL_INNEN_COUNT, COL_ABRECHNUNG_COUNT, drinkOuterCategories, drinkInnerCategories, categoryIndex,
-    drinkFilter, snackFilter, drinkOrder, snackOrder, typeColumnName, avColumnName, drinkOrderColumn, snackOrderColumn};
-
 /**
  * Add the passed items to the corresponding tables for the inner and outer list of the TEDDI
  * @param mode Whether the passed items are snacks or drinks
  * @param items The items that are about to be made visible on the app
  */
-module.exports.addItems = function (mode, tableAussen, tableInnen, ...data) {
+ function addItems (mode, tableAussen, tableInnen, ...data) {
     console.log("hellole");
     let table;
     /* The start row of the table */
@@ -216,17 +213,20 @@ module.exports.addItems = function (mode, tableAussen, tableInnen, ...data) {
             span.addEventListener("focusout", function (e) {
                 let numString = span.textContent;
                 if (!isNaN(parseInt(numString))) {
-                    let gesamtPrice = parseFloat(tds[4].textContent);
                     let price = parseFloat(tds[2].textContent);
                     let count = parseInt(numString);
 
-                    gesamtPrice += count * price;
+                    let gesamtPrice = count * price;
 
                     tds[4].textContent = gesamtPrice.toFixed(2) + "€";
                 }
                 else {
                     tds[4].textContent = "0.00€";
                 }
+
+                /* Finish the accounting by doing the profit and loss account */
+                finishAccounting();
+
             });
             tds[3].appendChild(span);
 
@@ -247,17 +247,18 @@ module.exports.addItems = function (mode, tableAussen, tableInnen, ...data) {
             span.addEventListener("focusout", function (e) {
                 let numString = span.textContent;
                 if (!isNaN(parseInt(numString))) {
-                    let gesamtPrice = parseFloat(tds[4].textContent);
                     let price = parseFloat(tds[2].textContent);
                     let count = parseInt(numString);
 
-                    gesamtPrice += count * price;
+                    let gesamtPrice = count * price;
 
                     tds[4].textContent = gesamtPrice.toFixed(2) + "€";
                 }
                 else  {
                     tds[4].textContent = "0.00€";
                 }
+                /* Finish the accounting by doing the profit and loss account */
+                finishAccounting();
             });
             tds[3].appendChild(span);
 
@@ -271,3 +272,59 @@ module.exports.addItems = function (mode, tableAussen, tableInnen, ...data) {
         table.appendChild(tr);
     }
 };
+
+/**
+ * Get the accumulated value of all the sold products for this accounting.
+ * @param tableName1 The name of the first table that is to be analyzed
+ * @param tableName2 The name of the second table that is to be analyzed
+ * @returns {number}
+ */
+function getGesamtPriceSum ( tableName1 = "avVerkaufAbrechnungStrichlisteInnen", tableName2 = "avVerkaufAbrechnungStrichlisteAussen"  ) {
+    let sum = 0;
+
+    const table1 = document.getElementById(tableName1);
+    for ( let i = 0; i < table1.children.length; ++i ) {
+        const row = table1.children.item(i).children;
+        if ( !isNaN(parseFloat(row.item(row.length-1).textContent))) {
+            sum += parseFloat(row.item(row.length-1).textContent);
+        }
+    }
+
+    const table2 = document.getElementById(tableName2);
+    for ( let i = 0; i < table2.children.length; ++i ) {
+        const row = table2.children.item(i).children;
+        if ( !isNaN(parseFloat(row.item(row.length-1).textContent))) {
+            sum += parseFloat(row.item(row.length-1).textContent);
+        }
+    }
+
+    return sum;
+}
+
+/**
+ * Finish the Accouting by filling out the Auswertung-fields at the end of the screen.
+ */
+function finishAccounting ( ) {
+    /* Take care of the overall result calculation at the end of the page. */
+    let avStricheAuswertung = document.getElementById("avVerkaufStricheAuswertung");
+    /* Calculate the value of all sold items. */
+    avStricheAuswertung.textContent = getGesamtPriceSum().toFixed(2) + "€";
+
+    let avMoney = parseFloat(document.getElementById("avVerkaufMoneyAuswertung").textContent);
+    let result = document.getElementById("avVerkaufAuswertungResult");
+
+    let resultSum = avMoney - getGesamtPriceSum();
+    if ( resultSum < 0 ) {
+        result.style.color = "red";
+    }
+    else {
+        result.style.color = "green";
+    }
+    result.textContent = resultSum.toFixed(2) + "€";
+
+}
+
+module.exports = {MODE, COL_AUSSEN_COUNT, COL_INNEN_COUNT, COL_ABRECHNUNG_COUNT, drinkOuterCategories, drinkInnerCategories, categoryIndex,
+    drinkFilter, snackFilter, drinkOrder, snackOrder, typeColumnName, avColumnName, drinkOrderColumn, snackOrderColumn, finishAccounting, addItems};
+
+

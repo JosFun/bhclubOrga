@@ -111,6 +111,9 @@ for ( let i = 0; i < moneyCounts.length; ++i ) {
 
             let moneyAuswertung = document.getElementById("avVerkaufMoneyAuswertung");
             moneyAuswertung.textContent = moneyOverAll.toFixed(2) + "€";
+
+        /* Finish the accounting by doing the profit and loss account */
+        avDb.finishAccounting();
     });
 }
 
