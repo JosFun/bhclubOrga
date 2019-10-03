@@ -45,7 +45,6 @@ selectAbrechnung.addEventListener("change", function(e) {
    }
    /* If the user has choosen to do a new accounting of the avVerkauf. */
    if ( selectAbrechnung.options[selectAbrechnung.selectedIndex].text === abrechnungNeu ) {
-       console.log(34565)
        /* Create filters and orders in order to request sql selects from the database. */
        avDb.categoryIndex = 0;
 
@@ -99,15 +98,19 @@ for ( let i = 0; i < moneyCounts.length; ++i ) {
     });
     moneyCounts.item(i).addEventListener("focusout", function(e) {
         e.preventDefault();
-        let numString = moneyCounts.item(i).textContent;
-
-            if ( !isNaN(parseInt(numString))) {
-                moneyOverAll+= parseInt(numString) * moneyValues [i];
-            }
-            else if ( numString === "") {
+        moneyOverAll = 0;
+        for ( let k = 0; k < moneyCounts.length; ++k ) {
+            let numString = moneyCounts.item(k).textContent;
+            if (!isNaN(parseInt(numString))) {
+                moneyOverAll += parseInt(numString) * moneyValues [k];
+            } else if (numString === "") {
                 moneyCounts.item(i).textContent = "ANZAHL";
             }
+        }
             moneyOverallField.textContent = moneyOverAll.toFixed(2) + "€";
+
+            let moneyAuswertung = document.getElementById("avVerkaufMoneyAuswertung");
+            moneyAuswertung.textContent = moneyOverAll.toFixed(2) + "€";
     });
 }
 
@@ -124,7 +127,6 @@ ipcRenderer.send("av_verkauf_abrechnungen:get");
 
 /* React to the avAbrechnung data this process receives from the underlying database. */
 ipcRenderer.on("av_verkauf_abrechnungen:deliver", function (e, data) {
-    console.log("hello");
     addAbrechnungSelectOptions(data);
 });
 
@@ -134,7 +136,6 @@ ipcRenderer.on("av_verkauf_abrechnungen:deliver", function (e, data) {
  */
 function addAbrechnungSelectOptions ( ...data ) {
     for ( let i = 0; i < data[0].length; ++i ) {
-        console.log(i);
         let option = document.createElement("option");
         let optionText = "#" + data[0][i]["av_abrechnung_id"] + " : " + data[0][i]["av_abrechnung_datum"];
         option.appendChild(document.createTextNode(optionText));

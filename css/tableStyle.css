@@ -247,7 +247,8 @@ td {
     width: 100%;
 }
 
-#drinkTable, #snackDataBase, #avGeldzaehlen, #avVerkaufAbrechnungStrichlisteAussen, #avVerkaufAbrechnungStrichlisteInnen{
+#drinkTable, #snackDataBase, #avGeldzaehlen, #avVerkaufAbrechnungStrichlisteAussen,
+#avVerkaufAbrechnungStrichlisteInnen, #avVerkaufAuswertung{
     font-weight: bold;
     border-collapse: collapse;
     padding-top: 12px;
@@ -270,7 +271,7 @@ td {
 }
 
 #drinkTable td, #addDrink td, #snackTable td, #snackDataBase td, #avGeldzaehlen td,
-#avVerkaufAbrechnungStrichlisteInnen td, #avVerkaufAbrechnungStrichlisteAussen td {
+#avVerkaufAbrechnungStrichlisteInnen td, #avVerkaufAbrechnungStrichlisteAussen td, #avVerkaufAuswertung td {
     border: 1px solid #ddd;
     padding: 8px;
 }
@@ -296,7 +297,8 @@ td {
 
 #snackDataBase tr:first-child, #drinkTable tr:first-child, #skListeSchnaps tr:first-child,
 #skListeRest tr:first-child, #avAußen tr:first-child, #avInnen tr:first-child,
-#avGeldzaehlen tr:first-child, #avVerkaufAbrechnungStrichlisteAussen tr:first-child, #avVerkaufAbrechnungStrichlisteInnen tr:first-child{
+#avGeldzaehlen tr:first-child, #avVerkaufAbrechnungStrichlisteAussen tr:first-child,
+#avVerkaufAbrechnungStrichlisteInnen tr:first-child, #avVerkaufAuswertung tr:first-child{
     background-color: #3C6F80;
     color: white;
     font-weight: bold;
@@ -304,7 +306,7 @@ td {
 
 
 #snackDataBase tr, #drinkTable tr, #skListeSchnaps tr, #skListeRest tr, #avAußen tr, #avInnen tr, #avGeldzaehlen tr,
-#avVerkaufAbrechnungStrichlisteInnen tr, #avVerkaufAbrechnungStrichlisteAussen tr{
+#avVerkaufAbrechnungStrichlisteInnen tr, #avVerkaufAbrechnungStrichlisteAussen tr, #avVerkaufAuswertung tr{
     background-color: beige;
     color:black;
     font-weight: bolder;
@@ -318,6 +320,8 @@ td {
 #snackDataBase img, #drinkTable img {
     width: 50px;
 }
+
+
 
 
 @media screen and ( max-width: 800px ) {
