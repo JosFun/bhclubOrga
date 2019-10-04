@@ -80,9 +80,16 @@ selectAbrechnung.addEventListener("change", function(e) {
            avDb.drinkFilter.delete(avDb.typeColumnName);
        }
    }
-   /* Otherwise, if the user has choosen to load an old accountin of the avVerkauf into the software from the database.*/
+   /* Otherwise, if the user has choosen to load an old accounting of the avVerkauf into the software from the database.*/
    else {
+       let abrechnungString = selectAbrechnung.options[selectAbrechnung.selectedIndex].text;
 
+       /* Try to get access to the id of the abrechnung the user has selected */
+       let textParts = abrechnungString.split(" ");
+       let id = parseInt(textParts[0].substring(1,textParts[0].length));
+
+       /* Now load the abrechnung with the specified id from the database of the system */
+       ipcRenderer.send("av_verkauf_abrechnungen:load", id);
    }
 });
 
@@ -250,4 +257,53 @@ ipcRenderer.on("av_verkauf_abrechnungen:confirm_abrechnung_creation", function(e
 * recent data will be stored. */
 ipcRenderer.on("av_drinks_abrechnungen:deletion_complete", function(e) {
     getDrinkAmounts();
+});
+
+/* Once an already existing abrechnung has been successfully fetched from the database system, one has to take care
+* that all the html elements on the page will be filled with the according content properly. */
+ipcRenderer.on( "av_verkauf_abrechnungen:deliver_abrechnung", function(e, abrechnung) {
+
+    /* Load the amounts of the counted coins and bank notes into the corresponding html elements.*/
+    for ( let i = 0; i < moneyCounts.length; ++i ) {
+        if ( i === 0 ) {
+            moneyCounts.item(i).textContent = abrechnung[0]["money_count_100"];
+        }
+        else if ( i === 1 ) {
+            moneyCounts.item(i).textContent = abrechnung[0]["money_count_50"];
+        }
+        else if ( i === 2 ) {
+            moneyCounts.item(i).textContent = abrechnung[0]["money_count_20"];
+        }
+        else if ( i === 3 ) {
+            moneyCounts.item(i).textContent = abrechnung[0]["money_count_10"];
+        }
+        else if ( i === 4 ) {
+            moneyCounts.item(i).textContent = abrechnung[0]["money_count_5"];
+        }
+        else if ( i === 5 ) {
+            moneyCounts.item(i).textContent = abrechnung[0]["money_count_2"];
+        }
+        else if ( i === 6 ) {
+            moneyCounts.item(i).textContent = abrechnung[0]["money_count_1"];
+        }
+        else if ( i === 7 ) {
+            moneyCounts.item(i).textContent = abrechnung[0]["money_count_05"];
+        }
+        else if ( i === 8 ) {
+            moneyCounts.item(i).textContent = abrechnung[0]["money_count_02"];
+        }
+        else if ( i === 9 ) {
+            moneyCounts.item(i).textContent = abrechnung[0]["money_count_01"];
+        }
+        else if ( i === 10 ) {
+            moneyCounts.item(i).textContent = abrechnung[0]["money_count_005"];
+        }
+        else if ( i === 11 ) {
+            moneyCounts.item(i).textContent = abrechnung[0]["money_count_002"];
+        }
+        else if ( i === 12 ) {
+            moneyCounts.item(i).textContent = abrechnung[0]["money_count_001"];
+        }
+    }
+
 });

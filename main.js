@@ -311,6 +311,12 @@ function deleteAVDrinks ( abrechnungID ) {
     } );
 }
 
+/**
+ * Store the specified triple in the datbase.
+ * @param abrechnungID The id of the abrechnung
+ * @param drinkID The id of the drink
+ * @param amount The amount of bottles of the drink that have been sold
+ */
 function storeAVDrinks ( abrechnungID, drinkID, amount ) {
     let valueArray = [ abrechnungID, drinkID, amount];
     let sqlInsert = "INSERT INTO av_drinks VALUES (?)";
@@ -318,6 +324,19 @@ function storeAVDrinks ( abrechnungID, drinkID, amount ) {
         if ( err ) throw err;
         console.log("av_drink_entry has successfully been inserted into the system!");
     })
+}
+
+/**
+ * Load the abrechnung with the specified ID from the database
+ * @param abrechnungID The specified id of the abrechnung that is to be loaded from the database
+ */
+function loadAVDrinks( abrechnungID ) {
+    let sqlSelect = "SELECT * FROM av_verkauf where av_abrechnung_id = ?";
+    dbConnection.query(sqlSelect, abrechnungID, function(err, results, fields) {
+        if ( err ) throw err;
+        console.log("av_verkauf_abrechnung with id " + abrechnungID + " has successfully been loaded from the system.");
+        win.webContents.send("av_verkauf_abrechnungen:deliver_abrechnung", results);
+    });
 }
 
 // Catch newly added drinks
@@ -425,6 +444,10 @@ ipcMain.on("av_drinks_abrechnungen:delete", function (e, abrechnungID){
 
 ipcMain.on("av_drinks_abrechnungen:store", function(e, abrechnungID, drinkID, amount) {
     storeAVDrinks(abrechnungID, drinkID, amount);
+});
+
+ipcMain.on("av_verkauf_abrechnungen:load", function( e, id ) {
+    loadAVDrinks(id);
 });
 
 if (process.env.NODE_ENV !== 'production'){
