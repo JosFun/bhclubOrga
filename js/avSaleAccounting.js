@@ -29,6 +29,12 @@ const moneyValues = [ 100, 50, 20, 10, 5, 2, 1, 0.5, 0.2, 0.1, 0.05, 0.02, 0.01 
  */
 let moneyOverAll = 0;
 
+/**
+ * The ID of the currently loaded Abrechnung in the database.
+ * @type {number}
+ */
+let currentAbrechnungID = 0;
+
 
 /**
  * The text in the select element that represents a new Abrechnung the user can make.
@@ -185,17 +191,59 @@ storeButton.addEventListener( "click", function(e) {
 
     /* Send the moneyData to the database. */
     ipcRenderer.send("av_verkauf_abrechnungen:create_abrechnung", avAbrechnungFields);
-
-    /* Get access to the dfferent amounts of all the ordered drinks. */
-
-
 });
 
-ipcRenderer.on("av_verkauf_abrechnung:confirm_abrechnung_creation", function(e, data ) {
+/**
+ * Get the specified amounts of all the drinks in the Abrechnung from the corresponding html elements and write
+ * them into the database properly.
+ */
+function getDrinkAmounts ( ) {
+    const table1 = document.getElementById("avVerkaufAbrechnungStrichlisteAussen");
+    const table2 = document.getElementById("avVerkaufAbrechnungStrichlisteInnen");
+    /* The index of the amount-td in each of the table's rows. */
+    let amountIndex = 4;
 
+    for ( let k = 0; k < 2; ++k ) {
+        let rows;
+        if ( k === 0 ) {
+             rows = table1.children;
+        }
+        else {
+            rows = table2.children;
+        }
+        /* Iterate through all the rows from the second to the last */
+        for (let i = 1; i < rows.length; ++i) {
+            /* If the editable span in the ith row does contain a valid number: write into the database*/
+            if (rows[i].children.item(amountIndex).className !== "avAbrechnungAussenCategory" &&
+            rows[i].children.item(amountIndex).className !== "avAbrechnungInnenCategory") {
+                let amount = parseInt(rows[i].children.item(amountIndex).children.item(0).textContent);
+                if (!isNaN(amount)) {
+                    /* Extract the drinkID from the row where an amount has been specified. */
+                    let drinkString = rows[i].children.item(0).textContent;
+                    drinkString = drinkString.substring(1, drinkString.length );
+                    let drinkID = parseInt ( drinkString );
+                    
+                    /* Now we have to delete all the entries in the av_drinks database table that are associated
+                    * with this abrechnung since it could be the case that the abrechnung has been opened in order
+                    * to update it, so that an update of all the drink amounts would be necessary. */
+                    ipcRenderer.send ( "av_drinks_abrechnungen:delete", currentAbrechnungID);
+                }
+            }
+        }
+    }
+}
+
+/* Reload the page after successfully inserting the necessary data into the database.*/
+ipcRenderer.on("av_verkauf_abrechnungen:confirm_abrechnung_creation", function(e, data ) {
+    currentAbrechnungID = data[0]["MAX(av_abrechnung_id)"];
+    console.log("hlao");
+    /* Now update the amounts of all the drinks, that belong to the currentAbrechnungID, in the database */
+    getDrinkAmounts();
     if ( confirm("Möchtest du die Abrechnung fertigstellen?") ) {
         location.reload();
     }
+});
 
+ipcRenderer.on("av_drinks_abrechnungen:deletion_complete", function(e) {
 
 });

@@ -289,9 +289,26 @@ function createNewAVVerkaufAbrechnung ( data ) {
     dbConnection.query(sqlInsert, [data], function( err, result) {
        if ( err ) throw err;
        console.log("New Abrechnung created!");
-    });
+       /* Get access to the id of the abrechnung that has just been created.*/
+       dbConnection.query("SELECT MAX(av_abrechnung_id) from av_verkauf", function(err, id) {
+            if ( err ) throw err;
+            win.webContents.send("av_verkauf_abrechnungen:confirm_abrechnung_creation", id);
 
-    win.webContents.send("av_verkauf_abrechnung:confirm_abrechnung_creation");
+       });
+    });
+}
+
+/**
+ * Delete all the entries in the table av_drinks with the specified id
+ * @param abrechnungID The specified id of the av_drinks-entries that are to be deleted.
+ */
+function deleteAVDrinks ( abrechnungID ) {
+    let sqlDelete = "DELETE FROM av_drinks WHERE av_abrechnung_id = ?";
+    dbConnection.query(sqlDelete, abrechnungID, function (err, results ) {
+        if ( err ) throw err;
+        console.log("av_drinks-entries with av_abrechnung_id = " + abrechnungID + " have been deleted from the system.");
+        win.webContents.send("av_drinks_abrechnungen:deletion_complete");
+    } );
 }
 
 // Catch newly added drinks
@@ -391,6 +408,10 @@ ipcMain.on('av_verkauf_abrechnungen:get', function(e) {
 
 ipcMain.on("av_verkauf_abrechnungen:create_abrechnung", function(e, abrechnungData) {
     createNewAVVerkaufAbrechnung(abrechnungData);
+});
+
+ipcMain.on("av_drinks_abrechnungen:delete", function (e, abrechnungID){
+    deleteAVDrinks(abrechnungID);
 });
 
 if (process.env.NODE_ENV !== 'production'){

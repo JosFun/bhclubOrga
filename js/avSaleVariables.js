@@ -262,7 +262,7 @@ const snackOrderColumn = "snack_name";
                 /* Finish the accounting by doing the profit and loss account */
                 finishAccounting();
             });
-            tds[3].appendChild(span);
+            tds[4].appendChild(span);
 
             tds[5].textContent = "0.00€";
 
