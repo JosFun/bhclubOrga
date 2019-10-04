@@ -222,11 +222,9 @@ function getDrinkAmounts ( ) {
                     let drinkString = rows[i].children.item(0).textContent;
                     drinkString = drinkString.substring(1, drinkString.length );
                     let drinkID = parseInt ( drinkString );
-                    
-                    /* Now we have to delete all the entries in the av_drinks database table that are associated
-                    * with this abrechnung since it could be the case that the abrechnung has been opened in order
-                    * to update it, so that an update of all the drink amounts would be necessary. */
-                    ipcRenderer.send ( "av_drinks_abrechnungen:delete", currentAbrechnungID);
+
+                    /* Request the storage of the data in the database of the system.*/
+                    ipcRenderer.send("av_drinks_abrechnungen:store", currentAbrechnungID,drinkID,amount);
                 }
             }
         }
@@ -236,14 +234,20 @@ function getDrinkAmounts ( ) {
 /* Reload the page after successfully inserting the necessary data into the database.*/
 ipcRenderer.on("av_verkauf_abrechnungen:confirm_abrechnung_creation", function(e, data ) {
     currentAbrechnungID = data[0]["MAX(av_abrechnung_id)"];
-    console.log("hlao");
     /* Now update the amounts of all the drinks, that belong to the currentAbrechnungID, in the database */
-    getDrinkAmounts();
+
+    /* Now we have to delete all the entries in the av_drinks database table that are associated
+      * with this abrechnung since it could be the case that the abrechnung has been opened in order
+      * to update it, so that an update of all the drink amounts would be necessary. */
+    ipcRenderer.send ( "av_drinks_abrechnungen:delete", currentAbrechnungID);
     if ( confirm("Möchtest du die Abrechnung fertigstellen?") ) {
         location.reload();
     }
 });
 
+/* Once the deletion of hypothetically existing av_drinks entries with the current av_abrechnung_id has been completed,
+* one can take care of the storage of the actual amounts of every product inside the database table, so that the most
+* recent data will be stored. */
 ipcRenderer.on("av_drinks_abrechnungen:deletion_complete", function(e) {
-
+    getDrinkAmounts();
 });

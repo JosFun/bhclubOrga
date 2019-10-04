@@ -311,6 +311,15 @@ function deleteAVDrinks ( abrechnungID ) {
     } );
 }
 
+function storeAVDrinks ( abrechnungID, drinkID, amount ) {
+    let valueArray = [ abrechnungID, drinkID, amount];
+    let sqlInsert = "INSERT INTO av_drinks VALUES (?)";
+    dbConnection.query(sqlInsert, [valueArray], function(err, results) {
+        if ( err ) throw err;
+        console.log("av_drink_entry has successfully been inserted into the system!");
+    })
+}
+
 // Catch newly added drinks
 ipcMain.on('drink:add', function(e,drinkInfo, drinkFilter, drinkOrder){
     /*TODO: Perform the sql insertion*/
@@ -412,6 +421,10 @@ ipcMain.on("av_verkauf_abrechnungen:create_abrechnung", function(e, abrechnungDa
 
 ipcMain.on("av_drinks_abrechnungen:delete", function (e, abrechnungID){
     deleteAVDrinks(abrechnungID);
+});
+
+ipcMain.on("av_drinks_abrechnungen:store", function(e, abrechnungID, drinkID, amount) {
+    storeAVDrinks(abrechnungID, drinkID, amount);
 });
 
 if (process.env.NODE_ENV !== 'production'){
