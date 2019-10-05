@@ -99,8 +99,6 @@ const snackOrderColumn = "snack_name";
  * @param items The items that are about to be made visible on the app
  */
  function addItems (mode, tableAussen, tableInnen, ...data) {
-     /* First, remove all the hypothetically existing additional rows from the tables. */
-     removeTableRows(tableInnen, tableAussen);
 
     let table;
     /* The start row of the table */
@@ -345,5 +343,5 @@ function removeTableRows ( innen, aussen ) {
 }
 
 module.exports = {MODE, COL_AUSSEN_COUNT, COL_INNEN_COUNT, COL_ABRECHNUNG_COUNT, drinkOuterCategories, drinkInnerCategories, categoryIndex,
-    drinkFilter, snackFilter, drinkOrder, snackOrder, typeColumnName, avColumnName, drinkOrderColumn, snackOrderColumn, finishAccounting, addItems};
+    drinkFilter, snackFilter, drinkOrder, snackOrder, typeColumnName, avColumnName, drinkOrderColumn, snackOrderColumn, finishAccounting, addItems, removeTableRows};
 

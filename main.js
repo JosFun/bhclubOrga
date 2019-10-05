@@ -361,17 +361,25 @@ function loadAVAbrechnung( abrechnungID ) {
  *
  */
 function loadAVDrinks ( abrechnungID, filter ) {
-    let sqlSelect = "SELECT * from rohgetraenke R, av_verkauf A WHERE R.drink_id = A.drink_id AND A.av_abrechnung_id = ?";
+    let sqlSelect = "SELECT * from rohgetraenke R, av_drinks A WHERE R.drink_id = A.drink_id AND A.av_abrechnung_id = ?";
 
-    let iterator;
+    /* Store the values of all the keys in the map inside a new array. */
+    let valueArray = new Array ( filter.size );
+
+    let iterator = filter.keys();
 
     if ( filter != null && filter.size > 0 ) {
         let key;
+        let i = 0;
         while ( (key = iterator.next().value) !== undefined ) {
-            sqlSelect += " AND " + key + " = " + filter.get(key);
+            sqlSelect += " AND " + key + " like ?";
+            valueArray[i++] = filter.get(key);
         }
     }
-    dbConnection.query(sqlSelect, abrechnungID, function(err, results, fields) {
+
+    console.log(sqlSelect);
+    sqlSelect += ";"
+    dbConnection.query(sqlSelect, [abrechnungID, valueArray], function(err, results, fields) {
         if ( err ) throw err;
         console.log("Drinks from av_verkauf_abrechnung with id " + abrechnungID + " have successfully been fetched from " +
             "the system.");
@@ -383,17 +391,9 @@ function loadAVDrinks ( abrechnungID, filter ) {
  * Load the snacks and their amounts that belong to the abrechnung with the specified ID into the system.
  * @param abrechnungID The id of the abrechnung
  */
-function loadAVSnacks ( abrechnungID, filter ) {
-    let sqlSelect = "SELECT * from snacks S, av_verkauf A WHERE S.snack_id = A.snack_id AND A.av_abrechnung_id = ?";
+function loadAVSnacks ( abrechnungID ) {
+    let sqlSelect = "SELECT * from snacks S, av_snacks A WHERE S.snack_id = A.snack_id AND A.av_abrechnung_id = ?";
 
-    let iterator;
-
-    if ( filter != null && filter.size > 0 ) {
-        let key;
-        while ( ( key = iterator.next().value) !== undefined ) {
-            sqlSelect += "AND " + key + " = " + filter.get(key);
-        }
-    }
     dbConnection.query(sqlSelect, abrechnungID, function(err, results, fields ) {
        if ( err ) throw err;
        console.log( "Snacks from av_verkauf_abrechnung with id " + abrechnungID + " have successfully been fetched from " +
@@ -517,8 +517,8 @@ ipcMain.on("av_verkauf_abrechnungen:load", function( e, id ) {
     loadAVAbrechnung(id);
 });
 
-ipcMain.on("av_drinks_abrechnungen:deliver_drink_amounts", function( e, id ) {
-    loadAVDrinks(id);
+ipcMain.on("av_drinks_abrechnungen:deliver_drink_amounts", function( e, id, filter ) {
+    loadAVDrinks(id, jsonMapModule.jsonToStrMap(filter));
 });
 
 ipcMain.on("av_snacks_abrechnungen:deliver_snack_amounts", function( e, id ) {

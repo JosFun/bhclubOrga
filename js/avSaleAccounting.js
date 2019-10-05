@@ -18,6 +18,12 @@ const moneyCounts = document.getElementsByClassName("avMoneyCount");
 const moneyOverallField = document.getElementById("avMoneyCountOverall");
 
 /**
+ * The names of the tables that are important on the av_verkauf_abrechnung page.
+ * @type {string}
+ */
+const tableAussen = "avVerkaufAbrechnungStrichlisteAussen", tableInnen = "avVerkaufAbrechnungStrichlisteInnen";
+
+/**
  * The different moneyValues of all the coins and bank notes one can count.
  * @type {number[]}
  */
@@ -60,6 +66,8 @@ selectAbrechnung.addEventListener("change", function(e) {
        /* Create filters and orders in order to request sql selects from the database. */
        avDb.categoryIndex = 0;
 
+       avDb.removeTableRows("avVerkaufAbrechnungStrichlisteInnen", "avVerkaufAbrechnungStrichlisteAussen");
+
        avDb.drinkOrder.set( avDb.drinkOrderColumn, "asc" );
        avDb.snackOrder.set( avDb.snackOrderColumn, "asc" );
 
@@ -87,6 +95,8 @@ selectAbrechnung.addEventListener("change", function(e) {
        /* Try to get access to the id of the abrechnung the user has selected */
        let textParts = abrechnungString.split(" ");
        let id = parseInt(textParts[0].substring(1,textParts[0].length));
+
+       currentAbrechnungID = id;
 
        /* Now load the abrechnung with the specified id from the database of the system */
        ipcRenderer.send("av_verkauf_abrechnungen:load", id);
@@ -330,24 +340,42 @@ ipcRenderer.on( "av_verkauf_abrechnungen:deliver_abrechnung", function(e, abrech
 
     let filter = new Map ( );
     avDb.categoryIndex = 0;
+    /* First, clear the tables. */
+    avDb.removeTableRows(tableInnen, tableAussen);
+
+    /* Second, add the drinks to the table representing the outside of the TED*/
 
     for ( let i = 0; i < avDb.drinkOuterCategories.length; ++i ) {
-        avDb.drinkFilter.set(avDb.typeColumnName, avDb.drinkOuterCategories[i]);
+        filter.set(avDb.typeColumnName, avDb.drinkOuterCategories[i]);
         ipcRenderer.send("av_drinks_abrechnungen:deliver_drink_amounts", currentAbrechnungID, jsonMapModule.strMapToJson(filter));
-        avDb.drinkFilter.delete(avDb.typeColumnName);
+        filter.delete(avDb.typeColumnName);
     }
 
+    /* Now request the delivery of the snacks from the database to the frontend of the app.*/
     ipcRenderer.send("av_snacks_abrechnungen:deliver_snack_amounts", currentAbrechnungID);
-
-    for ( let i = 0; i < avDb.drinkInnerCategories.length; ++i ) {
-        avDb.drinkFilter.set(avDb.typeColumnName, avDb.drinkInnerCategories[i]);
-        ipcRenderer.send("av_drinks_abrechnungen:deliver_drink_amounts", currentAbrechnungID, jsonMapModule.strMapToJson(filter));
-        avDb.drinkFilter.delete(avDb.typeColumnName);
-    }
-
-    /* Request the delivery of all the drink amounts that have been used in the abrechnung with the currently specified id. */
-    ipcRenderer.send("av_drinks_abrechnungen:deliver_drink_amounts", currentAbrechnungID);
-
 });
 
-ipcRenderer.on("")
+/* Once the av_verkauf_drinks have been delivered, add them to the corresponding tables, depending on the current
+* categoryIndex*/
+ipcRenderer.on("av_verkauf_drinks:update", function(e, data) {
+    if ( avDb.categoryIndex <= 4 ) {
+        avDb.addItems(avDb.MODE.ABRECHNUNG_DRINKS_OUTER, tableAussen, tableInnen, data );
+    }
+    else {
+        avDb.addItems(avDb.MODE.ABRECHNUNG_DRINKS_INNER, tableAussen, tableInnen, data );
+    }
+});
+
+/* Once the snacks have been delivered, add them to the table as well.
+* Do also request the delivery of the drinks that are supposed to go into the table inside of the TED. */
+ipcRenderer.on("av_verkauf_snacks:update", function(e, data) {
+
+    let filter = new Map();
+
+    avDb.addItems(avDb.MODE.ABRECHNUNG_SNACKS_OUTER, tableAussen, tableInnen, data);
+    for ( let i = 0; i < avDb.drinkInnerCategories.length; ++i ) {
+        filter.set(avDb.typeColumnName, avDb.drinkInnerCategories[i]);
+        ipcRenderer.send("av_drinks_abrechnungen:deliver_drink_amounts", currentAbrechnungID, jsonMapModule.strMapToJson(filter));
+        filter.delete(avDb.typeColumnName);
+    }
+});
