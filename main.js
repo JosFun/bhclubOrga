@@ -311,6 +311,16 @@ function deleteAVDrinks ( abrechnungID ) {
     } );
 }
 
+function deleteAVSnacks( abrechnungID ) {
+    let sqlDelete = "DELETE FROM av_snacks WHERE av_abrechnung_id = ?";
+    console.log("hello");
+    dbConnection.query (sqlDelete, abrechnungID, function(err, results ) {
+       if ( err ) throw err;
+       console.log("av_snacks-entries with av_abrechnung_id = " + abrechnungID + " have been deleted from the system.");
+       win.webContents.send("av_snacks_abrechnungen:deletion_complete");
+    });
+}
+
 /**
  * Store the specified triple in the database.
  * @param abrechnungID The id of the abrechnung
@@ -503,6 +513,10 @@ ipcMain.on("av_verkauf_abrechnungen:create_abrechnung", function(e, abrechnungDa
 
 ipcMain.on("av_drinks_abrechnungen:delete", function (e, abrechnungID){
     deleteAVDrinks(abrechnungID);
+});
+
+ipcMain.on("av_snacks_abrechnungen:delete", function (e, abrechnungID){
+    deleteAVSnacks(abrechnungID);
 });
 
 ipcMain.on("av_drinks_abrechnungen:store", function(e, abrechnungID, drinkID, amount) {

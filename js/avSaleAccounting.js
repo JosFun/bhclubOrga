@@ -209,8 +209,18 @@ storeButton.addEventListener( "click", function(e) {
         }
     }
 
-    /* Send the moneyData to the database. */
-    ipcRenderer.send("av_verkauf_abrechnungen:create_abrechnung", avAbrechnungFields);
+    if ( selectAbrechnung.options[selectAbrechnung.selectedIndex].text === abrechnungNeu ) {
+        ipcRenderer.send("av_verkauf_abrechnungen:create_abrechnung", avAbrechnungFields);
+    }
+    else {
+        /* Send the moneyData to the database. */
+        ipcRenderer.send("av_snacks_abrechnungen:delete", currentAbrechnungID );
+        ipcRenderer.send("av_drinks_abrechnungen:delete", currentAbrechnungID);
+        if (confirm("Möchtest du die Abrechnung #" + currentAbrechnungID + " überschreiben?")) {
+            location.reload();
+        }
+    }
+
 });
 
 /**
@@ -281,6 +291,7 @@ ipcRenderer.on("av_verkauf_abrechnungen:confirm_abrechnung_creation", function(e
     /* Now we have to delete all the entries in the av_drinks database table that are associated
       * with this abrechnung since it could be the case that the abrechnung has been opened in order
       * to update it, so that an update of all the drink amounts would be necessary. */
+    ipcRenderer.send("av_snacks_abrechnungen:delete", currentAbrechnungID );
     ipcRenderer.send ( "av_drinks_abrechnungen:delete", currentAbrechnungID);
     if ( confirm("Möchtest du die Abrechnung fertigstellen?") ) {
         location.reload();
@@ -367,6 +378,8 @@ ipcRenderer.on("av_verkauf_drinks:update", function(e, data) {
     else {
         avDb.addItems(avDb.MODE.ABRECHNUNG_DRINKS_INNER_LOAD, tableAussen, tableInnen, data );
     }
+
+    avDb.finishAccounting();
 });
 
 /* Once the snacks have been delivered, add them to the table as well.
@@ -381,4 +394,6 @@ ipcRenderer.on("av_verkauf_snacks:update", function(e, data) {
         ipcRenderer.send("av_drinks_abrechnungen:deliver_drink_amounts", currentAbrechnungID, jsonMapModule.strMapToJson(filter));
         filter.delete(avDb.typeColumnName);
     }
+
+    avDb.finishAccounting();
 });

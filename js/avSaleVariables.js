@@ -242,7 +242,13 @@ const snackOrderColumn = "snack_name";
             });
             tds[4].appendChild(span);
 
-            tds[5].textContent = "0.00€";
+            if ( mode === MODE.ABRECHNUNG_DRINKS_OUTER_LOAD || mode === MODE.ABRECHNUNG_DRINKS_INNER_LOAD) {
+                let rowVal = data[0][i]["drink_count"] * data[0][i]["internal_price"];
+                tds[5].textContent = rowVal.toFixed(2) + "€";
+            }
+            else {
+                tds[5].textContent = "0.00€";
+            }
         }
         else if (mode === avDb.MODE.ABRECHNUNG_SNACKS_OUTER || mode === MODE.ABRECHNUNG_SNACKS_OUTER_LOAD) {
             tds[0].textContent = "#" + data[0][i]["snack_id"];
@@ -281,7 +287,13 @@ const snackOrderColumn = "snack_name";
             });
             tds[4].appendChild(span);
 
-            tds[5].textContent = "0.00€";
+            if ( mode === MODE.ABRECHNUNG_DRINKS_OUTER_LOAD || mode === MODE.ABRECHNUNG_DRINKS_INNER_LOAD) {
+                let rowVal = data[0][i]["snack_count"] * data[0][i]["snack_price"];
+                tds[5].textContent = rowVal.toFixed(2) + "€";
+            }
+            else {
+                tds[5].textContent = "0.00€";
+            }
 
         }
 
