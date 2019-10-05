@@ -218,20 +218,42 @@ function getDrinkAmounts ( ) {
         else {
             rows = table2.children;
         }
-        /* Iterate through all the rows from the second to the last */
-        for (let i = 1; i < rows.length; ++i) {
+        let i;
+        /* Iterate through all the rows from the second to the last until you are in the snacks rows */
+        for (i = 1; i < rows.length && rows[i].children.item(0).textContent !== "Snacks"; ++i) {
             /* If the editable span in the ith row does contain a valid number: write into the database*/
             if (rows[i].children.item(amountIndex).className !== "avAbrechnungAussenCategory" &&
             rows[i].children.item(amountIndex).className !== "avAbrechnungInnenCategory") {
                 let amount = parseInt(rows[i].children.item(amountIndex).children.item(0).textContent);
+                /* Extract the drinkID from the row where an amount has been specified. */
+                let drinkString = rows[i].children.item(0).textContent;
+                drinkString = drinkString.substring(1, drinkString.length );
+                let drinkID = parseInt ( drinkString );
                 if (!isNaN(amount)) {
-                    /* Extract the drinkID from the row where an amount has been specified. */
-                    let drinkString = rows[i].children.item(0).textContent;
-                    drinkString = drinkString.substring(1, drinkString.length );
-                    let drinkID = parseInt ( drinkString );
-
                     /* Request the storage of the data in the database of the system.*/
                     ipcRenderer.send("av_drinks_abrechnungen:store", currentAbrechnungID,drinkID,amount);
+                }
+                else {
+                    ipcRenderer.send("av_drinks_abrechnungen:store", currentAbrechnungID, drinkID, 0);
+                }
+            }
+        }
+
+        for( ; i < rows.length; ++i ) {
+            /* If the editable span in the ith row does contain a valid number: write into the database*/
+            if (rows[i].children.item(amountIndex).className !== "avAbrechnungAussenCategory" &&
+                rows[i].children.item(amountIndex).className !== "avAbrechnungInnenCategory") {
+                let amount = parseInt(rows[i].children.item(amountIndex).children.item(0).textContent);
+                /* Extract the drinkID from the row where an amount has been specified. */
+                let snackString = rows[i].children.item(0).textContent;
+                snackString = snackString.substring(1, snackString.length );
+                let snackID = parseInt ( snackString );
+                if (!isNaN(amount)) {
+                    /* Request the storage of the data in the database of the system.*/
+                    ipcRenderer.send("av_snacks_abrechnungen:store", currentAbrechnungID,snackID,amount);
+                }
+                else {
+                    ipcRenderer.send("av_snacks_abrechnungen:store", currentAbrechnungID, snackID, 0);
                 }
             }
         }
@@ -306,4 +328,26 @@ ipcRenderer.on( "av_verkauf_abrechnungen:deliver_abrechnung", function(e, abrech
         }
     }
 
+    let filter = new Map ( );
+    avDb.categoryIndex = 0;
+
+    for ( let i = 0; i < avDb.drinkOuterCategories.length; ++i ) {
+        avDb.drinkFilter.set(avDb.typeColumnName, avDb.drinkOuterCategories[i]);
+        ipcRenderer.send("av_drinks_abrechnungen:deliver_drink_amounts", currentAbrechnungID, jsonMapModule.strMapToJson(filter));
+        avDb.drinkFilter.delete(avDb.typeColumnName);
+    }
+
+    ipcRenderer.send("av_snacks_abrechnungen:deliver_snack_amounts", currentAbrechnungID);
+
+    for ( let i = 0; i < avDb.drinkInnerCategories.length; ++i ) {
+        avDb.drinkFilter.set(avDb.typeColumnName, avDb.drinkInnerCategories[i]);
+        ipcRenderer.send("av_drinks_abrechnungen:deliver_drink_amounts", currentAbrechnungID, jsonMapModule.strMapToJson(filter));
+        avDb.drinkFilter.delete(avDb.typeColumnName);
+    }
+
+    /* Request the delivery of all the drink amounts that have been used in the abrechnung with the currently specified id. */
+    ipcRenderer.send("av_drinks_abrechnungen:deliver_drink_amounts", currentAbrechnungID);
+
 });
+
+ipcRenderer.on("")

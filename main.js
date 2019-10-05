@@ -312,10 +312,10 @@ function deleteAVDrinks ( abrechnungID ) {
 }
 
 /**
- * Store the specified triple in the datbase.
+ * Store the specified triple in the database.
  * @param abrechnungID The id of the abrechnung
  * @param drinkID The id of the drink
- * @param amount The amount of bottles of the drink that have been sold
+ * @param amount The amount of bottles of the drink that has been sold
  */
 function storeAVDrinks ( abrechnungID, drinkID, amount ) {
     let valueArray = [ abrechnungID, drinkID, amount];
@@ -327,15 +327,78 @@ function storeAVDrinks ( abrechnungID, drinkID, amount ) {
 }
 
 /**
+ * Store the specified triple in the database.
+ * @param abrechnungID The id of the corresponding abrechnung
+ * @param snackID The id of the snack
+ * @param amount The amount of bottles of the snack that has been sold
+ */
+function storeAVSnacks ( abrechnungID, snackID, amount ) {
+    let valueArray = [ abrechnungID, snackID, amount ];
+    let sqlInsert = "INSERT INTO av_snacks VALUES (?)";
+    dbConnection.query(sqlInsert, [valueArray], function(err, results) {
+       if ( err ) throw err;
+       console.log("av_snacks entry has successfully been insertd into the system.");
+    });
+}
+
+/**
  * Load the abrechnung with the specified ID from the database
  * @param abrechnungID The specified id of the abrechnung that is to be loaded from the database
  */
-function loadAVDrinks( abrechnungID ) {
+function loadAVAbrechnung( abrechnungID ) {
     let sqlSelect = "SELECT * FROM av_verkauf where av_abrechnung_id = ?";
     dbConnection.query(sqlSelect, abrechnungID, function(err, results, fields) {
         if ( err ) throw err;
         console.log("av_verkauf_abrechnung with id " + abrechnungID + " has successfully been loaded from the system.");
         win.webContents.send("av_verkauf_abrechnungen:deliver_abrechnung", results);
+    });
+}
+
+/**
+ * Load the drinks and their amounts that belong to the abrechnung with the specified ID into the system.
+ * @param abrechnungID The id of the abrechnung
+ * @param filter The filter that has been applied to the sqlSelect
+ *
+ */
+function loadAVDrinks ( abrechnungID, filter ) {
+    let sqlSelect = "SELECT * from rohgetraenke R, av_verkauf A WHERE R.drink_id = A.drink_id AND A.av_abrechnung_id = ?";
+
+    let iterator;
+
+    if ( filter != null && filter.size > 0 ) {
+        let key;
+        while ( (key = iterator.next().value) !== undefined ) {
+            sqlSelect += " AND " + key + " = " + filter.get(key);
+        }
+    }
+    dbConnection.query(sqlSelect, abrechnungID, function(err, results, fields) {
+        if ( err ) throw err;
+        console.log("Drinks from av_verkauf_abrechnung with id " + abrechnungID + " have successfully been fetched from " +
+            "the system.");
+        win.webContents.send("av_verkauf_drinks:update", results);
+    });
+}
+
+/**
+ * Load the snacks and their amounts that belong to the abrechnung with the specified ID into the system.
+ * @param abrechnungID The id of the abrechnung
+ */
+function loadAVSnacks ( abrechnungID, filter ) {
+    let sqlSelect = "SELECT * from snacks S, av_verkauf A WHERE S.snack_id = A.snack_id AND A.av_abrechnung_id = ?";
+
+    let iterator;
+
+    if ( filter != null && filter.size > 0 ) {
+        let key;
+        while ( ( key = iterator.next().value) !== undefined ) {
+            sqlSelect += "AND " + key + " = " + filter.get(key);
+        }
+    }
+    dbConnection.query(sqlSelect, abrechnungID, function(err, results, fields ) {
+       if ( err ) throw err;
+       console.log( "Snacks from av_verkauf_abrechnung with id " + abrechnungID + " have successfully been fetched from " +
+           "the system." );
+       win.webContents.send("av_verkauf_snacks:update", results);
     });
 }
 
@@ -446,8 +509,20 @@ ipcMain.on("av_drinks_abrechnungen:store", function(e, abrechnungID, drinkID, am
     storeAVDrinks(abrechnungID, drinkID, amount);
 });
 
+ipcMain.on("av_snacks_abrechnungen:store", function(e, abrechnungID, snackID, amount) {
+    storeAVSnacks(abrechnungID, snackID, amount);
+});
+
 ipcMain.on("av_verkauf_abrechnungen:load", function( e, id ) {
+    loadAVAbrechnung(id);
+});
+
+ipcMain.on("av_drinks_abrechnungen:deliver_drink_amounts", function( e, id ) {
     loadAVDrinks(id);
+});
+
+ipcMain.on("av_snacks_abrechnungen:deliver_snack_amounts", function( e, id ) {
+    loadAVSnacks(id);
 });
 
 if (process.env.NODE_ENV !== 'production'){

@@ -99,7 +99,9 @@ const snackOrderColumn = "snack_name";
  * @param items The items that are about to be made visible on the app
  */
  function addItems (mode, tableAussen, tableInnen, ...data) {
-    console.log("hellole");
+     /* First, remove all the hypothetically existing additional rows from the tables. */
+     removeTableRows(tableInnen, tableAussen);
+
     let table;
     /* The start row of the table */
     const startRow = document.createElement("tr");
@@ -304,7 +306,7 @@ function getGesamtPriceSum ( tableName1 = "avVerkaufAbrechnungStrichlisteInnen",
 }
 
 /**
- * Finish the Accouting by filling out the Auswertung-fields at the end of the screen.
+ * Finish the Accounting by filling out the Auswertung-fields at the end of the screen.
  */
 function finishAccounting ( ) {
     /* Take care of the overall result calculation at the end of the page. */
@@ -326,7 +328,22 @@ function finishAccounting ( ) {
 
 }
 
+/**
+ * Remove all the rows from the tables for TED innen and TED aussen verkauf.
+ */
+function removeTableRows ( innen, aussen ) {
+    const tableAussen = document.getElementById(aussen);
+    const tableInnen = document.getElementById(innen);
+
+    /* Remove all the rows from both the tables. */
+    for ( let i = 1; i < tableAussen.children.length; ++i ) {
+        tableAussen.children.item(i).remove();
+    }
+    for ( let i = 1; i < tableInnen.children.length; ++i ) {
+        tableInnen.children.item(i).remove();
+    }
+}
+
 module.exports = {MODE, COL_AUSSEN_COUNT, COL_INNEN_COUNT, COL_ABRECHNUNG_COUNT, drinkOuterCategories, drinkInnerCategories, categoryIndex,
     drinkFilter, snackFilter, drinkOrder, snackOrder, typeColumnName, avColumnName, drinkOrderColumn, snackOrderColumn, finishAccounting, addItems};
-
 
