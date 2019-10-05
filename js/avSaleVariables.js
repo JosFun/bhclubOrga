@@ -8,7 +8,10 @@ const MODE = {
     DRINKS_INNER: "drinksInner",
     ABRECHNUNG_DRINKS_OUTER: "abrechnungDrinksOuter",
     ABRECHNUNG_SNACKS_OUTER: "abrechnungSnacksOuter",
-    ABRECHNUNG_DRINKS_INNER: "abrechnungDrinksInner"
+    ABRECHNUNG_DRINKS_INNER: "abrechnungDrinksInner",
+    ABRECHNUNG_DRINKS_OUTER_LOAD: "abrechnungDrinksOuterLoad",
+    ABRECHNUNG_SNACKS_OUTER_LOAD: "abrechnungSnacksOuterLoad",
+    ABRECHNUNG_DRINKS_INNER_LOAD: "abrechnungDrinksInnerLoad"
 };
 
 
@@ -137,14 +140,15 @@ const snackOrderColumn = "snack_name";
             startRow.appendChild(td);
         }
         table.appendChild(startRow);
-    } else if (mode === avDb.MODE.ABRECHNUNG_DRINKS_OUTER || mode === avDb.MODE.ABRECHNUNG_SNACKS_OUTER) {
+    } else if (mode === avDb.MODE.ABRECHNUNG_DRINKS_OUTER || mode === avDb.MODE.ABRECHNUNG_SNACKS_OUTER ||
+                mode === avDb.MODE.ABRECHNUNG_DRINKS_OUTER_LOAD || mode === avDb.MODE.ABRECHNUNG_SNACKS_OUTER_LOAD ) {
         table = document.getElementById(tableAussen);
 
         for (let i = 0; i < avDb.COL_ABRECHNUNG_COUNT; ++i) {
             const td = document.createElement("td");
-            if (i === 0 && mode === MODE.ABRECHNUNG_DRINKS_OUTER) {
+            if (i === 0 && ( mode === MODE.ABRECHNUNG_DRINKS_OUTER || mode === MODE.ABRECHNUNG_DRINKS_OUTER_LOAD)) {
                 td.textContent = avDb.drinkOuterCategories[avDb.categoryIndex++];
-            } else if (i === 0 && mode === MODE.ABRECHNUNG_SNACKS_OUTER) {
+            } else if (i === 0 && ( mode === MODE.ABRECHNUNG_SNACKS_OUTER || mode === MODE.ABRECHNUNG_SNACKS_OUTER_LOAD) ) {
                 td.textContent = "Snacks";
                 avDb.categoryIndex++;
             }
@@ -155,7 +159,7 @@ const snackOrderColumn = "snack_name";
             startRow.appendChild(td);
         }
         table.appendChild(startRow);
-    } else if (mode === avDb.MODE.ABRECHNUNG_DRINKS_INNER) {
+    } else if (mode === avDb.MODE.ABRECHNUNG_DRINKS_INNER || mode === MODE.ABRECHNUNG_DRINKS_INNER_LOAD) {
         table = document.getElementById(tableInnen);
 
         for (let i = 0; i < avDb.COL_ABRECHNUNG_COUNT; ++i) {
@@ -179,7 +183,8 @@ const snackOrderColumn = "snack_name";
             tds = new Array(avDb.COL_AUSSEN_COUNT);
         } else if (mode === avDb.MODE.DRINKS_INNER) {
             tds = new Array(avDb.COL_INNEN_COUNT);
-        } else if (mode === avDb.MODE.ABRECHNUNG_DRINKS_OUTER || mode === avDb.MODE.ABRECHNUNG_SNACKS_OUTER || mode === avDb.MODE.ABRECHNUNG_DRINKS_INNER) {
+        } else if (mode === avDb.MODE.ABRECHNUNG_DRINKS_OUTER || mode === avDb.MODE.ABRECHNUNG_SNACKS_OUTER || mode === avDb.MODE.ABRECHNUNG_DRINKS_INNER ||
+                    mode === MODE.ABRECHNUNG_DRINKS_OUTER_LOAD || mode === avDb.MODE.ABRECHNUNG_SNACKS_OUTER_LOAD || mode === avDb.MODE.ABRECHNUNG_DRINKS_INNER_LOAD) {
             tds = new Array(avDb.COL_ABRECHNUNG_COUNT);
         }
 
@@ -199,13 +204,19 @@ const snackOrderColumn = "snack_name";
             tds[0].textContent = data[0][i]["drink_name"];
             tds[1].textContent = data[0][i]["bottle_size"].toFixed(2) + "l";
             tds[2].textContent = data[0][i]["internal_price"].toFixed(2) + "€";
-        } else if (mode === avDb.MODE.ABRECHNUNG_DRINKS_OUTER || mode === avDb.MODE.ABRECHNUNG_DRINKS_INNER) {
+        } else if (mode === avDb.MODE.ABRECHNUNG_DRINKS_OUTER || mode === avDb.MODE.ABRECHNUNG_DRINKS_INNER || mode === avDb.MODE.ABRECHNUNG_DRINKS_OUTER_LOAD || mode === avDb.MODE.ABRECHNUNG_DRINKS_INNER_LOAD) {
             tds[0].textContent = "#" + data[0][i]["drink_id"];
             tds[1].textContent = data[0][i]["drink_name"];
             tds[2].textContent = data[0][i]["bottle_size"].toFixed(2) + "l";
             tds[3].textContent = data[0][i]["internal_price"].toFixed(2) + "€";
             let span = document.createElement("span");
             span.contentEditable = true;
+
+            /* If the method has been started in a load mode: Look into the passed data and load the amounts for each
+            * drink into the system. */
+            if ( mode === MODE.ABRECHNUNG_DRINKS_OUTER_LOAD || mode === MODE.ABRECHNUNG_DRINKS_INNER_LOAD) {
+                span.textContent = data[0][i]["drink_count"];
+            }
             span.addEventListener("focusin", function (e) {
                 if (span.textContent === "ANZAHL") {
                     span.textContent = "";
@@ -233,7 +244,7 @@ const snackOrderColumn = "snack_name";
 
             tds[5].textContent = "0.00€";
         }
-        else if (mode === avDb.MODE.ABRECHNUNG_SNACKS_OUTER) {
+        else if (mode === avDb.MODE.ABRECHNUNG_SNACKS_OUTER || mode === MODE.ABRECHNUNG_SNACKS_OUTER_LOAD) {
             tds[0].textContent = "#" + data[0][i]["snack_id"];
             tds[1].textContent = data[0][i]["snack_name"];
             tds[2].textContent = "1 Packung";
@@ -241,6 +252,12 @@ const snackOrderColumn = "snack_name";
 
             let span = document.createElement("span");
             span.contentEditable = true;
+
+            /* If the method has been started in a load mode: Look into the passed data and load the amounts for each
+          * drink into the system. */
+            if ( mode === MODE.ABRECHNUNG_SNACKS_OUTER_LOAD) {
+                span.textContent = data[0][i]["snack_count"];
+            }
             span.addEventListener("focusin", function (e) {
                 if (span.textContent === "ANZAHL") {
                     span.textContent = "";
@@ -333,12 +350,15 @@ function removeTableRows ( innen, aussen ) {
     const tableAussen = document.getElementById(aussen);
     const tableInnen = document.getElementById(innen);
 
+    let aussenLen = tableAussen.children.length;
+    let innenLen = tableInnen.children.length;
+
     /* Remove all the rows from both the tables. */
-    for ( let i = 1; i < tableAussen.children.length; ++i ) {
-        tableAussen.children.item(i).remove();
+    for ( let i = 1; i < aussenLen; ++i ) {
+        tableAussen.children.item(1).remove();
     }
-    for ( let i = 1; i < tableInnen.children.length; ++i ) {
-        tableInnen.children.item(i).remove();
+    for ( let i = 1; i < innenLen; ++i ) {
+        tableInnen.children.item(1).remove();
     }
 }
 

@@ -342,6 +342,7 @@ ipcRenderer.on( "av_verkauf_abrechnungen:deliver_abrechnung", function(e, abrech
     avDb.categoryIndex = 0;
     /* First, clear the tables. */
     avDb.removeTableRows(tableInnen, tableAussen);
+    confirm("yes");
 
     /* Second, add the drinks to the table representing the outside of the TED*/
 
@@ -359,10 +360,10 @@ ipcRenderer.on( "av_verkauf_abrechnungen:deliver_abrechnung", function(e, abrech
 * categoryIndex*/
 ipcRenderer.on("av_verkauf_drinks:update", function(e, data) {
     if ( avDb.categoryIndex <= 4 ) {
-        avDb.addItems(avDb.MODE.ABRECHNUNG_DRINKS_OUTER, tableAussen, tableInnen, data );
+        avDb.addItems(avDb.MODE.ABRECHNUNG_DRINKS_OUTER_LOAD, tableAussen, tableInnen, data );
     }
     else {
-        avDb.addItems(avDb.MODE.ABRECHNUNG_DRINKS_INNER, tableAussen, tableInnen, data );
+        avDb.addItems(avDb.MODE.ABRECHNUNG_DRINKS_INNER_LOAD, tableAussen, tableInnen, data );
     }
 });
 
@@ -372,7 +373,7 @@ ipcRenderer.on("av_verkauf_snacks:update", function(e, data) {
 
     let filter = new Map();
 
-    avDb.addItems(avDb.MODE.ABRECHNUNG_SNACKS_OUTER, tableAussen, tableInnen, data);
+    avDb.addItems(avDb.MODE.ABRECHNUNG_SNACKS_OUTER_LOAD, tableAussen, tableInnen, data);
     for ( let i = 0; i < avDb.drinkInnerCategories.length; ++i ) {
         filter.set(avDb.typeColumnName, avDb.drinkInnerCategories[i]);
         ipcRenderer.send("av_drinks_abrechnungen:deliver_drink_amounts", currentAbrechnungID, jsonMapModule.strMapToJson(filter));
