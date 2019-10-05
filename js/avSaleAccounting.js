@@ -98,8 +98,11 @@ selectAbrechnung.addEventListener("change", function(e) {
 
        currentAbrechnungID = id;
 
-       /* Now load the abrechnung with the specified id from the database of the system */
-       ipcRenderer.send("av_verkauf_abrechnungen:load", id);
+       if ( confirm("Laden von AV-Verkauf-Abrechnung #" + currentAbrechnungID + "?") ) {
+           /* Now load the abrechnung with the specified id from the database of the system */
+           ipcRenderer.send("av_verkauf_abrechnungen:load", id);
+       }
+
    }
 });
 
@@ -342,7 +345,6 @@ ipcRenderer.on( "av_verkauf_abrechnungen:deliver_abrechnung", function(e, abrech
     avDb.categoryIndex = 0;
     /* First, clear the tables. */
     avDb.removeTableRows(tableInnen, tableAussen);
-    confirm("yes");
 
     /* Second, add the drinks to the table representing the outside of the TED*/
 
