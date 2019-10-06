@@ -129,24 +129,30 @@ for ( let i = 0; i < moneyCounts.length; ++i ) {
         }
     });
     moneyCounts.item(i).addEventListener("focusout", function(e) {
-        e.preventDefault();
-        moneyOverAll = 0;
-        for ( let k = 0; k < moneyCounts.length; ++k ) {
-            let numString = moneyCounts.item(k).textContent;
-            if (!isNaN(parseInt(numString))) {
-                moneyOverAll += parseInt(numString) * moneyValues [k];
-            } else if (numString === "") {
-                moneyCounts.item(i).textContent = "ANZAHL";
-            }
-        }
-            moneyOverallField.textContent = moneyOverAll.toFixed(2) + "€";
-
-            let moneyAuswertung = document.getElementById("avVerkaufMoneyAuswertung");
-            moneyAuswertung.textContent = moneyOverAll.toFixed(2) + "€";
-
-        /* Finish the accounting by doing the profit and loss account */
-        avDb.finishAccounting();
+       addMoneyTogether();
     });
+}
+
+/**
+ * Add the money, the user has counted, together and fill the corresponding fields with content.
+ */
+function addMoneyTogether ( ) {
+    moneyOverAll = 0;
+    for ( let k = 0; k < moneyCounts.length; ++k ) {
+        let numString = moneyCounts.item(k).textContent;
+        if (!isNaN(parseInt(numString))) {
+            moneyOverAll += parseInt(numString) * moneyValues [k];
+        } else if (numString === "") {
+            moneyCounts.item(i).textContent = "ANZAHL";
+        }
+    }
+    moneyOverallField.textContent = moneyOverAll.toFixed(2) + "€";
+
+    let moneyAuswertung = document.getElementById("avVerkaufMoneyAuswertung");
+    moneyAuswertung.textContent = moneyOverAll.toFixed(2) + "€";
+
+    /* Finish the accounting by doing the profit and loss account */
+    avDb.finishAccounting();
 }
 
 updateSelectAbrechnung();
@@ -351,6 +357,8 @@ ipcRenderer.on( "av_verkauf_abrechnungen:deliver_abrechnung", function(e, abrech
             moneyCounts.item(i).textContent = abrechnung[0]["money_count_001"];
         }
     }
+
+    addMoneyTogether();
 
     let filter = new Map ( );
     avDb.categoryIndex = 0;
