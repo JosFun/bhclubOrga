@@ -212,7 +212,8 @@ td {
     cursor: pointer;
     width: 100%;
 }
-.skListeCategory, .avInnenListeCategory, .avAußenListeCategory, .avAbrechnungAussenCategory, .avAbrechnungInnenCategory {
+.skListeCategory, .avInnenListeCategory, .avAußenListeCategory, .avAbrechnungAussenCategory, .avAbrechnungInnenCategory,
+.avStatisticsEvaluation{
     background-color: lightgray;
     font-style: italic;
 }
@@ -323,7 +324,6 @@ td {
 #snackDataBase img, #drinkTable img {
     width: 50px;
 }
-
 
 
 

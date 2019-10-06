@@ -67,6 +67,9 @@ ipcRenderer.on( "av_verkauf_abrechnungen:deliver", function ( e, data ) {
  * Fill the table on the statistics page with content.
  */
 function fillAbrechnungTable ( data ) {
+    /* The sums of money and sold products in the selected period of time. */
+    let moneySum = 0, productSum = 0;
+
     const table = document.getElementById("av_statistic_table");
     for ( let i = 0; i < data.length; ++i ) {
         const tr = document.createElement("tr");
@@ -79,7 +82,9 @@ function fillAbrechnungTable ( data ) {
         tds[0].textContent = data[i]["av_abrechnung_id"];
         tds[1].textContent = data[i]["av_abrechnung_datum"];
         tds[2].textContent = data[i]["money"].toFixed(2) + "€";
+        moneySum += parseFloat(data[i]["money"]);
         tds[3].textContent = data[i]["product_value"].toFixed(2) + "€";
+        productSum += parseFloat(data[i]["product_value"]);
 
         let profit = parseFloat(data[i]["money"]) - parseFloat(data[i]["product_value"]);
         console.log( profit );
@@ -96,6 +101,33 @@ function fillAbrechnungTable ( data ) {
         }
         table.appendChild(tr);
     }
+
+    const endRow = document.createElement("tr");
+    endRow.className = "avStatisticsEvaluation";
+
+    for ( let k = 0; k < ABRECHNUNG_TABLE_COL_COUNT; ++k ) {
+        const td = document.createElement("td");
+        td.className = "avStatisticsEvaluation";
+        if ( k === 1 ) {
+            td.textContent = "GESAMT";
+        }
+        else if ( k === 2 ) {
+            td.textContent = moneySum.toFixed(2 ) + "€";
+        }
+        else if ( k === 3 ) {
+            td.textContent = productSum.toFixed(2) + "€";
+        }
+        else if ( k === 4 ) {
+            td.textContent = ( moneySum-productSum ).toFixed(2) + "€";
+            if ( moneySum - productSum > 0 ) {
+                td.style.color = "red";
+            } else {
+                td.style.color = "green";
+            }
+        }
+        endRow.appendChild(td);
+    }
+    table.appendChild(endRow);
 
 
 }
