@@ -268,9 +268,25 @@ function deleteSnack ( id ) {
 /**
  * Get all the avVerkaufAbrechnungen from the sql database
  */
-function getAVVerkaufAbrechnungen ( ) {
-    let sqlSelect = "SELECT * FROM av_verkauf;"
-    dbConnection.query(sqlSelect, function( err, results, fields) {
+function getAVVerkaufAbrechnungen ( filter ) {
+    let sqlSelect = "SELECT * FROM av_verkauf"
+    let valueArray = new Array ( filter.size );
+
+    let iterator = filter.keys();
+    let key, i = 0;
+
+    while ( ( key = iterator.next().value) !== undefined ) {
+        valueArray[i++] = filter.get(key);
+        if ( i === 1 ) {
+            sqlSelect += " WHERE "
+        } else {
+            sqlSelect += " AND ";
+        }
+
+        sqlSelect +=  key + " LIKE ?";
+    }
+    sqlSelect += ";"
+    dbConnection.query(sqlSelect,valueArray, function( err, results, fields) {
         if ( err ) throw err;
         console.log("AV-Abrechnungen have been fetched from the system!");
         win.webContents.send("av_verkauf_abrechnungen:deliver", results);
@@ -502,9 +518,10 @@ ipcMain.on('drink:delete', function(e,id,drinkFilter) {
 });
 
 // Catch requests regarding the fetch request of all the av-Verkauf-abrechnungen that exist in the database
-ipcMain.on('av_verkauf_abrechnungen:get', function(e) {
-    getAVVerkaufAbrechnungen();
+ipcMain.on('av_verkauf_abrechnungen:get', function(e, filter) {
     e.preventDefault();
+    getAVVerkaufAbrechnungen(jsonMapModule.jsonToStrMap(filter));
+
 });
 
 ipcMain.on("av_verkauf_abrechnungen:create_abrechnung", function(e, abrechnungData) {

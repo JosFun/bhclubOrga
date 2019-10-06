@@ -22,9 +22,21 @@ exports.isInt = function( n ) {
  */
 exports.getDate = function(  ) {
     let today = new Date();
-    let dd = String(today.getDay() - 1).padStart(2, "0");
+    /* Day refers to the weekday, while date means the acutal day in the month!*/
+    let dd = String(today.getDate() ).padStart(2, "0");
     let mm = String(today.getMonth() + 1).padStart(2,"0");
     let yyyy = String(today.getFullYear());
 
     return dd + "-" + mm + "-" + yyyy;
+};
+
+/**
+ * Returns the current data's year as a number.
+ * @returns {number}
+ */
+exports.getYear = function ( ) {
+    let today = new Date();
+    let yyyy = String(today.getFullYear());
+
+    return parseInt ( yyyy );
 };

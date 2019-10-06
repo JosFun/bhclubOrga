@@ -163,7 +163,7 @@ function updateSelectAbrechnung ( ) {
     selectAbrechnung.appendChild(newOption);
 
     /* Fetch the options for the select button from the database. */
-    ipcRenderer.send("av_verkauf_abrechnungen:get");
+    ipcRenderer.send("av_verkauf_abrechnungen:get", jsonMapModule.strMapToJson(new Map()));
 }
 
 
