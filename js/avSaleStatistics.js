@@ -12,6 +12,18 @@ const avDb = require("../js/avSaleVariables");
 const dateColumn = "av_abrechnung_datum";
 
 /**
+ * The drink column of the rohgetraenke table.
+ * @type {string}
+ */
+const drinkColumn = "drink_name";
+
+/**
+ * The avVerkauf column of the rohgetraenke table.
+ * @type {string}
+ */
+const avVerkaufColumn = "avVerkauf";
+
+/**
  * The numer of columns of the av_statistic_table
  * @type {number}
  */
@@ -22,40 +34,63 @@ fillSelectOptions();
  * Fill the select element on the page with valid years as input.
  */
 function fillSelectOptions ( ) {
-    let select = document.getElementById("selectAVStatisticYear");
+    let selectYear = document.getElementById("selectAVStatisticYear");
 
-    for ( let i = 2019; i <= useFulFunctions.getYear(); ++i ) {
-        let option = document.createElement("option");
-        let textNode = document.createTextNode(i.toString());
+        for ( let i = 2019; i <= useFulFunctions.getYear(); ++i ) {
+            let option = document.createElement("option");
+            let textNode = document.createTextNode(i.toString());
 
-        option.appendChild(textNode);
-        select.appendChild(option);
-    }
-
-    select.addEventListener("change", function ( e ) {
-        let selection = select.options[select.selectedIndex].text;
-
-        if ( selection !== "BITTE JAHR AUSWÄHLEN!" ) {
-            /* If the placeholder is not being selected anymore: Remove it from the select element. */
-            if ( select.children.item(0).textContent === "BITTE JAHR AUSWÄHLEN!" ) {
-                select.children.item(0).remove();
-            }
-
-            let filter = new Map();
-
-            /* If a specific year has been selected. */
-            if ( selection !== "GESAMTER ZEITRAUM") {
-                /* Get the selected date from the select element. */
-                let dateString = selection;
-                filter.set ( dateColumn, "%" + dateString);
-            }
-
-            console.log(useFulFunctions.getDate());
-
-            ipcRenderer.send( "av_verkauf_abrechnungen:get", jsonMapModule.strMapToJson(filter));
+            option.appendChild(textNode);
+            selectYear.appendChild(option);
         }
-    } );
 
+        selectYear.addEventListener("change", function ( e ) {
+            let selection = selectYear.options[selectYear.selectedIndex].text;
+
+            if ( selection !== "BITTE JAHR AUSWÄHLEN!" ) {
+                /* If the placeholder is not being selected anymore: Remove it from the selectYear element. */
+                if ( selectYear.children.item(0).textContent === "BITTE JAHR AUSWÄHLEN!" ) {
+                    selectYear.children.item(0).remove();
+                }
+
+                let filter = new Map();
+
+                /* If a specific year has been selected. */
+                if ( selection !== "GESAMTER ZEITRAUM") {
+                    /* Get the selected date from the selectYear element. */
+                    let dateString = selection;
+                    filter.set ( dateColumn, "%" + dateString);
+                }
+
+                ipcRenderer.send( "av_verkauf_abrechnungen:get", jsonMapModule.strMapToJson(filter));
+            }
+        } );
+
+        let selectDrink = document.getElementById("selectAVStatisticDrink");
+
+        let avSaleFilter = new Map ();
+        avSaleFilter.set(avVerkaufColumn, true);
+
+        let avSaleOrder = new Map ( );
+        avSaleOrder.set(drinkColumn, "asc");
+
+        /* Query the database for all the drinks that are present on the avSale. */
+        ipcRenderer.send("drinks:update", jsonMapModule.strMapToJson(avSaleFilter), jsonMapModule.strMapToJson(avSaleOrder));
+
+        selectDrink.addEventListener( "change", function ( e ) {
+        let selection = selectDrink.options[selectDrink.selectedIndex].text;
+
+        if ( selection !== "BITTE GETRÄNK AUSWÄHLEN!") {
+            if ( selectDrink.children.item(0).textContent === "BITTE GETRÄNK AUSWÄHLEN!") {
+                selectDrink.children.item(0).remove();
+            }
+
+            let filter = new Map ( );
+            filter.set ( drinkColumn, selection );
+
+
+        }
+    });
 
 }
 

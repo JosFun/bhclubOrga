@@ -189,7 +189,7 @@ select {
     margin-left: 10px;
 }
 
-#select_av_abrechnung, #selectAVStatisticYear {
+#select_av_abrechnung, #selectAVStatisticYear, #selectAVStatisticDrink {
     width: 20%;
     font-size: 18px;
 }
@@ -249,7 +249,7 @@ td {
 }
 
 #drinkTable, #snackDataBase, #avGeldzaehlen, #avVerkaufAbrechnungStrichlisteAussen,
-#avVerkaufAbrechnungStrichlisteInnen, #avVerkaufAuswertung, #av_statistic_table{
+#avVerkaufAbrechnungStrichlisteInnen, #avVerkaufAuswertung, #av_statistic_table, #av_drink_statistic_table{
     font-weight: bold;
     border-collapse: collapse;
     padding-top: 12px;
@@ -273,7 +273,7 @@ td {
 
 #drinkTable td, #addDrink td, #snackTable td, #snackDataBase td, #avGeldzaehlen td,
 #avVerkaufAbrechnungStrichlisteInnen td, #avVerkaufAbrechnungStrichlisteAussen td, #avVerkaufAuswertung td,
-#av_statistic_table td{
+#av_statistic_table td, #av_drink_statistic_table td{
     border: 1px solid #ddd;
     padding: 8px;
 }
@@ -301,7 +301,7 @@ td {
 #skListeRest tr:first-child, #avAußen tr:first-child, #avInnen tr:first-child,
 #avGeldzaehlen tr:first-child, #avVerkaufAbrechnungStrichlisteAussen tr:first-child,
 #avVerkaufAbrechnungStrichlisteInnen tr:first-child, #avVerkaufAuswertung tr:first-child,
-#av_statistic_table tr:first-child{
+#av_statistic_table tr:first-child, #av_drink_statistic_table tr:first-child{
     background-color: #3C6F80;
     color: white;
     font-weight: bold;
@@ -310,7 +310,7 @@ td {
 
 #snackDataBase tr, #drinkTable tr, #skListeSchnaps tr, #skListeRest tr, #avAußen tr, #avInnen tr, #avGeldzaehlen tr,
 #avVerkaufAbrechnungStrichlisteInnen tr, #avVerkaufAbrechnungStrichlisteAussen tr, #avVerkaufAuswertung tr,
-#av_statistic_table tr{
+#av_statistic_table tr, #av_drink_statistic_table tr{
     background-color: beige;
     color:black;
     font-weight: bolder;
