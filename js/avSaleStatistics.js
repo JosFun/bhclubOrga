@@ -24,6 +24,11 @@ const drinkColumn = "drink_name";
 const avVerkaufColumn = "avVerkauf";
 
 /**
+ * The id column of the av_verkauf table.
+ * @type {string}
+ */
+const avAbrechnungDateColumn = "av_abrechnung_datum";
+/**
  * The numer of columns of the av_statistic_table
  * @type {number}
  */
@@ -34,15 +39,62 @@ fillSelectOptions();
  * Fill the select element on the page with valid years as input.
  */
 function fillSelectOptions ( ) {
-    let selectYear = document.getElementById("selectAVStatisticYear");
+    let selectBegin = document.getElementById("selectAVStatisticMonthBegin");
+    let selectEnd = document.getElementById("selectAVStatisticMonthEnd");
+
+    /* The dateFilter that is going to be passed on to the backend in order to receive all AV-Verkauf-Abrechnungen
+    * that have been made between two specified months. */
+    let dateFilter = new Map ( );
 
         for ( let i = 2019; i <= useFulFunctions.getYear(); ++i ) {
-            let option = document.createElement("option");
-            let textNode = document.createTextNode(i.toString());
+            let dateString = i.toString();
+            for ( let j = 1; j <= useFulFunctions.getMonth() + 1; ++i ) {
+                if ( j < 10 ) {
+                    dateString = "01-0" + j + dateString;
+                }
+                else {
+                    dateString = "01-" + j+ dateString;
+                }
+            }
 
-            option.appendChild(textNode);
-            selectYear.appendChild(option);
+            let option1 = document.createElement("option");
+            let option2 = document.createElement("option");
+            let textNode1 = document.createTextNode(dateString);
+            let textNode2 = document.createTextNode(dateString);
+            option1.appendChild(textNode1);
+            option2.appendChild(textNode2);
+            selectBegin.appendChild(option1);
+            selectEnd.appendChild(option2);
         }
+
+        selectBegin.addEventListener("change", function(e) {
+            let selection = selectBegin.option[selectBegin.selectedIndex].text;
+
+            if ( selection !== "ANFANGSMONAT AUSWÄHLEN" ) {
+                if ( selectBegin.children.item(0).textContent === "BITTE ANFANGSMONAT AUSWÄHLEN") {
+                    selectBegin.children.item(0).remove();
+                }
+
+                let filter = new Map();
+                filter.set(dateColumn, selection);
+            }
+        });
+
+        selectEnd.addEventListener("change", function (e) {
+            let selection = selectBegin.option[selectBegin.selectedIndex].text;
+
+            if ( selection !== "ENDMONAT AUSWÄHLEN" ) {
+                if ( selectEnd.children.item(0).textContent === "BITTE ENDMONAT AUSWÄHLEN") {
+                    selectEnd.children.item(0).remove();
+                }
+
+                let filter = new Map();
+                filter.set(dateColumn, selection);
+
+                ipcRenderer.send( "av_verkauf_abrechnungen:get", jsonMapModule.strMapToJson(filter));
+
+            }
+        });
 
         selectYear.addEventListener("change", function ( e ) {
             let selection = selectYear.options[selectYear.selectedIndex].text;
@@ -88,7 +140,11 @@ function fillSelectOptions ( ) {
             let filter = new Map ( );
             filter.set ( drinkColumn, selection );
 
+            let order = new Map ( );
+            order.set( avAbrechnungDateColumn, "asc");
 
+            ipcRenderer.send( "av_drink_statistics:get",
+                jsonMapModule.strMapToJson(filter), jsonMapModule.strMapToJson(order));
         }
     });
 
@@ -97,6 +153,12 @@ function fillSelectOptions ( ) {
 /* Once the backend delivers the data from all the abrechnungen: fill the table with tahle corresponding data!*/
 ipcRenderer.on( "av_verkauf_abrechnungen:deliver", function ( e, data ) {
     fillAbrechnungTable(data);
+});
+
+/* Once the backend delivers the data from all the drinks that are present in the database: Fill the html select with
+* data from all the drinks. */
+ipcRenderer.on("drinks:data", function (e, data ) {
+    fillDrinkSelect(data);
 });
 /**
  * Fill the table on the statistics page with content.
@@ -163,6 +225,8 @@ function fillAbrechnungTable ( data ) {
         endRow.appendChild(td);
     }
     table.appendChild(endRow);
+}
 
-
+function fillDrinkSelect ( ) {
+     const htmlSelect = document.getElementById("selectAVStatisticDrink");
 }

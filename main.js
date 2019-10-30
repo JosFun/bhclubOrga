@@ -428,6 +428,39 @@ function loadAVSnacks ( abrechnungID ) {
     });
 }
 
+function getDrinkStatistics ( filter, order ) {
+    let sqlSelect = "SELECT A.av_abrechnung_datum, D.drink_count FROM av_verkauf A, av_drinks D, rohgetraenke R WHERE" +
+        " A.av_abrechnung_id = D.av_abrechnung_id AND R.drink_id = D.drink_id";
+
+    let valueArray = new Array ( filter.size );
+
+    let iterator = filter.keys ();
+
+    if ( filter != null && filter.size > 0 ) {
+        let key;
+        let i = 0;
+        while ( (key = iterator.next().value) !== undefined ) {
+            sqlSelect += " AND " + key + " like ?";
+            valueArray[i++] = filter.get(key);
+        }
+    }
+
+    if ( order.size === 1 ) {
+        let column = order.keys().next().value;
+        let orderKind = order.get(column);
+        sqlSelect += " order by " + column + " " + orderKind;
+    }
+    sqlSelect += ";";
+
+    console.log(sqlSelect);
+
+    dbConnection.query(sqlSelect, valueArray, function ( e, results, fields) {
+        if ( err ) throw err;
+        win.webContents.send( "av_drinks_statistics:data", results);
+    });
+
+}
+
 // Catch newly added drinks
 ipcMain.on('drink:add', function(e,drinkInfo, drinkFilter, drinkOrder){
     /*TODO: Perform the sql insertion*/
@@ -556,6 +589,10 @@ ipcMain.on("av_snacks_abrechnungen:deliver_snack_amounts", function( e, id ) {
     loadAVSnacks(id);
 });
 
+ipcMain.on("av_drink_statistics:get", function( e, filter, order) {
+    console.log("hello");
+   getDrinkStatistics(jsonMapModule.jsonToStrMap(filter), jsonMapModule.jsonToStrMap(order));
+});
 if (process.env.NODE_ENV !== 'production'){
     mainMenuTemplate.push({
         label: 'DeveloperTools',

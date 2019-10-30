@@ -40,3 +40,14 @@ exports.getYear = function ( ) {
 
     return parseInt ( yyyy );
 };
+
+/**
+ * Returns the current date's month as a number
+ * @returns {number}
+ */
+exports.getMonth = function( ) {
+    let today = new Date();
+    let mm = String(today.getMonth() + 1);
+
+    return parseInt ( mm );
+}

@@ -72,10 +72,15 @@
     <div align="center">
         <h2>AV-Verkauf-Statistik</h2>
         <form id="avStatisticForm">
-            <select id="selectAVStatisticYear" size="1">
-                <option>BITTE JAHR AUSWÄHLEN!</option>
-                <option>GESAMTER ZEITRAUM</option>
+            <select id="selectAVStatisticMonthBegin" size="1">
+                <option>ANFANGSMONAT AUSWÄHLEN</option>
             </select>
+            <select id="selectAVStatisticMonthEnd" size="1">
+                <option>ENDMONAT AUSWÄHLEN</option>
+            </select>
+            <select id="selectAVStatisticDrink" size="1">
+                <option>GETRÄNK AUSWÄHLEN!</option>
+             </select>
         </form>
         <br><br>
         <table id="av_statistic_table">
@@ -100,14 +105,14 @@
     </div>
     <div align="center">
         <h2>Getränkestatistiken</h2>
-        <form id="drinkStatisticForm" size = "1">
-            <select id="selectAVStatisticDrink" size="1">
-                <option>BITTE GETRÄNK AUSWÄHLEN!</option>
-            </select>
-        </form>
-        <br><br>
         <table id="av_drink_statistic_table">
             <tr>
+                <td>
+                    Getränk
+                </td>
+                <td>
+                    Größe
+                </td>
                 <td>
                     Abrechnungs-ID
                 </td>

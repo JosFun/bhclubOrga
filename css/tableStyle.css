@@ -189,7 +189,7 @@ select {
     margin-left: 10px;
 }
 
-#select_av_abrechnung, #selectAVStatisticYear, #selectAVStatisticDrink {
+#select_av_abrechnung, #selectAVStatisticMonthBegin, #selectAVStatisticMonthEnd, #selectAVStatisticDrink {
     width: 20%;
     font-size: 18px;
 }
