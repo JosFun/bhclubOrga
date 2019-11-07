@@ -455,10 +455,28 @@ function getDrinkStatistics ( filter, order ) {
     console.log(sqlSelect);
 
     dbConnection.query(sqlSelect, valueArray, function ( e, results, fields) {
-        if ( err ) throw err;
+        if ( e ) throw e;
         win.webContents.send( "av_drinks_statistics:data", results);
     });
 
+}
+
+/**
+ * Deliver all the AV-Verkauf-Abrechnungen between the specified start and end dates, that are being stored inside the
+ * filter.
+ * @param filter The filter containing the time period, the user would like to have a look at.
+ * @param startDateName The key using which the startDate was stored inside the filter.
+ * @param endDateName The key using which the endDate was stored inside the filter.
+ */
+function getAVVerkaufAbrechnungenTimePeriod ( filter, startDateName, endDateName ) {
+    let startDate = filter.get(startDateName);
+    let endDate = filter.get(endDateName);
+
+    let sqlSelect = "SELECT * FROM av_verkauf_abrechungen A WHERE A.av_abrechnung_datum > ? AND  A.av_abrechnung_datum < ?";
+    dbConnection.query(sqlSelect, startDate, endDate, function( e, results, fields ) {
+        if( e ) throw e;
+        win.webContents.send("av_verkauf_abrechnungen_time_period:data", results);
+    });
 }
 
 // Catch newly added drinks
@@ -590,9 +608,13 @@ ipcMain.on("av_snacks_abrechnungen:deliver_snack_amounts", function( e, id ) {
 });
 
 ipcMain.on("av_drink_statistics:get", function( e, filter, order) {
-    console.log("hello");
    getDrinkStatistics(jsonMapModule.jsonToStrMap(filter), jsonMapModule.jsonToStrMap(order));
 });
+
+ipcMain.on("av_verkauf_abrechnungen_time_period:get", function( e, filter, startDateName, endDateName ) {
+    getAVVerkaufAbrechungenTimePeriod( jsonMapModule.jsonToStrMap(filter), startDateName, endDateName );
+});
+
 if (process.env.NODE_ENV !== 'production'){
     mainMenuTemplate.push({
         label: 'DeveloperTools',

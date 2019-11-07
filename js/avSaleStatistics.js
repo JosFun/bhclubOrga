@@ -12,6 +12,18 @@ const avDb = require("../js/avSaleVariables");
 const dateColumn = "av_abrechnung_datum";
 
 /**
+ * The key for storing the start of the time period we want to receive the AV-Abrechnungen and drinks of.
+ * @type {string}
+ */
+const dateStart = "datum_start";
+
+/**
+ * The key for storing the end of the time period we want to receive the AV-Abrechnungen and drinks of.
+ * @type {string}
+ */
+const dateEnd = "datum_end";
+
+/**
  * The drink column of the rohgetraenke table.
  * @type {string}
  */
@@ -39,36 +51,40 @@ fillSelectOptions();
  * Fill the select element on the page with valid years as input.
  */
 function fillSelectOptions ( ) {
+    console.log("dfdsf");
     let selectBegin = document.getElementById("selectAVStatisticMonthBegin");
     let selectEnd = document.getElementById("selectAVStatisticMonthEnd");
+
 
     /* The dateFilter that is going to be passed on to the backend in order to receive all AV-Verkauf-Abrechnungen
     * that have been made between two specified months. */
     let dateFilter = new Map ( );
 
         for ( let i = 2019; i <= useFulFunctions.getYear(); ++i ) {
-            let dateString = i.toString();
-            for ( let j = 1; j <= useFulFunctions.getMonth() + 1; ++i ) {
+            console.log(i);
+            for ( let j = 1; j <= useFulFunctions.getMonth() + 1; ++j ) {
+                let dateString = i.toString();
+
                 if ( j < 10 ) {
-                    dateString = "01-0" + j + dateString;
+                    dateString = "01/0" + j + "/" + dateString;
                 }
                 else {
-                    dateString = "01-" + j+ dateString;
+                    dateString = "01/" + j+ "/" + dateString;
                 }
-            }
 
-            let option1 = document.createElement("option");
-            let option2 = document.createElement("option");
-            let textNode1 = document.createTextNode(dateString);
-            let textNode2 = document.createTextNode(dateString);
-            option1.appendChild(textNode1);
-            option2.appendChild(textNode2);
-            selectBegin.appendChild(option1);
-            selectEnd.appendChild(option2);
+                let option1 = document.createElement("option");
+                let option2 = document.createElement("option");
+                let textNode1 = document.createTextNode(dateString);
+                let textNode2 = document.createTextNode(dateString);
+                option1.appendChild(textNode1);
+                option2.appendChild(textNode2);
+                selectBegin.appendChild(option1);
+                selectEnd.appendChild(option2);
+            }
         }
 
         selectBegin.addEventListener("change", function(e) {
-            let selection = selectBegin.option[selectBegin.selectedIndex].text;
+            let selection = selectBegin.options[selectBegin.selectedIndex].text;
 
             if ( selection !== "ANFANGSMONAT AUSWÄHLEN" ) {
                 if ( selectBegin.children.item(0).textContent === "BITTE ANFANGSMONAT AUSWÄHLEN") {
@@ -76,12 +92,12 @@ function fillSelectOptions ( ) {
                 }
 
                 let filter = new Map();
-                filter.set(dateColumn, selection);
+                filter.set(dateStart, selection);
             }
         });
 
         selectEnd.addEventListener("change", function (e) {
-            let selection = selectBegin.option[selectBegin.selectedIndex].text;
+            let selection = selectBegin.options[selectBegin.selectedIndex].text;
 
             if ( selection !== "ENDMONAT AUSWÄHLEN" ) {
                 if ( selectEnd.children.item(0).textContent === "BITTE ENDMONAT AUSWÄHLEN") {
@@ -89,34 +105,13 @@ function fillSelectOptions ( ) {
                 }
 
                 let filter = new Map();
-                filter.set(dateColumn, selection);
+                filter.set(dateEnd, selection);
 
-                ipcRenderer.send( "av_verkauf_abrechnungen:get", jsonMapModule.strMapToJson(filter));
+                /* Request all the AV-Abrechnungen of the specified time period.*/
+                ipcRenderer.send( "av_verkauf_abrechnungen_time_period:get", jsonMapModule.strMapToJson(filter), dateStart, dateEnd);
 
             }
         });
-
-        selectYear.addEventListener("change", function ( e ) {
-            let selection = selectYear.options[selectYear.selectedIndex].text;
-
-            if ( selection !== "BITTE JAHR AUSWÄHLEN!" ) {
-                /* If the placeholder is not being selected anymore: Remove it from the selectYear element. */
-                if ( selectYear.children.item(0).textContent === "BITTE JAHR AUSWÄHLEN!" ) {
-                    selectYear.children.item(0).remove();
-                }
-
-                let filter = new Map();
-
-                /* If a specific year has been selected. */
-                if ( selection !== "GESAMTER ZEITRAUM") {
-                    /* Get the selected date from the selectYear element. */
-                    let dateString = selection;
-                    filter.set ( dateColumn, "%" + dateString);
-                }
-
-                ipcRenderer.send( "av_verkauf_abrechnungen:get", jsonMapModule.strMapToJson(filter));
-            }
-        } );
 
         let selectDrink = document.getElementById("selectAVStatisticDrink");
 

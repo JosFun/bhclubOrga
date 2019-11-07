@@ -268,7 +268,7 @@ function updateDrinkData ( ...fields ) {
 
                 /* Apply the correct formula to calculate the price for one portion of the drink. */
                 let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
-                portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
+                portionPrice = Math.ceil ( 10 * portionPrice ) / 10;
 
                 if ( !isNaN(externalAddition)){
                     ipcRenderer.send("drinks:alter", id, "external_addition", externalAddition);
@@ -349,7 +349,7 @@ function updateDrinkData ( ...fields ) {
 
                 /* Apply the correct formula to calculate the price for one portion of the drink. */
                 let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
-                portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
+                portionPrice = Math.ceil ( 10 * portionPrice ) / 10;
 
                 let bottlePrice = (Math.ceil(100 * portionPrice * bottleSize / portionSize) / 100);
 
@@ -373,6 +373,8 @@ function updateDrinkData ( ...fields ) {
             tds[8].addEventListener('input', function(e) {
                 e.preventDefault();
 
+                console.log("hello there");
+
                 /* Extract the id of the current element from the table by stripping of the preceding # from the actual id */
                 let idString = tds[0].textContent;
                 idString = idString.slice(1,idString.length);
@@ -385,7 +387,7 @@ function updateDrinkData ( ...fields ) {
 
                 /* Apply the correct formula to calculate the price for one portion of the drink. */
                 let portionPrice = (( bottleCost + externalAddition * bottleSize ) * 1.19 * 1.1)/(bottleSize / portionSize);
-                portionPrice = Math.ceil ( 100 * portionPrice ) / 100;
+                portionPrice = Math.ceil ( 10 * portionPrice ) / 10;
 
                 if ( !isNaN(externalAddition)){
                     ipcRenderer.send("drinks:alter", id, "external_addition", externalAddition);
@@ -902,7 +904,7 @@ document.getElementById("newInternalPrice").addEventListener("input", function(e
 
 /**
  * Calculate the price for one portion of the drink.
- * Applied formula: price = ((bottleCost + 17€ * bottleSize) * 1.19 * 1.1)/(bottleSize * portionSize)
+ * Applied formula: price = ((bottleCost + external addition * bottleSize) * 1.19 * 1.1)/(bottleSize * portionSize)
  */
 function calulatePortionPrice ( ) {
 
